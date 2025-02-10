@@ -42,7 +42,7 @@ function AdminPage({ children }) {
                         <Link to="/admin/loaidat">Loại đất</Link>
                     </Menu.Item>
                     <Menu.Item key="2" icon={<HomeOutlined />}>
-                        <Link to="/batdongsan">Bất động sản</Link>
+                        <Link to="/admin/batdongsan">Bất động sản</Link>
                     </Menu.Item>
                     <Menu.Item key="3" icon={<UserOutlined />}>
                         User
