@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import '../../style/AdminPage.css';
-
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -14,21 +12,17 @@ import {
 } from '@ant-design/icons';
 import { Button, Layout, Menu, theme } from 'antd';
 import { Avatar } from 'antd';
-
+import { Link } from 'react-router-dom';
 const { Header, Sider, Content } = Layout;
 
 function AdminPage({ children }) {
     const [collapsed, setCollapsed] = useState(false);
     const { token: { colorBgContainer, borderRadiusLG } } = theme.useToken();
+
     return (
         <Layout>
             {/* Sidebar */}
-            <Sider
-                trigger={null}
-                collapsible
-                collapsed={collapsed}
-                className="bg-dark text-white"
-            >
+            <Sider trigger={null} collapsible collapsed={collapsed} className="bg-dark text-white">
                 <div
                     className="d-flex align-items-center justify-content-center py-4"
                     style={{
@@ -43,37 +37,23 @@ function AdminPage({ children }) {
                 <Menu
                     theme="dark"
                     mode="inline"
-                    defaultSelectedKeys={['1']}
-                    items={[
-                        {
-                            key: '1',
-                            icon: <ClusterOutlined />,
-                            label: 'Loại đất',
-                        },
-                        {
-                            key: '2',
-                            icon: <HomeOutlined />,
-                            label: 'Bất động sản',
-                        },
-                        {
-                            key: '3',
-                            icon: <UserOutlined />,
-                            label: 'User',
-                        },
-                        {
-                            key: '4',
-                            icon: <ShoppingCartOutlined />,
-                            label: 'Mua đất',
-                        },
-                        {
-                            key: '5',
-                            icon: <SolutionOutlined />,
-                            label: 'Nhân viên',
-                        },
-
-
-                    ]}
-                />
+                    defaultSelectedKeys={['1']}>
+                    <Menu.Item key="1" icon={<ClusterOutlined />}>
+                        <Link to="/admin/loaidat">Loại đất</Link>
+                    </Menu.Item>
+                    <Menu.Item key="2" icon={<HomeOutlined />}>
+                        <Link to="/admin/batdongsan">Bất động sản</Link>
+                    </Menu.Item>
+                    <Menu.Item key="3" icon={<UserOutlined />}>
+                        User
+                    </Menu.Item>
+                    <Menu.Item key="4" icon={<ShoppingCartOutlined />}>
+                        Mua đất
+                    </Menu.Item>
+                    <Menu.Item key="5" icon={<SolutionOutlined />}>
+                        Nhân viên
+                    </Menu.Item>
+                </Menu>
             </Sider>
 
             {/* Main Layout */}
@@ -123,7 +103,6 @@ function AdminPage({ children }) {
                         >
                             Logout
                         </Button>
-
                     </div>
                 </Header>
 
@@ -138,49 +117,7 @@ function AdminPage({ children }) {
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                     }}
                 >
-                    <h2 className="mb-4">Dashboard</h2>
-                    <div className="row">
-                        <div className="col-lg-4 col-md-6 mb-4">
-                            <div className="card text-white bg-primary shadow">
-                                <div className="card-body">
-                                    <h5 className="card-title">Loại đất</h5>
-                                    <p className="card-text">Quản lý tất cả các loại đất.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-4 col-md-6 mb-4">
-                            <div className="card text-white bg-success shadow">
-                                <div className="card-body">
-                                    <h5 className="card-title">Đất động sản</h5>
-                                    <p className="card-text">Quản lý tất cả đất.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-4 col-md-6 mb-4">
-                            <div className="card text-white bg-warning shadow">
-                                <div className="card-body">
-                                    <h5 className="card-title">User</h5>
-                                    <p className="card-text">Quản lý người dùng.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-4 col-md-6 mb-4">
-                            <div className="card text-white bg-danger shadow">
-                                <div className="card-body">
-                                    <h5 className="card-title">Mua đất</h5>
-                                    <p className="card-text">Quản lý các form người dùng bán đất.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-4 col-md-6 mb-4">
-                            <div className="card text-white bg-info shadow">
-                                <div className="card-body">
-                                    <h5 className="card-title">Nhân viên</h5>
-                                    <p className="card-text">Quản lý tất cả nhân viên.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {children}
                 </Content>
             </Layout>
         </Layout>

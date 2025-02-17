@@ -1,0 +1,51 @@
+/* src/styles.css */
+.card-container {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 100%;  /* Đảm bảo các sản phẩm có chiều cao đều nhau */
+  display: flex;
+  flex-direction: column; /* Để các nội dung trong Card không bị lộn xộn */
+}
+
+.card-title {
+  font-size: 1rem; /* Giảm kích thước font chữ */
+  font-weight: bold;
+}
+
+.card-description {
+  font-size: 0.9rem; /* Giảm kích thước font chữ */
+  color: #555;
+}
+
+.card-price {
+  font-size: 1rem; /* Giảm kích thước font chữ */
+  font-weight: bold;
+  color: #d9534f;
+}
+
+.card-button {
+  margin-top: 8px;
+  font-size: 0.9rem; /* Giảm kích thước font chữ của nút */
+}
+
+/* Điều chỉnh kích thước của ảnh */
+.card-container .img-fluid {
+  width: 100%;
+  height: 200px; /* Giới hạn chiều cao ảnh */
+  object-fit: cover; /* Cắt ảnh sao cho phù hợp */
+}
+
+/* Đảm bảo các cột có cùng chiều rộng */
+.ant-col {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch; /* Đảm bảo tất cả các cột có chiều cao đều nhau */
+}
+
+/* Đảm bảo các sản phẩm trên màn hình rộng có chiều rộng đều nhau */
+@media (min-width: 768px) {
+  .ant-col {
+    flex: 0 0 25%; /* 4 sản phẩm mỗi dòng */
+  }
+}
