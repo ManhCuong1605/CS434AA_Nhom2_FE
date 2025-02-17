@@ -7,8 +7,6 @@ function Loaidat() {
     return (
         <AdminPage>
             <h2 className="mb-4">Loại đất</h2>
-
-
             <p>Quản lý các loại đất ở đây.</p>
             <button type="button" className="btn btn-primary mb-3" onClick={() => setShowModal(true)}>Thêm</button>
             <table className="table">

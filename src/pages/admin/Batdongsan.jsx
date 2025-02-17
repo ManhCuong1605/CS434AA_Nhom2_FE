@@ -131,7 +131,7 @@ function Batdongsan() {
                                         </div>
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label">Diện tích</label>
+                                        <label className="form-label">Hình ảnh</label>
                                         <input type="file" className="form-control" accept="image/*" />
                                     </div>
                                 </form>
