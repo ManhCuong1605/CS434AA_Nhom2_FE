@@ -1,18 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Navbar, Nav, Container, Button } from "react-bootstrap";
 
-const Header = ({ onLoginClick, onRegisterClick, resetForm }) => {
+const Header = ({ onFormChange }) => {
+    const [showForm, setShowForm] = useState(null);
+
+    const handleLoginClick = () => {
+        setShowForm("login");
+        onFormChange("login");
+    };
+
+    const handleRegisterClick = () => {
+        setShowForm("register");
+        onFormChange("register");
+    };
+
+    const resetForm = () => {
+        setShowForm(null);
+        onFormChange(null);
+    };
+
     return (
         <header>
             <Navbar bg="light" expand="lg" className="border-bottom">
                 <Container>
                     <Navbar.Brand href="/" className="d-flex align-items-center" onClick={resetForm}>
-                        <img
-                            src="https://via.placeholder.com/40"
-                            alt="Logo"
-                            className="me-2"
-                        />
+                        <img src="https://via.placeholder.com/40" alt="Logo" className="me-2" />
                         <div>
                             <strong>Bất động sản</strong>
                             <small className="text-muted d-block">.com</small>
@@ -21,7 +34,7 @@ const Header = ({ onLoginClick, onRegisterClick, resetForm }) => {
                     <Navbar.Toggle aria-controls="navbar-nav" />
                     <Navbar.Collapse id="navbar-nav">
                         <Nav className="ms-auto">
-                            <Nav.Link href="/trang-chu" onClick={resetForm}>Trang Chủ</Nav.Link>
+                            <Nav.Link href="/" onClick={resetForm}>Trang Chủ</Nav.Link>
                             <Nav.Link href="/bat-dong-san" onClick={resetForm}>Bất động sản</Nav.Link>
                             <Nav.Link href="/gioi-thieu" onClick={resetForm}>Giới thiệu</Nav.Link>
                             <Nav.Link href="/du-an" onClick={resetForm}>Dự án</Nav.Link>
@@ -31,10 +44,10 @@ const Header = ({ onLoginClick, onRegisterClick, resetForm }) => {
                             <Nav.Link href="/danh-ba" onClick={resetForm}>Danh bạ</Nav.Link>
                         </Nav>
                         <div className="d-flex ms-3">
-                            <Button variant="outline-primary" className="me-2" onClick={onLoginClick}>
+                            <Button variant="outline-primary" className="me-2" onClick={handleLoginClick}>
                                 Đăng nhập
                             </Button>
-                            <Button variant="danger" onClick={onRegisterClick}>
+                            <Button variant="danger" onClick={handleRegisterClick}>
                                 Đăng ký
                             </Button>
                         </div>

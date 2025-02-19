@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import Header from "./Header";
+import Footer from "./Footer";
 import loginImage from "../assets/login.png";  // Sử dụng cùng hình ảnh như LoginForm
 
 function RegisterForm({ toggleForm }) {
@@ -51,59 +53,62 @@ function RegisterForm({ toggleForm }) {
   };
 
   return (
-    <div className="container d-flex justify-content-center align-items-center vh-100 bg-light">
-      <div className="row bg-white shadow rounded overflow-hidden" style={{ maxWidth: "900px" }}>
-        <div className="col-md-5 d-flex flex-column justify-content-center align-items-center bg-light p-4">
-          <img src={loginImage} alt="Register" className="mb-3" style={{ width: "200px" }} />
-          <p className="text-danger text-center fw-bold">Nơi khởi nguồn tổ ấm, đầu tư vững bền.</p>
-        </div>
-        <div className="col-md-7 p-4">
-          <h2 className="text-start fs-6 fw-bold">Xin chào bạn</h2>
-          <h4 className="text-start fw-bold mb-4 fs-4">Đăng ký tài khoản</h4>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <input
-                type="email"
-                className={`form-control ${errors.email ? "is-invalid" : ""}`}
-                placeholder="Nhập email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              {errors.email && <div className="text-danger mb-2">{errors.email}</div>}
-            </div><div className="mb-3">
-              <input
-                type="password"
-                className={`form-control ${errors.password ? "is-invalid" : ""}`}
-                placeholder="Nhập mật khẩu"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              {errors.password && <div className="text-danger mb-2">{errors.password}</div>}
-            </div>
-            <div className="mb-3">
-              <input
-                type="password"
-                className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
-                placeholder="Xác nhận mật khẩu"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-              {errors.confirmPassword && <div className="text-danger mb-2">{errors.confirmPassword}</div>}
-            </div>
-            <button type="submit" className="btn btn-danger w-100 mb-3">Đăng ký</button>
-          </form>
-          <p className="text-center mt-3">
-            Đã có tài khoản?{" "}
-            <button
-              className="text-danger text-decoration-none btn btn-link"
-              onClick={() => toggleForm("login")}
-            >
-              Đăng nhập ngay
-            </button>
-          </p>
+    <>
+      <div className="container d-flex justify-content-center align-items-center vh-100 bg-light">
+        <div className="row bg-white shadow rounded overflow-hidden" style={{ maxWidth: "900px" }}>
+          <div className="col-md-5 d-flex flex-column justify-content-center align-items-center bg-light p-4">
+            <img src={loginImage} alt="Register" className="mb-3" style={{ width: "200px" }} />
+            <p className="text-danger text-center fw-bold">Nơi khởi nguồn tổ ấm, đầu tư vững bền.</p>
+          </div>
+          <div className="col-md-7 p-4">
+            <h2 className="text-start fs-6 fw-bold">Xin chào bạn</h2>
+            <h4 className="text-start fw-bold mb-4 fs-4">Đăng ký tài khoản</h4>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <input
+                  type="email"
+                  className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                  placeholder="Nhập email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                {errors.email && <div className="text-danger mb-2">{errors.email}</div>}
+              </div><div className="mb-3">
+                <input
+                  type="password"
+                  className={`form-control ${errors.password ? "is-invalid" : ""}`}
+                  placeholder="Nhập mật khẩu"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                {errors.password && <div className="text-danger mb-2">{errors.password}</div>}
+              </div>
+              <div className="mb-3">
+                <input
+                  type="password"
+                  className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
+                  placeholder="Xác nhận mật khẩu"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+                {errors.confirmPassword && <div className="text-danger mb-2">{errors.confirmPassword}</div>}
+              </div>
+              <button type="submit" className="btn btn-danger w-100 mb-3">Đăng ký</button>
+            </form>
+            <p className="text-center mt-3">
+              Đã có tài khoản?{" "}
+              <button
+                className="text-danger text-decoration-none btn btn-link"
+                onClick={() => toggleForm("login")}
+              >
+                Đăng nhập ngay
+              </button>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 }
 
