@@ -1,24 +1,17 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Navbar, Nav, Container, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
 
-const Header = ({ onFormChange }) => {
+const Header = () => {
     const [showForm, setShowForm] = useState(null);
+    const navigate = useNavigate();
 
-    const handleLoginClick = () => {
-        setShowForm("login");
-        onFormChange("login");
-    };
-
-    const handleRegisterClick = () => {
-        setShowForm("register");
-        onFormChange("register");
-    };
-
-    const resetForm = () => {
-        setShowForm(null);
-        onFormChange(null);
-    };
+    const handleLoginClick = () => setShowForm("login");
+    const handleRegisterClick = () => setShowForm("register");
+    const resetForm = () => setShowForm(null);
 
     return (
         <header>
@@ -34,8 +27,13 @@ const Header = ({ onFormChange }) => {
                     <Navbar.Toggle aria-controls="navbar-nav" />
                     <Navbar.Collapse id="navbar-nav">
                         <Nav className="ms-auto">
-                            <Nav.Link href="/" onClick={resetForm}>Trang Chủ</Nav.Link>
-                            <Nav.Link href="/bat-dong-san" onClick={resetForm}>Bất động sản</Nav.Link>
+                            <Nav.Link onClick={() => navigate("/")}>Trang Chủ</Nav.Link>
+                            <Nav.Link onClick={() => {
+                                resetForm();
+                                navigate("/bat-dong-san");
+                            }}>
+                                Bất động sản
+                            </Nav.Link>
                             <Nav.Link href="/gioi-thieu" onClick={resetForm}>Giới thiệu</Nav.Link>
                             <Nav.Link href="/du-an" onClick={resetForm}>Dự án</Nav.Link>
                             <Nav.Link href="/tin-tuc" onClick={resetForm}>Tin tức</Nav.Link>
@@ -54,6 +52,10 @@ const Header = ({ onFormChange }) => {
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
+
+            {/* Hiển thị form đăng nhập hoặc đăng ký */}
+            {showForm === "login" && <LoginForm toggleForm={resetForm} />}
+            {showForm === "register" && <RegisterForm toggleForm={resetForm} />}
         </header>
     );
 };
