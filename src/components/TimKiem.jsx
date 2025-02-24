@@ -5,7 +5,7 @@ function TimKiem() {
     return (
         <div className="container mt-3">
             <div className="row">
-                <div className="col-md-12">
+                <div className="col-md-8 mx-auto">
                     <div className="input-group mb-3">
                         <input
                             type="text"
@@ -17,7 +17,7 @@ function TimKiem() {
                         </button>
                     </div>
                 </div>
-                <div className="col-md-12">
+                <div className="col-md-8 mx-auto">
                     <div className="d-flex gap-2">
                         <select className="form-select">
                             <option>Khu vực</option>

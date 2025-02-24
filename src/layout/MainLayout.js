@@ -5,6 +5,7 @@ import Trangchu from "../pages/user/Trangchu";
 import Footer from "../components/Footer";
 import LoginForm from "../components/LoginForm";
 import RegisterForm from "../components/RegisterForm";
+import Slide from "../components/Slide";
 const MainLayout = ({ onFormChange, showForm, resetForm }) => {
     return (
         <>
@@ -15,7 +16,9 @@ const MainLayout = ({ onFormChange, showForm, resetForm }) => {
                 showForm === "login" ? <LoginForm toggleForm={resetForm} /> :
                     // Nếu không có form nào, hiển thị các phần còn lại
                     <>
+                        <Slide />
                         <TimKiem />
+
                         <Trangchu />
                         <Footer />
                     </>
