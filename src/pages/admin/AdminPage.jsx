@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import '../../style/AdminPage.css';
+import { useNavigate } from "react-router-dom";
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -18,7 +19,16 @@ const { Header, Sider, Content } = Layout;
 function AdminPage({ children }) {
     const [collapsed, setCollapsed] = useState(false);
     const { token: { colorBgContainer, borderRadiusLG } } = theme.useToken();
-
+    const navigate = useNavigate();
+    const [user, setUser] = useState("");
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        localStorage.removeItem("roles");
+        setUser(null);
+        window.dispatchEvent(new Event("storage")); // Gửi sự kiện để cập nhật các component khác
+        navigate("/", { replace: true });
+    };
     return (
         <Layout>
             {/* Sidebar */}
@@ -100,6 +110,7 @@ function AdminPage({ children }) {
                             style={{
                                 padding: '5px 20px',
                             }}
+                            onClick={() => navigate("/dang-nhap")}
                         >
                             Logout
                         </Button>

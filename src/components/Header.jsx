@@ -1,23 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Navbar, Nav, Container, Button } from "react-bootstrap";
+import { Navbar, Nav, Container, Button, NavDropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import LoginForm from "./LoginForm";
-import RegisterForm from "./RegisterForm";
 
 const Header = () => {
-    const [showForm, setShowForm] = useState(null);
     const navigate = useNavigate();
+    const [user, setUser] = useState(localStorage.getItem("username"));
 
-    const handleLoginClick = () => setShowForm("login");
-    const handleRegisterClick = () => setShowForm("register");
-    const resetForm = () => setShowForm(null);
+    useEffect(() => {
+        const handleStorageChange = () => {
+            setUser(localStorage.getItem("username")); // Cập nhật user khi localStorage thay đổi
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+        return () => {
+            window.removeEventListener("storage", handleStorageChange);
+        };
+    }, []);
+
+    // Xử lý đăng xuất
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        localStorage.removeItem("roles");
+        setUser(null);
+        window.dispatchEvent(new Event("storage")); // Gửi sự kiện để cập nhật các component khác
+        navigate("/", { replace: true });
+    };
 
     return (
         <header>
             <Navbar bg="light" expand="lg" className="border-bottom">
                 <Container>
-                    <Navbar.Brand href="/" className="d-flex align-items-center" onClick={resetForm}>
+                    <Navbar.Brand href="/" className="d-flex align-items-center">
                         <img src="https://via.placeholder.com/40" alt="Logo" className="me-2" />
                         <div>
                             <strong>Bất động sản</strong>
@@ -28,34 +43,35 @@ const Header = () => {
                     <Navbar.Collapse id="navbar-nav">
                         <Nav className="ms-auto">
                             <Nav.Link onClick={() => navigate("/")}>Trang Chủ</Nav.Link>
-                            <Nav.Link onClick={() => {
-                                resetForm();
-                                navigate("/bat-dong-san");
-                            }}>
-                                Bất động sản
-                            </Nav.Link>
-                            <Nav.Link href="/gioi-thieu" onClick={resetForm}>Giới thiệu</Nav.Link>
-                            <Nav.Link href="/du-an" onClick={resetForm}>Dự án</Nav.Link>
-                            <Nav.Link href="/tin-tuc" onClick={resetForm}>Tin tức</Nav.Link>
-                            <Nav.Link href="/wiki" onClick={resetForm}>Wiki BĐS</Nav.Link>
-                            <Nav.Link href="/ban-dat" onClick={resetForm}>Bán đất</Nav.Link>
-                            <Nav.Link href="/danh-ba" onClick={resetForm}>Danh bạ</Nav.Link>
+                            <Nav.Link onClick={() => navigate("/bat-dong-san")}>Bất động sản</Nav.Link>
+                            <Nav.Link href="/gioi-thieu">Giới thiệu</Nav.Link>
+                            <Nav.Link href="/du-an">Dự án</Nav.Link>
+                            <Nav.Link href="/tin-tuc">Tin tức</Nav.Link>
+                            <Nav.Link href="/wiki">Wiki BĐS</Nav.Link>
+                            <Nav.Link href="/ban-dat">Bán đất</Nav.Link>
+                            <Nav.Link href="/danh-ba">Danh bạ</Nav.Link>
                         </Nav>
                         <div className="d-flex ms-3">
-                            <Button variant="outline-primary" className="me-2" onClick={handleLoginClick}>
-                                Đăng nhập
-                            </Button>
-                            <Button variant="danger" onClick={handleRegisterClick}>
-                                Đăng ký
-                            </Button>
+                            {user ? (
+                                <NavDropdown title={<span className="fw-bold fs-5">{user}</span>} id="user-dropdown">
+
+                                    <NavDropdown.Item onClick={() => navigate("/profile")}>Hồ sơ</NavDropdown.Item>
+                                    <NavDropdown.Item onClick={handleLogout}>Đăng xuất</NavDropdown.Item>
+                                </NavDropdown>
+                            ) : (
+                                <>
+                                    <Button variant="outline-primary" className="me-2" onClick={() => navigate("/dang-nhap")}>
+                                        Đăng nhập
+                                    </Button>
+                                    <Button variant="danger" onClick={() => navigate("/dang-ky")}>
+                                        Đăng ký
+                                    </Button>
+                                </>
+                            )}
                         </div>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-
-            {/* Hiển thị form đăng nhập hoặc đăng ký */}
-            {showForm === "login" && <LoginForm toggleForm={resetForm} />}
-            {showForm === "register" && <RegisterForm toggleForm={resetForm} />}
         </header>
     );
 };

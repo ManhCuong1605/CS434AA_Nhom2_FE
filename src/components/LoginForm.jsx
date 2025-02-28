@@ -1,7 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import loginImage from '../assets/login.png';
-import Footer from "./Footer";
+import axios from "axios";
 function LoginForm() {
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
+    const roles = JSON.parse(localStorage.getItem("roles")) || [];
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setError("");
+
+        try {
+            const response = await axios.post("http://localhost:5000/api/login", {
+                username,
+                password
+            });
+
+            if (response.data?.token) {
+                localStorage.setItem("token", response.data.token);
+                localStorage.setItem("username", username);
+                localStorage.setItem("roles", JSON.stringify(response.data.roles || []));
+
+                window.dispatchEvent(new Event("storage")); // Cập nhật Header ngay lập tức
+
+                alert("Đăng nhập thành công!");
+                if (response.data.roles?.includes("ADMIN")) {
+                    navigate("/admin", { replace: true });
+                } else {
+                    navigate("/", { replace: true });
+                }
+            }
+            else {
+                setError("Dữ liệu phản hồi không hợp lệ!");
+            }
+        } catch (error) {
+            console.error("Lỗi đăng nhập:", error);
+            setError(error.response?.data?.error || "Đăng nhập thất bại!");
+        }
+    };
     return (
         <>
             <div className="container d-flex justify-content-center align-items-center vh-100 bg-light">
@@ -24,7 +63,7 @@ function LoginForm() {
                         <h2 className="text-start fs-6 fw-bold">Xin chào bạn</h2>
                         <h4 className="text-start fw-bold mb-4 fs-4">Đăng nhập để tiếp tục</h4>
 
-                        <form>
+                        <form onSubmit={handleLogin}>
                             {/* Số điện thoại hoặc email */}
                             <div className="mb-3">
 
@@ -35,8 +74,10 @@ function LoginForm() {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        id="email"
-                                        placeholder="Nhập email hoặc SĐT"
+                                        id="username"
+                                        placeholder="Nhập tài khoản"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -52,6 +93,8 @@ function LoginForm() {
                                         className="form-control"
                                         id="password"
                                         placeholder="Nhập mật khẩu"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
                                     />
                                     <button className="btn btn-outline-secondary" type="button">
                                         <i className="bi bi-eye"></i>
@@ -95,7 +138,6 @@ function LoginForm() {
                     </div>
                 </div>
             </div>
-            <Footer />
         </>
     );
 }

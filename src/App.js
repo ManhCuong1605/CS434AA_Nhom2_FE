@@ -1,33 +1,43 @@
-import React, { useState } from "react";
+import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
+
+import AdminLayout from "./layout/AdminLayout"; // Layout riêng cho Admin
+import MainLayout from "./layout/MainLayout"; // Layout cho User
 
 import AdminPage from "./pages/admin/AdminPage";
 import Loaidat from "./pages/admin/Loaidat";
 import QuanLyBatdongsan from "./pages/admin/QuanLyBatdongsan";
-import MainLayout from "./layout/MainLayout";
+
 import Batdongsan from "./pages/user/Batdongsan";
 import ChiTietSanPham from "./pages/user/Chitietsanpham";
+import LoginForm from "./components/LoginForm";
+import RegisterForm from "./components/RegisterForm";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 function App() {
-  const [showForm, setShowForm] = useState(null);
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
 
-  // Kiểm tra nếu đường dẫn là `/bat-dong-san` hoặc `/bat-dong-san/:id`
-  const isBatDongSanPage = location.pathname.startsWith("/bat-dong-san");
-
   return (
     <div className="App">
-      {!isAdminPage && !isBatDongSanPage && (
-        <MainLayout onFormChange={setShowForm} showForm={showForm} resetForm={() => setShowForm(null)} />
-      )}
+
+      {!isAdminPage && <Header />}
+
       <Routes>
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/admin/loaidat" element={<Loaidat />} />
-        <Route path="/admin/batdongsan" element={<QuanLyBatdongsan />} />
-        <Route path="/bat-dong-san" element={<Batdongsan />} />
-        <Route path="/bat-dong-san/:id" element={<ChiTietSanPham />} />
+        {/* Layout riêng cho Admin */}
+        <Route path="/admin/*" element={<AdminLayout />} />
+
+        {/* Layout chính cho User */}
+        <Route path="/*" element={<MainLayout />} />
+
+
+        <Route path="/dang-nhap" element={<LoginForm />} />
+        <Route path="/dang-ky" element={<RegisterForm />} />
       </Routes>
+
+
+      {!isAdminPage && <Footer />}
     </div>
   );
 }

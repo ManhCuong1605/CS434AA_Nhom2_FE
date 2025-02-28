@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Header from "./Header";
 import Footer from "./Footer";
 import loginImage from "../assets/login.png";  // Sử dụng cùng hình ảnh như LoginForm
 
@@ -107,7 +106,6 @@ function RegisterForm({ toggleForm }) {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 }
