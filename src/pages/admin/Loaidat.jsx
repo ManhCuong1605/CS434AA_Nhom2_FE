@@ -1,9 +1,24 @@
-import React, { useState } from 'react';
-import AdminPage from './AdminPage'; // Import AdminPage để sử dụng layout chung
+import React, { useEffect, useState } from 'react';
+import AdminPage from './AdminPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import loaiNhaDatApi from '../../api/LoaiNhaDatApi';
 function Loaidat() {
     const [showModal, setShowModal] = useState(false);
+    const [loaiNhaDatList, setLoaiNhaDatList] = useState([]);
+
+    useEffect(() => {
+        fetchLoaiNhaDat();
+    }, []);
+
+    const fetchLoaiNhaDat = async () => {
+        try {
+            const response = await loaiNhaDatApi.getAll();
+            setLoaiNhaDatList(response.data);
+        } catch (error) {
+            console.error("Lỗi khi lấy danh sách loại đất:", error);
+        }
+    }
+
     return (
         <AdminPage>
             <h2 className="mb-4">Loại đất</h2>
@@ -19,33 +34,17 @@ function Loaidat() {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>LD001</td>
-                        <td>Loại đất A</td>
-                        <td>
-                            <button type="button" className="btn btn-warning me-2">Sửa</button>
-                            <button type="button" className="btn btn-danger">Xóa</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>LD002</td>
-                        <td>Loại đất B</td>
-                        <td>
-                            <button type="button" className="btn btn-warning me-2">Sửa</button>
-                            <button type="button" className="btn btn-danger">Xóa</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td>LD003</td>
-                        <td>Loại đất C</td>
-                        <td>
-                            <button type="button" className="btn btn-warning me-2">Sửa</button>
-                            <button type="button" className="btn btn-danger">Xóa</button>
-                        </td>
-                    </tr>
+                    {loaiNhaDatList.map((item, index) => (
+                        <tr key={item.id}>
+                            <td>{index + 1}</td>
+                            <td>{item.MaLoaiDat}</td>
+                            <td>{item.TenLoaiDat}</td>
+                            <td>
+                                <button className="btn btn-warning me-2">Sửa</button>
+                                <button className="btn btn-danger">Xóa</button>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
 

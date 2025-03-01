@@ -5,19 +5,14 @@ import { useChat } from "./context/ChatContext"; // Import useChat từ context
 import AdminLayout from "./layout/AdminLayout"; // Layout riêng cho Admin
 import MainLayout from "./layout/MainLayout"; // Layout cho User
 
-import AdminPage from "./pages/admin/AdminPage";
-import Loaidat from "./pages/admin/Loaidat";
-import QuanLyBatdongsan from "./pages/admin/QuanLyBatdongsan";
 
-import Batdongsan from "./pages/user/Batdongsan";
-import ChiTietSanPham from "./pages/user/Chitietsanpham";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import TinTuc from "./pages/user/Tintuc";
 import GioiThieu from "./pages/user/GioiThieu";
-
+import ChatWidget from "./components/ChatWidget"
 function App() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
