@@ -1,188 +1,255 @@
-/* Định dạng tổng thể */
+/* Giảm kích thước tổng thể */
 .product-container {
+    padding: 1px; /* Giảm padding */
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 40px;
-    /* Tăng padding */
+    flex-direction: column;
+    transform: scale(0.9); /* Thu nhỏ toàn bộ 50% */
+    transform-origin: top center;
 }
 
+/* Thu nhỏ khung chứa nội dung */
 .product-content {
-    display: flex;
-    max-width: 1100px;
-    /* Tăng kích thước tổng thể */
-    background: white;
-    border-radius: 15px;
-    padding: 30px;
-    /* Tăng padding */
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-    /* Làm nổi bật hơn */
-    transition: transform 0.3s ease-in-out;
-}
-
-.product-content {
+    max-width: 150px; /* Giảm kích thước 50% */
+    background-color: #fff;
+    border-radius: 3px;
+    padding: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
-    /* Sắp xếp theo cột */
-    align-items: center;
-    max-width: 1100px;
-    background: white;
-    border-radius: 15px;
-    padding: 30px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease-in-out;
+    gap: 2px;
 }
 
-/* Khu vực hình ảnh */
+/* Giảm kích thước khu vực hình ảnh */
 .image-section {
-    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
+/* Giảm kích thước hình ảnh chính */
 .main-image {
-    width: 100%;
-    max-height: 500px;
-    /* Tăng chiều cao */
+    max-width: 100%;
+    max-height: 60px; /* Giảm chiều cao ảnh */
+    border-radius: 2px;
     object-fit: cover;
-    border-radius: 12px;
-    transition: opacity 0.3s ease-in-out;
 }
 
-.fade-in {
-    animation: fadeIn 0.5s ease-in-out;
+/* Thu nhỏ danh sách ảnh nhỏ */
+.thumbnail-container {
+    display: flex;
+    gap: 2px;
+    margin-top: 2px;
+}
+
+.thumbnail {
+    width: 15px; /* Giảm kích thước ảnh nhỏ */
+    height: 15px;
+    border-radius: 2px;
+    cursor: pointer;
+    object-fit: cover;
+    transition: transform 0.2s;
+}
+
+.thumbnail:hover {
+    transform: scale(1.05);
+}
+
+/* Giảm kích thước khu vực thông tin */
+.info-section {
+    flex: 1;
+    text-align: center;
+}
+
+/* Giảm kích thước tiêu đề */
+.product-title {
+    font-size: 8px; /* Giảm 50% */
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+/* Giảm kích thước thông tin giá và vị trí */
+.product-location,
+.product-price,
+.product-details {
+    font-size: 7px;
+    margin-bottom: 2px;
+    color: #555;
+}
+
+/* Thu nhỏ hộp thông tin liên hệ */
+.contact-box {
+    margin-top: 2px;
+    font-size: 7px;
+    padding: 2px;
+    background: #f8f9fa;
+    border-radius: 2px;
+}
+
+/* Giảm kích thước nút liên hệ */
+.contact-button {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    font-size: 7px;
+    padding: 2px 4px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.contact-button:hover {
+    background-color: #0056b3;
+}
+
+/* Giảm kích thước khung chứa thông tin chi tiết */
+.detail-box {
+    background: #f9f9f9;
+    padding: 3px;
+    border-radius: 2px;
+    margin-top: 2px;
+    font-size: 6px;
+}
+
+/* Responsive tối ưu cho màn hình nhỏ */
+@media (max-width: 768px) {
+    .product-content {
+        max-width: 30%;
+        padding: 2px;
+    }
+
+    .main-image {
+        max-height: 50px;
+    }
+
+    .thumbnail {
+        width: 10px;
+        height: 10px;
+    }
+
+    .product-title {
+        font-size: 7px;
+    }
+
+    .contact-box {
+        font-size: 6px;
+    }
+}
+/* 🌟 Avatar Chat */
+.chat-avatar {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+}
+
+.chat-avatar:hover {
+    background: #0056b3;
+}
+
+/* 🌟 Cửa sổ chat */
+.chat-window {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 350px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.chat-header {
+    background: #007bff;
+    color: white;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.chat-body {
+    padding: 12px;
+    height: 250px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.chat-message {
+    max-width: 75%;
+    padding: 10px 14px;
+    border-radius: 18px;
+    font-size: 14px;
+}
+
+.chat-message.user {
+    background: #007bff;
+    color: white;
+    align-self: flex-end;
+}
+
+.chat-message.agent {
+    background: #f1f1f1;
+    color: black;
+    align-self: flex-start;
+}
+
+.chat-footer {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.chat-footer input {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #f9f9f9;
+}
+
+.chat-footer button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    margin-left: 8px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.chat-footer button:hover {
+    background: #0056b3;
 }
 
 @keyframes fadeIn {
     from {
-        opacity: 0.5;
+        opacity: 0;
+        transform: translateY(10px);
     }
-
     to {
         opacity: 1;
+        transform: translateY(0);
     }
-}
-
-/* Ảnh thu nhỏ */
-.thumbnail-container {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.thumbnail {
-    width: 90px;
-    /* Tăng kích thước ảnh nhỏ */
-    height: 90px;
-    object-fit: cover;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.2s, border 0.2s;
-    border: 2px solid transparent;
-}
-
-.thumbnail:hover {
-    transform: scale(1.1);
-    border: 2px solid #007bff;
-}
-
-.thumbnail.active {
-    border: 3px solid #ff5733;
-    transform: scale(1.15);
-}
-
-/* Khu vực thông tin sản phẩm */
-.info-section {
-    flex: 1;
-    padding-left: 35px;
-    /* Tăng khoảng cách giữa ảnh và thông tin */
-}
-
-.product-title {
-    font-size: 28px;
-    /* Tăng kích thước tiêu đề */
-    font-weight: bold;
-    color: #333;
-}
-
-.product-location {
-    color: gray;
-    margin-bottom: 15px;
-    font-size: 20px;
-    /* Tăng kích thước chữ */
-}
-
-.product-price {
-    font-size: 24px;
-    /* Làm nổi bật giá */
-    font-weight: bold;
-    color: red;
-}
-
-.product-details {
-    font-size: 20px;
-    /* Tăng kích thước thông tin chi tiết */
-    margin-bottom: 15px;
-    color: #555;
-}
-
-.product-detail-container {
-    display: grid;
-    grid-template-columns: 1fr;
-}
-
-/* Khu vực thông tin liên hệ */
-.contact-box {
-    background: #f9f9f9;
-    padding: 20px;
-    border-radius: 10px;
-    margin-top: 20px;
-    font-size: 20px;
-    /* Tăng cỡ chữ */
-    border-left: 5px solid #007bff;
-}
-
-.contact-number {
-    font-weight: bold;
-    color: #333;
-}
-
-/* Nút liên hệ */
-.contact-button {
-    background: #007bff;
-    font-size: 20px;
-    /* Tăng kích thước chữ trong nút */
-    color: white;
-    padding: 14px 24px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 15px;
-    transition: background 0.3s ease-in-out;
-}
-
-.contact-button:hover {
-    background: #0056b3;
-    transform: scale(1.05);
-}
-
-.description-section {
-    margin-top: 20px;
-    padding: 15px;
-    background: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.description-section h3 {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.description-section p {
-    font-size: 16px;
-    line-height: 1.5;
-    color: #333;
 }

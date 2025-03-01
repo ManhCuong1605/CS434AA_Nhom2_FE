@@ -4,10 +4,8 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import "../../style/Chitietsanpham.css";
 import MoTaChiTiet from "../../components/MoTaChiTiet";
+import { useChat } from "../../context/ChatContext"; // Import context
 
-
-
-// Danh sách bất động sản mẫu
 const danhSachBatDongSan = [
     {
         id: 1,
@@ -26,15 +24,16 @@ const danhSachBatDongSan = [
         ],
         contact: "0969 524 ***",
         agent: "Nguyễn Bình Gkd",
-        description: "Căn biệt thự cao cấp nằm trong khu đô thị Nam Cường Dương Nội, có diện tích 212m² với thiết kế hiện đại, gần trường học, bệnh viện, trung tâm thương mại và nhiều tiện ích khác."
+        description: "Căn biệt thự cao cấp nằm trong khu đô thị Nam Cường Dương Nội."
     }
 ];
 
 const ChiTietSanPham = () => {
     const { id } = useParams();
+    const { setIsChatOpen } = useChat(); // Lấy hàm mở chat từ context
     const product = danhSachBatDongSan.find((p) => p.id === parseInt(id));
-
     const [selectedImage, setSelectedImage] = useState(product ? product.images[0] : "");
+
     if (!product) {
         return <div className="product-container">Sản phẩm không tồn tại.</div>;
     }
@@ -43,14 +42,8 @@ const ChiTietSanPham = () => {
         <>
             <div className="product-container">
                 <div className="product-content">
-
-                    {/* Khu vực hiển thị ảnh */}
                     <div className="image-section">
-                        <img
-                            src={selectedImage}
-                            alt="Ảnh chính"
-                            className="main-image fade-in"
-                        />
+                        <img src={selectedImage} alt="Ảnh chính" className="main-image fade-in" />
                         <div className="thumbnail-container">
                             {product.images.map((img, index) => (
                                 <img
@@ -64,7 +57,6 @@ const ChiTietSanPham = () => {
                         </div>
                     </div>
 
-                    {/* Thông tin sản phẩm */}
                     <div className="info-section">
                         <h2 className="product-title">{product.title}</h2>
                         <p className="product-location">{product.location}</p>
@@ -73,14 +65,13 @@ const ChiTietSanPham = () => {
                         <div className="contact-box">
                             <p><strong>Môi giới: {product.agent}</strong></p>
                             <p className="contact-number">☎ {product.contact}</p>
-                            <button className="contact-button">Liên hệ ngay</button>
+                            <button className="contact-button" onClick={() => setIsChatOpen(true)}>
+                                Liên hệ ngay
+                            </button>
                         </div>
                     </div>
 
-                    {/* Thêm phần mô tả chi tiết */}
                     <MoTaChiTiet description={product.description} />
-
-
                 </div>
             </div>
         </>
