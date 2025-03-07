@@ -131,10 +131,13 @@ function LoginForm() {
                         {/* Đăng ký */}
                         <p className="text-center mt-3">
                             Chưa là thành viên?{" "}
-                            <a href="/register" className="text-danger text-decoration-none">
+                            <span
+                                className="text-danger text-decoration-none"
+                                style={{ cursor: "pointer" }}
+                                onClick={() => navigate("/dang-ky")}
+                            >
                                 Đăng ký
-                            </a>
-                            {" "}tại đây
+                            </span>{" "}tại đây
                         </p>
                     </div>
                 </div>

@@ -26,9 +26,10 @@ function AdminPage({ children }) {
         localStorage.removeItem("username");
         localStorage.removeItem("roles");
         setUser(null);
-        window.dispatchEvent(new Event("storage")); // Gửi sự kiện để cập nhật các component khác
-        navigate("/", { replace: true });
+        window.dispatchEvent(new Event("storage")); // Gửi sự kiện cập nhật
+        navigate("/dang-nhap", { replace: true }); // Điều hướng đến trang đăng nhập
     };
+
     return (
         <Layout>
             {/* Sidebar */}
@@ -110,10 +111,11 @@ function AdminPage({ children }) {
                             style={{
                                 padding: '5px 20px',
                             }}
-                            onClick={() => navigate("/dang-nhap")}
+                            onClick={handleLogout}
                         >
                             Logout
                         </Button>
+
                     </div>
                 </Header>
 

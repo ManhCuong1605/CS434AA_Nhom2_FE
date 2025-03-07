@@ -14,7 +14,7 @@ const ChatWidget = ({ initialMessage = "" }) => {
         if (isChatOpen && messages.length === 0) {
             setMessages([{ text: "Xin chào! Chúng tôi có thể giúp gì cho bạn?", type: "agent" }]);
         }
-    }, [isChatOpen]);
+    }, [isChatOpen, messages.length]);
 
     const handleSendMessage = () => {
         if (userMessage.trim() !== "") {
