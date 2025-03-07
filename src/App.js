@@ -4,7 +4,7 @@ import { useChat } from "./context/ChatContext"; // Import useChat từ context
 
 import AdminLayout from "./layout/AdminLayout"; // Layout riêng cho Admin
 import MainLayout from "./layout/MainLayout"; // Layout cho User
-
+import PrivateRoute from "./components/PrivateRoutes";
 
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
@@ -23,7 +23,9 @@ function App() {
       {!isAdminPage && <Header />}
 
       <Routes>
-        <Route path="/admin/*" element={<AdminLayout />} />
+        <Route element={<PrivateRoute allowedRoles={["ADMIN"]} />}>
+          <Route path="/admin/*" element={<AdminLayout />} />
+        </Route>
         <Route path="/*" element={<MainLayout onChatToggle={() => setIsChatOpen(true)} />} />
         <Route path="/dang-nhap" element={<LoginForm />} />
         <Route path="/dang-ky" element={<RegisterForm />} />

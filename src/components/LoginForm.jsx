@@ -7,6 +7,7 @@ function LoginForm() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
     const roles = JSON.parse(localStorage.getItem("roles")) || [];
 
     const handleLogin = async (e) => {
