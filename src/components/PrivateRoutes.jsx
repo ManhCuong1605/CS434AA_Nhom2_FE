@@ -5,7 +5,7 @@ const PrivateRoute = ({ allowedRoles }) => {
     const roles = JSON.parse(localStorage.getItem("roles") || "[]");
 
     if (!token)
-        return <Navigate to="/login" replace />;
+        return <Navigate to="//dang-nhap" replace />;
     if (!roles.some(role => allowedRoles.includes(role))) {
         alert('Bạn không có quyền truy cập');
         return <Navigate to="/" replace />;

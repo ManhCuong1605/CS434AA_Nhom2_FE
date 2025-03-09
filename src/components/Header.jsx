@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Navbar, Nav, Container, Button, NavDropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-
+import Logo from "../assets/Logo/Logooo.jpg"
 const Header = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(localStorage.getItem("username"));
@@ -33,10 +33,10 @@ const Header = () => {
             <Navbar bg="light" expand="lg" className="border-bottom">
                 <Container>
                     <Navbar.Brand href="/" className="d-flex align-items-center">
-                        <img src="https://via.placeholder.com/40" alt="Logo" className="me-2" />
-                        <div>
-                            <strong>Bất động sản</strong>
-                            <small className="text-muted d-block">.com</small>
+                        <img src={Logo} alt="Logo" className="me-2" style={{ width: '50px', height: 'auto' }} />
+                        <div >
+                            <strong>BlackS City</strong>
+
                         </div>
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="navbar-nav" />

@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import "../../style/Chitietsanpham.css";
 import MoTaChiTiet from "../../components/MoTaChiTiet";
 import { useChat } from "../../context/ChatContext"; // Import context
-
 const danhSachBatDongSan = [
     {
         id: 1,
@@ -25,8 +22,28 @@ const danhSachBatDongSan = [
         contact: "0969 524 ***",
         agent: "Nguyễn Bình Gkd",
         description: "Căn biệt thự cao cấp nằm trong khu đô thị Nam Cường Dương Nội."
+    },
+    {
+        id: 2,
+        title: "VINHOMES WONDER CITY ĐAN PHƯỢNG",
+        price: "50 tỷ",
+        area: "200m²",
+        pricePerM2: "250 tr/m²",
+        bedrooms: 7,
+        bathrooms: 6,
+        location: "Đan Phượng, Hà Nội",
+        images: [
+            require("../../assets/slide/banner1.jpg"),
+            require("../../assets/slide/banner2.jpg"),
+            require("../../assets/slide/banner3.jpg"),
+            require("../../assets/slide/banner3.jpg")
+        ],
+        contact: "0987 761 ***",
+        agent: "Global Property",
+        description: "Một căn biệt thự sang trọng tại Vinhomes Wonder City."
     }
 ];
+
 
 const ChiTietSanPham = () => {
     const { id } = useParams();
