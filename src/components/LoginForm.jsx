@@ -81,6 +81,7 @@ function LoginForm() {
                                         onChange={(e) => setUsername(e.target.value)}
                                     />
                                 </div>
+
                             </div>
 
                             {/* Mật khẩu */}
@@ -101,6 +102,7 @@ function LoginForm() {
                                         <i className="bi bi-eye"></i>
                                     </button>
                                 </div>
+                                {error && <div className="text-danger mt-1">{error}</div>}
                             </div>
 
                             {/* Nhớ tài khoản và quên mật khẩu */}

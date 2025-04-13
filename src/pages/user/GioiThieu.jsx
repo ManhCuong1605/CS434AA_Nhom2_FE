@@ -18,8 +18,8 @@ const GioiThieu = () => {
           className="position-absolute top-50 start-50 translate-middle text-center"
           style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)" }}
         >
-          <h1>Bất Động Sản.com</h1>
-          <p className="fs-4">WEBSITE Hàng Đầu</p>
+          <h1>BlackS City</h1>
+          <p className="fs-4">WEBSITE Bất Động Sản Hàng Đầu</p>
           <p className="fs-5">Luôn Sẵn Sàng Bên Bạn</p>
         </div>
       </section>
@@ -27,7 +27,7 @@ const GioiThieu = () => {
       {/* About Section */}
       <section className="about py-5">
         <Container>
-          <div className="border p-4 rounded" style={{ borderColor: "red",borderWidth: "3px", borderStyle: "solid" }}>
+          <div className="border p-4 rounded" style={{ borderColor: "red", borderWidth: "3px", borderStyle: "solid" }}>
             <h2 className="text-center mb-4">Về Chúng Tôi</h2>
             <p className="text-center">
               Công ty Bất động sản là đơn vị uy tín trong lĩnh vực đầu tư, phát triển và phân phối bất động sản.

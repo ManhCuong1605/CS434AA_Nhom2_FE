@@ -58,11 +58,11 @@ function RegisterForm() {
         headers: { "Content-Type": "application/json" },
       });
 
-      setMessage("🎉 Đăng ký thành công! Bạn có thể đăng nhập ngay.");
+      setMessage("Đăng ký thành công! Bạn có thể đăng nhập ngay.");
       setTimeout(() => navigate("/dang-nhap"), 2000);
     } catch (error) {
       console.error("Lỗi khi gọi API:", error.response?.data || error.message);
-      setMessage(`⚠️ ${error.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại sau."}`);
+      setMessage(`${error.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại sau."}`);
     } finally {
       setLoading(false);
     }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AdminPage from './AdminPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import nhaDatApi from '../../api/NhaDatApi';
-import loaiNhaDatApi from '../../api/LoaiNhaDatApi';
+import { fetchNhaDatList, fetchLoaiNhaDatList } from "../../services/fetchData";
 import Swal from 'sweetalert2';
 
 function Batdongsan() {
@@ -10,6 +10,9 @@ function Batdongsan() {
     const [nhaDatList, setNhaDatList] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
     const [loaiDatList, setLoaiDatList] = useState([]);
+    const [selectedImages, setSelectedImages] = useState([]);
+    const [currentImages, setCurrentImages] = useState([]);
+
     const [formData, setFormData] = useState({
         MaNhaDat: "",
         TenNhaDat: "",
@@ -28,25 +31,16 @@ function Batdongsan() {
     });
 
     useEffect(() => {
-        fetchNhaDat();
-        fetchLoaiDat(); // Gọi hàm fetch loại nhà đất
+        loadData();
     }, []);
 
-    const fetchNhaDat = async () => {
+    const loadData = async () => {
         try {
-            const response = await nhaDatApi.getAll();
-            setNhaDatList(response.data);
+            const [nhaDat, loaiDat] = await Promise.all([fetchNhaDatList(), fetchLoaiNhaDatList()]);
+            setNhaDatList(nhaDat);
+            setLoaiDatList(loaiDat);
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu:", error);
-        }
-    };
-
-    const fetchLoaiDat = async () => {
-        try {
-            const response = await loaiNhaDatApi.getAll();
-            setLoaiDatList(response.data);
-        } catch (error) {
-            console.error("Lỗi khi tải loại đất:", error);
         }
     };
 
@@ -54,23 +48,32 @@ function Batdongsan() {
         const { name, value } = e.target;
         setFormData(prevState => ({
             ...prevState,
-            [name]: name === "LoaiNhaDat_id" ? Number(value) : value, // Chuyển đổi sang số nếu là LoaiNhaDat_id
+            [name]: name === "LoaiNhaDat_id" ? (value ? Number(value) : null) : value,
         }));
     };
 
     const handleSubmit = async () => {
-        console.log("Form Data trước khi gửi:", formData); // Kiểm tra giá trị formData
         try {
+            const formDataToSend = new FormData();
+            Object.entries(formData).forEach(([key, value]) => {
+                formDataToSend.append(key, value);
+            });
+            selectedImages.forEach((img) => {
+                formDataToSend.append("images", img);
+            });
+
             if (isEditing) {
-                await nhaDatApi.update(formData.id, formData);
+                await nhaDatApi.update(formData.id, formDataToSend); // dùng FormData
                 Swal.fire('Cập nhật thành công!', '', 'success');
             } else {
-                await nhaDatApi.add(formData);
+                await nhaDatApi.add(formDataToSend);
                 Swal.fire('Thêm thành công!', '', 'success');
             }
-            fetchNhaDat();
+
+            fetchNhaDatList();
             closeModal();
         } catch (error) {
+            console.log(error);
             Swal.fire('Lỗi!', 'Vui lòng thử lại.', 'error');
         }
     };
@@ -78,11 +81,14 @@ function Batdongsan() {
     const handleEdit = (item) => {
         setFormData({
             ...item,
-            LoaiNhaDat_id: item.LoaiNhaDat_id || null,
+            LoaiNhaDat_id: item.LoaiNhaDat?.id || null,
         });
+        setCurrentImages(item.hinhAnh || []);
+        setSelectedImages([]); // reset ảnh mới được chọn
         setIsEditing(true);
         setShowModal(true);
     };
+
 
     const handleDelete = async (id) => {
         const confirm = await Swal.fire({
@@ -98,7 +104,7 @@ function Batdongsan() {
             try {
                 await nhaDatApi.delete(id);
                 Swal.fire('Đã xóa!', 'Bất động sản đã bị xóa.', 'success');
-                fetchNhaDat();
+                fetchNhaDatList();
             } catch (error) {
                 Swal.fire('Lỗi!', 'Không thể xóa.', 'error');
             }
@@ -124,10 +130,16 @@ function Batdongsan() {
         });
         setIsEditing(false);
         setShowModal(true);
+        setSelectedImages([]);
     };
 
     const closeModal = () => {
         setShowModal(false);
+        setSelectedImages([]);
+    };
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files);
+        setSelectedImages(prevImages => [...prevImages, ...files]);
     };
 
     return (
@@ -157,14 +169,25 @@ function Batdongsan() {
                             <td>{index + 1}</td>
                             <td>{item.MaNhaDat}</td>
                             <td>{item.TenNhaDat}</td>
-                            <td>{item.LoaiNhaDat_id}</td>
+                            <td>{item.LoaiNhaDat?.TenLoaiDat || "Không xác định"}</td>
                             <td>{item.MoTa}</td>
                             <td>{`${item.SoNha}, ${item.Duong}, ${item.Phuong}, ${item.Quan}, ${item.ThanhPho}`}</td>
                             <td>{item.GiaBan.toLocaleString()} VNĐ</td>
                             <td>{item.DienTich} m²</td>
                             <td>{item.Huong}</td>
                             <td>{item.TrangThai === 1 ? 'Đang bán' : 'Đã bán'}</td>
-                            <td><img src={item.HinhAnh} alt="Hình ảnh" width="50" /></td>
+                            <td>
+                                <div style={{ display: 'flex', gap: '5px', overflowX: 'auto', maxWidth: '150px' }}>
+                                    {item.hinhAnh?.map((img, idx) => (
+                                        <img
+                                            key={idx}
+                                            src={img.url}
+                                            alt={`Hình ảnh ${idx + 1}`}
+                                            style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '5px' }}
+                                        />
+                                    ))}
+                                </div>
+                            </td>
                             <td>
                                 <button className="btn btn-warning me-2" onClick={() => handleEdit(item)}>Sửa</button>
                                 <button className="btn btn-danger" onClick={() => handleDelete(item.id)}>Xóa</button>
@@ -201,7 +224,7 @@ function Batdongsan() {
                                         >
                                             <option value="">-- Chọn loại nhà đất --</option>
                                             {loaiDatList.map(loai => (
-                                                <option key={loai.id} value={loai.id}>
+                                                <option key={loai.id} value={Number(loai.id)}>
                                                     {loai.TenLoaiDat}
                                                 </option>
                                             ))}
@@ -235,7 +258,42 @@ function Batdongsan() {
                                     </div>
                                     <div className="mb-3">
                                         <label className="form-label">Hình ảnh</label>
-                                        <input type="file" className="form-control" name="HinhAnh" onChange={handleChange} />
+                                        <input
+                                            type="file"
+                                            className="form-control"
+                                            name="images"
+                                            onChange={handleImageChange}
+                                            multiple
+                                            accept="image/*"
+                                        />
+
+                                        {/* Hiển thị ảnh hiện tại (khi edit) */}
+                                        {isEditing && currentImages.length > 0 && (
+                                            <div className="mt-2">
+                                                <div className="d-flex flex-wrap gap-2">
+                                                    {currentImages.map((img, index) => (
+                                                        <img
+                                                            key={index}
+                                                            src={typeof img === 'string' ? img : img.url}
+                                                            alt={`Ảnh ${index}`}
+                                                            style={{ width: "80px", height: "80px", objectFit: "cover", border: "1px solid #ccc", borderRadius: "4px" }}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Hiển thị preview ảnh mới chọn */}
+                                        <div className="mt-2 d-flex flex-wrap gap-2">
+                                            {selectedImages.map((file, index) => (
+                                                <img
+                                                    key={index}
+                                                    src={URL.createObjectURL(file)}
+                                                    alt={`Preview ${index}`}
+                                                    style={{ width: "80px", height: "80px", objectFit: "cover" }}
+                                                />
+                                            ))}
+                                        </div>
                                     </div>
                                 </form>
                             </div>

@@ -16,14 +16,14 @@ function Footer() {
                         <p className="footer-text">
                             Chúng tôi cung cấp dịch vụ mua bán, cho thuê nhà đất chuyên nghiệp với đội ngũ tư vấn tận tâm.
                         </p>
-                        <p><FaMapMarkerAlt /> 123 Đường ABC, Quận 1, TP. HCM</p>
+                        <p><FaMapMarkerAlt /> 123 Mẹ Suốt, Hòa Khánh Nam, Liên Chiểu, Đà Nẵng</p>
                     </div>
 
                     {/* Cột 2 - Liên hệ */}
                     <div className="col-md-4">
                         <h5 className="footer-title">Liên hệ</h5>
-                        <p><FaPhoneAlt /> <a href="tel:0969524***" className="footer-link">0969 524 ***</a></p>
-                        <p><FaEnvelope /> <a href="mailto:info@batdongsan.com" className="footer-link">info@batdongsan.com</a></p>
+                        <p><FaPhoneAlt /> <a href="tel:0969524***" className="footer-link">0969 524 999</a></p>
+                        <p><FaEnvelope /> <a href="mailto:info@batdongsan.com" className="footer-link">blackscity@batdongsan.com</a></p>
                     </div>
 
                     {/* Cột 3 - Mạng xã hội */}
