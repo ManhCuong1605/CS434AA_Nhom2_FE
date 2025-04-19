@@ -56,13 +56,13 @@ function AdminPage({ children }) {
                         <Link to="/admin/batdongsan">Bất động sản</Link>
                     </Menu.Item>
                     <Menu.Item key="3" icon={<UserOutlined />}>
-                        User
+                        <Link to="/admin/user">Người dùng</Link>
                     </Menu.Item>
                     <Menu.Item key="4" icon={<ShoppingCartOutlined />}>
-                        Mua đất
+                        <Link to="/admin/khachhang">Khách hàng</Link>
                     </Menu.Item>
                     <Menu.Item key="5" icon={<SolutionOutlined />}>
-                        Nhân viên
+                        <Link to="/admin/nhanVien">Nhân viên</Link>
                     </Menu.Item>
                 </Menu>
             </Sider>

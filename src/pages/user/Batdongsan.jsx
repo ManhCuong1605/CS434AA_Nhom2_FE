@@ -28,11 +28,17 @@ function Batdongsan() {
     };
 
     const handleSearch = async (filters) => {
+
         try {
             const res = await nhaDatApi.search(filters);
-            setNhaDatList(res.data);
+
+            if (Array.isArray(res.data.data)) {
+                setNhaDatList(res.data.data);
+            } else {
+                setNhaDatList([]);
+            }
         } catch (error) {
-            console.error("Lỗi khi tìm kiếm:", error);
+            setNhaDatList([]);
         }
     };
 
@@ -43,7 +49,7 @@ function Batdongsan() {
             <div className="container mt-4">
                 <h2 className="text-center fw-bold fs-4">Danh sách bất động sản</h2>
                 <div className="row mt-3">
-                    {nhaDatList.map((item) => (
+                    {Array.isArray(nhaDatList) && nhaDatList.map((item) => (
                         <div key={item.id} className="col-12 d-flex justify-content-center mb-4">
                             <div className="card shadow-sm border-0 position-relative" style={{ maxWidth: "850px", width: "100%", minHeight: "550px" }}>
                                 <Link to={`/bat-dong-san/${item.id}`} className="text-decoration-none">
@@ -67,7 +73,6 @@ function Batdongsan() {
                                     <p className="text-primary small fs-6">
                                         {item.SoNha}, {item.Duong}, {item.Phuong}, {item.Quan}, {item.ThanhPho}
                                     </p>
-                                    {/* Icon trái tim nằm dưới phần thông tin */}
                                     <div className="mt-2 d-flex justify-content-end align-items-center">
                                         <div
                                             style={{
@@ -81,16 +86,15 @@ function Batdongsan() {
                                         </div>
                                     </div>
                                 </div>
-
-
-
                             </div>
                         </div>
                     ))}
+
+
                 </div>
             </div>
         </div>
     );
-}
+};
 
 export default Batdongsan;

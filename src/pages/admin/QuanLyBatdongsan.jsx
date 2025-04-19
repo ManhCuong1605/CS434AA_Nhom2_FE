@@ -53,6 +53,11 @@ function Batdongsan() {
     };
 
     const handleSubmit = async () => {
+        const { MaNhaDat, TenNhaDat, LoaiNhaDat_id } = formData;
+        if (!MaNhaDat, TenNhaDat, LoaiNhaDat_id) {
+            Swal.fire('Lỗi!', 'Vui lòng nhập đầy đủ các thông tin bắt buộc!', 'error');
+            return;
+        }
         try {
             const formDataToSend = new FormData();
             Object.entries(formData).forEach(([key, value]) => {
@@ -69,8 +74,8 @@ function Batdongsan() {
                 await nhaDatApi.add(formDataToSend);
                 Swal.fire('Thêm thành công!', '', 'success');
             }
-
-            fetchNhaDatList();
+            const updatedList = await fetchNhaDatList();
+            setNhaDatList(updatedList);
             closeModal();
         } catch (error) {
             console.log(error);
@@ -104,7 +109,8 @@ function Batdongsan() {
             try {
                 await nhaDatApi.delete(id);
                 Swal.fire('Đã xóa!', 'Bất động sản đã bị xóa.', 'success');
-                fetchNhaDatList();
+                const updatedList = await fetchNhaDatList();
+                setNhaDatList(updatedList);
             } catch (error) {
                 Swal.fire('Lỗi!', 'Không thể xóa.', 'error');
             }
@@ -207,15 +213,15 @@ function Batdongsan() {
                             <div className="modal-body">
                                 <form>
                                     <div className="mb-3">
-                                        <label className="form-label">Mã nhà đất</label>
+                                        <label className="form-label">Mã nhà đất *</label>
                                         <input type="text" className="form-control" name="MaNhaDat" value={formData.MaNhaDat} onChange={handleChange} />
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label">Tên nhà đất</label>
+                                        <label className="form-label">Tên nhà đất *</label>
                                         <input type="text" className="form-control" name="TenNhaDat" value={formData.TenNhaDat} onChange={handleChange} />
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label">Loại nhà đất</label>
+                                        <label className="form-label">Loại nhà đất *</label>
                                         <select
                                             className="form-select"
                                             name="LoaiNhaDat_id"

@@ -13,7 +13,7 @@ function TimKiem({ onSearch }) {
         GiaMax: "",
         DienTichMin: "",
         DienTichMax: "",
-        searchText: ""
+        searchText: "" // Search text được lấy từ input
     });
 
     const thanhPhoVN = [
@@ -97,6 +97,7 @@ function TimKiem({ onSearch }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
+        // Cập nhật filter khi người dùng thay đổi input
         if (name === "GiaBan" && value.includes("-")) {
             const [min, max] = value.split("-").map(Number);
             setFilters((prev) => ({
@@ -122,9 +123,10 @@ function TimKiem({ onSearch }) {
         const { value } = e.target;
         setFilters((prev) => ({
             ...prev,
-            searchText: value
+            searchText: value // Cập nhật trường tìm kiếm
         }));
     };
+
 
 
     return (
@@ -138,13 +140,15 @@ function TimKiem({ onSearch }) {
                             placeholder="Tìm kiếm nhà đất"
                             name="searchText"
                             value={filters.searchText}
-                            onChange={handleSearchInputChange}
+                            onChange={handleSearchInputChange} // Lắng nghe thay đổi tìm kiếm
                         />
                         <button className="btn btn-danger" type="button" onClick={() => onSearch(filters)}>
                             Tìm kiếm
                         </button>
                     </div>
                 </div>
+
+                {/* Các bộ lọc khác như Thành Phố, Loại Đất, Giá, Diện Tích */}
                 <div className="col-md-8 mx-auto">
                     <div className="d-flex gap-2">
                         <select className="form-select" name="ThanhPho" onChange={handleChange}>
@@ -156,14 +160,12 @@ function TimKiem({ onSearch }) {
 
                         <select className="form-select" name="TenLoaiDat" onChange={handleChange}>
                             <option value="">-- Chọn Loại Đất --</option>
-                            {loaiDatList.map(loai => (
+                            {loaiDatList.map((loai) => (
                                 <option key={loai.id} value={loai.TenLoaiDat}>
                                     {loai.TenLoaiDat}
                                 </option>
                             ))}
                         </select>
-
-
 
                         <select className="form-select" name="GiaBan" onChange={handleChange}>
                             <option value="">-- Chọn khoảng giá --</option>
@@ -173,6 +175,7 @@ function TimKiem({ onSearch }) {
                             <option value="3000000000-5000000000">3 tỷ - 5 tỷ</option>
                             <option value="5000000000-99999999999999">Trên 5 tỷ</option>
                         </select>
+
                         <select className="form-select" name="DienTich" onChange={handleChange}>
                             <option value="">-- Chọn diện tích --</option>
                             <option value="0-50">Dưới 50m²</option>
@@ -185,6 +188,5 @@ function TimKiem({ onSearch }) {
             </div>
         </div>
     );
-}
-
+};
 export default TimKiem;

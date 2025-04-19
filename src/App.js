@@ -13,6 +13,7 @@ import Footer from "./components/Footer";
 import TinTuc from "./pages/user/Tintuc";
 import GioiThieu from "./pages/user/GioiThieu";
 import ChatWidget from "./components/ChatWidget"
+import ProfilePage from "./pages/user/ProfilePage";
 function App() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
@@ -31,6 +32,7 @@ function App() {
         <Route path="/dang-ky" element={<RegisterForm />} />
         <Route path="/tin-tuc" element={<TinTuc />} />
         <Route path="/gioi-thieu" element={<GioiThieu />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
 
       {!isAdminPage && <Footer />}

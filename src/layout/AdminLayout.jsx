@@ -3,7 +3,9 @@ import { Routes, Route } from "react-router-dom";
 import AdminPage from "../pages/admin/AdminPage";
 import Loaidat from "../pages/admin/Loaidat";
 import QuanLyBatdongsan from "../pages/admin/QuanLyBatdongsan";
-
+import NguoiDung from "../pages/admin/NguoiDung";
+import KhachHang from "../pages/admin/KhachHang";
+import NhanVien from "../pages/admin/NhanVien";
 const AdminLayout = () => {
     return (
         <div className="admin-layout">
@@ -12,6 +14,9 @@ const AdminLayout = () => {
                 <Route path="/" element={<AdminPage />} />
                 <Route path="/loaidat" element={<Loaidat />} />
                 <Route path="/batdongsan" element={<QuanLyBatdongsan />} />
+                <Route path="/user" element={<NguoiDung />} />
+                <Route path="/khachhang" element={<KhachHang />} />
+                <Route path="/nhanVien" element={<NhanVien />} />
             </Routes>
         </div>
     );
