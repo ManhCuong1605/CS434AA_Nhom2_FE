@@ -20,12 +20,10 @@ function AdminPage({ children }) {
     const [collapsed, setCollapsed] = useState(false);
     const { token: { colorBgContainer, borderRadiusLG } } = theme.useToken();
     const navigate = useNavigate();
-    const [user, setUser] = useState("");
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
         localStorage.removeItem("roles");
-        setUser(null);
         window.dispatchEvent(new Event("storage")); // Gửi sự kiện cập nhật
         navigate("/dang-nhap", { replace: true }); // Điều hướng đến trang đăng nhập
     };

@@ -54,7 +54,7 @@ function RegisterForm() {
         email: email
       };
 
-      const response = await axios.post("http://localhost:5000/api/register", userData, {
+      await axios.post("http://localhost:5000/api/register", userData, {
         headers: { "Content-Type": "application/json" },
       });
 

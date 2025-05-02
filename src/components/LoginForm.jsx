@@ -8,8 +8,6 @@ function LoginForm() {
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    const roles = JSON.parse(localStorage.getItem("roles")) || [];
-
     const handleLogin = async (e) => {
         e.preventDefault();
         setError("");
@@ -23,6 +21,7 @@ function LoginForm() {
             if (response.data?.token) {
                 localStorage.setItem("token", response.data.token);
                 localStorage.setItem("username", username);
+                // eslint-disable-next-line no-unused-vars
                 localStorage.setItem("roles", JSON.stringify(response.data.roles || []));
 
                 window.dispatchEvent(new Event("storage")); // Cập nhật Header ngay lập tức

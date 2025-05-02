@@ -8,13 +8,7 @@ import {
     MDBCardBody,
     MDBCardImage,
     MDBBtn,
-    MDBBreadcrumb,
-    MDBBreadcrumbItem,
-    MDBProgress,
-    MDBProgressBar,
-    MDBIcon,
-    MDBListGroup,
-    MDBListGroupItem
+    MDBBreadcrumb
 } from 'mdb-react-ui-kit';
 export default function ProfilePage() {
     return (

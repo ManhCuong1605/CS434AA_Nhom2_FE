@@ -26,10 +26,9 @@ function NguoiDung() {
 
     const loadData = async () => {
         try {
-            const token = localStorage.getItem('token'); // Lấy token từ localStorage hoặc sessionStorage
+            const token = localStorage.getItem('token'); // Lấy token từ localStorage
             const res = await NguoiDungApi.getAll(token); // Gửi token vào API
-            const sortedUsers = res.data.sort((a, b) => b.TrangThai - a.TrangThai);
-            setUserList(res.data);
+            setUserList(res.data.sort((a, b) => b.TrangThai - a.TrangThai));
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu:", error);
             Swal.fire('Lỗi!', 'Không thể tải danh sách người dùng', 'error');

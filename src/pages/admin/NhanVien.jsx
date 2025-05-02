@@ -3,7 +3,6 @@ import AdminPage from './AdminPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Swal from 'sweetalert2';
 import nhanVienApi from '../../api/NhanVienApi';
-import dayjs from 'dayjs';
 function NhanVien() {
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
