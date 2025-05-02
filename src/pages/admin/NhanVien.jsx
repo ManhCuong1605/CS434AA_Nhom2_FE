@@ -3,6 +3,7 @@ import AdminPage from './AdminPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Swal from 'sweetalert2';
 import nhanVienApi from '../../api/NhanVienApi';
+import dayjs from 'dayjs';
 function NhanVien() {
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -43,13 +44,12 @@ function NhanVien() {
         setShowModal(true);
     };
     const handleSubmit = async () => {
-        const { MaNV, username, password, email, SoDienThoai } = formData;
+        const { MaNV, username, password, email, SoDienThoai, NgayLamViec } = formData;
         if (!MaNV || !username || (!isEditing && !password) || !email || !SoDienThoai || !formData.NgayLamViec) {
             Swal.fire('Lỗi!', 'Vui lòng nhập đầy đủ các thông tin bắt buộc', 'error');
             return;
         }
-        const [year, month, day] = formData.NgayLamViec.split('-');
-        const formattedDate = `${day}/${month}/${year}`;  // Chuyển đổi lại thành dd/mm/yyyy nếu cần
+        const formattedDate = NgayLamViec;
         const dataToSend = {
             ...formData,
             NgayLamViec: formattedDate

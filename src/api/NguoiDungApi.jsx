@@ -33,10 +33,11 @@ const deleteUser = (id) => {
         },
     });
 };
-
-export default {
+const apiObject = {
     getAll,
     add,
     update,
     delete: deleteUser,
 };
+
+export default apiObject;

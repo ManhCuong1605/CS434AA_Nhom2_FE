@@ -54,8 +54,12 @@ function Batdongsan() {
 
     const handleSubmit = async () => {
         const { MaNhaDat, TenNhaDat, LoaiNhaDat_id } = formData;
-        if (!MaNhaDat, TenNhaDat, LoaiNhaDat_id) {
+        if (!MaNhaDat || !TenNhaDat || !LoaiNhaDat_id) {
             Swal.fire('Lỗi!', 'Vui lòng nhập đầy đủ các thông tin bắt buộc!', 'error');
+            return;
+        }
+        if (MaNhaDat.length > 10) {
+            Swal.fire('Lỗi!', 'Mã nhà đất quá dài. Vui lòng nhập lại(dưới 10 ký tự)!', 'error');
             return;
         }
         try {
@@ -79,10 +83,11 @@ function Batdongsan() {
             closeModal();
         } catch (error) {
             console.log(error);
-            Swal.fire('Lỗi!', 'Vui lòng thử lại.', 'error');
-        }
-    };
+            const errorMessage = error?.response?.data?.error || error?.response?.data?.message || 'Vui lòng thử lại.';
 
+            Swal.fire('Lỗi!', errorMessage, 'error');
+        }
+    }
     const handleEdit = (item) => {
         setFormData({
             ...item,
@@ -214,7 +219,7 @@ function Batdongsan() {
                                 <form>
                                     <div className="mb-3">
                                         <label className="form-label">Mã nhà đất *</label>
-                                        <input type="text" className="form-control" name="MaNhaDat" value={formData.MaNhaDat} onChange={handleChange} />
+                                        <input type="text" maxLength="10" className="form-control" name="MaNhaDat" value={formData.MaNhaDat} onChange={handleChange} />
                                     </div>
                                     <div className="mb-3">
                                         <label className="form-label">Tên nhà đất *</label>

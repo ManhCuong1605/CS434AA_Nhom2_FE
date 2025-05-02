@@ -1,7 +1,6 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaFacebookF, FaYoutube, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
-
 import "../style/Footer.css";
 
 function Footer() {
@@ -9,7 +8,6 @@ function Footer() {
         <footer className="footer bg-dark text-white py-5">
             <div className="container">
                 <div className="row">
-
                     {/* Cột 1 - Thông tin công ty */}
                     <div className="col-md-4">
                         <h5 className="footer-title">Công ty Bất Động Sản</h5>
@@ -22,25 +20,25 @@ function Footer() {
                     {/* Cột 2 - Liên hệ */}
                     <div className="col-md-4">
                         <h5 className="footer-title">Liên hệ</h5>
-                        <p><FaPhoneAlt /> <a href="tel:0969524***" className="footer-link">0969 524 999</a></p>
-                        <p><FaEnvelope /> <a href="mailto:info@batdongsan.com" className="footer-link">blackscity@batdongsan.com</a></p>
+                        <p><FaPhoneAlt /> <a href="tel:0969524999" className="footer-link">0969 524 999</a></p>
+                        <p><FaEnvelope /> <a href="mailto:blackscity@batdongsan.com" className="footer-link">blackscity@batdongsan.com</a></p>
                     </div>
 
                     {/* Cột 3 - Mạng xã hội */}
                     <div className="col-md-4 text-center">
                         <h5 className="footer-title">Kết nối với chúng tôi</h5>
                         <div className="social-icons">
-                            <a href="#" className="social-icon"><FaFacebookF /></a>
-                            <a href="#" className="social-icon"><FaPhoneAlt /></a>
-                            <a href="#" className="social-icon"><FaYoutube /></a>
+                            <a href="https://facebook.com" className="social-icon" aria-label="Facebook"><FaFacebookF /></a>
+                            <button className="social-icon btn btn-link p-0" aria-label="Phone">
+                                <FaPhoneAlt />
+                            </button>
+                            <a href="https://youtube.com" className="social-icon" aria-label="YouTube"><FaYoutube /></a>
                         </div>
                     </div>
                 </div>
 
-                {/* Đường kẻ ngang */}
                 <hr className="footer-divider" />
 
-                {/* Dòng dưới cùng */}
                 <div className="text-center">
                     <p className="mb-0 text-muted">© 2024 Bất Động Sản. All rights reserved.</p>
                 </div>
