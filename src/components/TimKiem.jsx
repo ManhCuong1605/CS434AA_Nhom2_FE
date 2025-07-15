@@ -89,7 +89,8 @@ function TimKiem({ onSearch }) {
     const loadData = async () => {
         try {
             const [loaiDat] = await Promise.all([fetchLoaiNhaDatList()]);
-            setLoaiDatList(loaiDat);
+            setLoaiDatList(loaiDat.data || []);
+
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu:", error);
         }

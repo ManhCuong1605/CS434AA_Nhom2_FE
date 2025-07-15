@@ -2,31 +2,84 @@ import React, { useEffect, useState } from 'react';
 import AdminPage from './AdminPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import loaiNhaDatApi from '../../api/LoaiNhaDatApi';
+import PhanTrang from '../../components/PhanTrang';
 import Swal from 'sweetalert2';
 function Loaidat() {
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [loaiNhaDatList, setLoaiNhaDatList] = useState([]);
     const [formData, setFormData] = useState({ id: '', MaLoaiDat: '', TenLoaiDat: '' });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
-        fetchLoaiNhaDat();
-    }, []);
+        fetchLoaiNhaDat(currentPage, 5);
+    }, [currentPage]);
 
-    const fetchLoaiNhaDat = async () => {
+    const fetchLoaiNhaDat = async (page = 1, limit = 5) => {
         try {
-            const response = await loaiNhaDatApi.getAll();
-            setLoaiNhaDatList(response.data);
+            const response = await loaiNhaDatApi.getAll({ page, limit });
+            const data = response.data;
+
+            setLoaiNhaDatList(data.data);
+            setCurrentPage(data.currentPage);
+            setTotalPages(data.totalPages);
+
         } catch (error) {
             console.error("Lỗi khi lấy danh sách loại đất:", error);
         }
     };
+    const handlePageChange = (newPage) => {
+        // Cập nhật trang hiện tại
+        setCurrentPage(newPage);
 
+        // Tải lại dữ liệu với trang mới
+        fetchLoaiNhaDat(newPage);
+    };
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async () => {
+        const maLoaiRegex = /^[A-Za-z0-9]+$/; // Cho phép chữ và số, không có ký tự đặc biệt
+        const tenLoaiRegex = /^[A-Za-zÀ-ỹ0-9\s\-]+$/; // Cho phép tiếng Việt, chữ, số, khoảng trắng và dấu gạch ngang
+
+        if (!formData.MaLoaiDat.trim()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Mã loại đất không được để trống.',
+            });
+            return;
+        }
+
+        if (!maLoaiRegex.test(formData.MaLoaiDat)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Mã loại đất không được chứa ký tự đặc biệt.',
+            });
+            return;
+        }
+
+        if (!formData.TenLoaiDat.trim()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Tên loại đất không được để trống.',
+            });
+            return;
+        }
+
+        if (!tenLoaiRegex.test(formData.TenLoaiDat)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Tên loại đất không được chứa ký tự đặc biệt.',
+            });
+            return;
+        }
+
         try {
             if (isEditing) {
                 await loaiNhaDatApi.update(formData.id, {
@@ -63,6 +116,7 @@ function Loaidat() {
             });
         }
     };
+
 
     const handleEdit = (loaiNhaDat) => {
         setFormData(loaiNhaDat);
@@ -145,10 +199,15 @@ function Loaidat() {
                         ))}
                     </tbody>
                 </table>
+
             ) : (
                 <p className="text-center text-muted">Chưa có dữ liệu loại đất.</p>
             )}
-
+            <PhanTrang
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
             {showModal && (
                 <>
                     <div className="modal-backdrop fade show"></div>

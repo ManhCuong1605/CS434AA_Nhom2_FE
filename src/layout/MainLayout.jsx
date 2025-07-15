@@ -1,6 +1,5 @@
 import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import TimKiem from "../components/TimKiem";
 import Trangchu from "../pages/user/Trangchu";
 import Slide from "../components/Slide";
 import Batdongsan from "../pages/user/Batdongsan";
@@ -16,7 +15,6 @@ const MainLayout = () => {
             {isHomePage && (
                 <>
                     <Slide />
-                    <TimKiem />
                     <Trangchu />
                 </>
             )}

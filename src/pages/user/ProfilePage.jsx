@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import {
     MDBCol,
     MDBContainer,
@@ -11,6 +12,28 @@ import {
     MDBBreadcrumb
 } from 'mdb-react-ui-kit';
 export default function ProfilePage() {
+
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+        const fetchProfile = async () => {
+            const token = localStorage.getItem("token");
+            try {
+                const response = await axios.get("http://localhost:5000/api/users/profile", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setUser(response.data);
+            } catch (error) {
+                console.error("Lỗi khi lấy thông tin người dùng:", error);
+            }
+
+        };
+        fetchProfile();
+    }, []);
+    if (!user) {
+        return <div className="text-center mt-5">Đang tải thông tin cá nhân...</div>;
+    }
     return (
         <section style={{ backgroundColor: '#eee' }}>
             <MDBContainer className="py-5">
@@ -47,10 +70,10 @@ export default function ProfilePage() {
                             <MDBCardBody>
                                 <MDBRow>
                                     <MDBCol sm="3">
-                                        <MDBCardText>Full Name</MDBCardText>
+                                        <MDBCardText>Họ Tên</MDBCardText>
                                     </MDBCol>
                                     <MDBCol sm="9">
-                                        <MDBCardText className="text-muted">Johnatan Smith</MDBCardText>
+                                        <MDBCardText className="text-muted">{user.HoTen}</MDBCardText>
                                     </MDBCol>
                                 </MDBRow>
                                 <hr />
@@ -59,26 +82,26 @@ export default function ProfilePage() {
                                         <MDBCardText>Email</MDBCardText>
                                     </MDBCol>
                                     <MDBCol sm="9">
-                                        <MDBCardText className="text-muted">example@example.com</MDBCardText>
+                                        <MDBCardText className="text-muted">{user.email}</MDBCardText>
                                     </MDBCol>
                                 </MDBRow>
                                 <hr />
                                 <MDBRow>
                                     <MDBCol sm="3">
-                                        <MDBCardText>Phone</MDBCardText>
+                                        <MDBCardText>Số điện thoại</MDBCardText>
                                     </MDBCol>
                                     <MDBCol sm="9">
-                                        <MDBCardText className="text-muted">(097) 234-5678</MDBCardText>
+                                        <MDBCardText className="text-muted">{user.SoDienThoai}</MDBCardText>
                                     </MDBCol>
                                 </MDBRow>
                                 <hr />
                                 <MDBRow>
                                     <MDBCol sm="3">
-                                        <MDBCardText>Address</MDBCardText>
+                                        <MDBCardText>Địa chỉ</MDBCardText>
                                     </MDBCol>
 
                                     <MDBCol sm="9">
-                                        <MDBCardText className="text-muted">Bay Area, San Francisco, CA</MDBCardText>
+                                        <MDBCardText className="text-muted">{user.DiaChi}</MDBCardText>
                                     </MDBCol>
                                 </MDBRow>
                             </MDBCardBody>

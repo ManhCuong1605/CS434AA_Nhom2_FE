@@ -2,7 +2,7 @@ import axios from "axios";
 const API_URL = "http://localhost:5000/api/nhaDat";
 
 const nhaDatApi = {
-    getAll: async () => axios.get(API_URL),
+    getAll: async (params) => axios.get(API_URL, { params }),
     getById: async (id) => axios.get(`${API_URL}/${id}`),
     add: async (data) =>
         axios.post(`${API_URL}/addNhaDat`, data, {

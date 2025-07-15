@@ -14,6 +14,8 @@ import TinTuc from "./pages/user/Tintuc";
 import GioiThieu from "./pages/user/GioiThieu";
 import ChatWidget from "./components/ChatWidget"
 import ProfilePage from "./pages/user/ProfilePage";
+import QuenMatKhau from "./pages/user/QuenMatKhau";
+import DoiMatKhau from "./pages/user/DoiMatKhau";
 function App() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
@@ -33,6 +35,8 @@ function App() {
         <Route path="/tin-tuc" element={<TinTuc />} />
         <Route path="/gioi-thieu" element={<GioiThieu />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/forgot-password" element={<QuenMatKhau />} />
+        <Route path="/reset-password" element={<DoiMatKhau />} />
       </Routes>
 
       {!isAdminPage && <Footer />}

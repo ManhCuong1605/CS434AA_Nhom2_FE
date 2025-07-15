@@ -27,8 +27,8 @@ function RegisterForm() {
     if (!hoTen) newErrors.hoTen = "Vui lòng nhập họ và tên.";
     if (!soDienThoai) {
       newErrors.soDienThoai = "Vui lòng nhập số điện thoại.";
-    } else if (!/^\d{10,11}$/.test(soDienThoai)) {
-      newErrors.soDienThoai = "Số điện thoại không hợp lệ.";
+    } else if (!/^0\d{9}$/.test(soDienThoai)) {
+      newErrors.soDienThoai = "Số điện thoại không hợp lệ. Phải bắt đầu bằng 0 và có đúng 10 chữ số.";
     }
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       newErrors.email = "Email không hợp lệ.";
@@ -61,8 +61,11 @@ function RegisterForm() {
       setMessage("Đăng ký thành công! Bạn có thể đăng nhập ngay.");
       setTimeout(() => navigate("/dang-nhap"), 2000);
     } catch (error) {
-      console.error("Lỗi khi gọi API:", error.response?.data || error.message);
-      setMessage(`${error.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại sau."}`);
+      const errMsg =
+        error.response?.data?.message || // thông báo lỗi chung
+        "Có lỗi xảy ra, vui lòng thử lại sau.";
+
+      setMessage(errMsg);
     } finally {
       setLoading(false);
     }

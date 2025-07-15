@@ -57,7 +57,8 @@ function NguoiDung() {
             closeModal();
         } catch (error) {
             console.log(error);
-            Swal.fire('Lỗi!', 'Vui lòng thử lại.', 'error');
+            const errorMessage = error.response?.data?.error || 'Vui lòng thử lại.';
+            Swal.fire('Lỗi!', errorMessage, 'error');
         }
     };
 
@@ -117,28 +118,26 @@ function NguoiDung() {
                         </tr>
                     </thead>
                     <tbody>
-                        {userList.map((user, index) => (
-                            <tr key={user.id}>
-                                <td>{index + 1}</td>
-                                <td>{user.username}</td>
-                                <td>{user.password}</td>
-                                <td>{user.HoTen}</td>
-                                <td>{user.email}</td>
-                                <td>{user.SoDienThoai}</td>
-                                <td>{user.DiaChi}</td>
-                                <td>
+                        {userList
+                            .filter(user => user.TrangThai === 1) // Chỉ hiển thị người dùng đang hoạt động
+                            .map((user, index) => (
+                                <tr key={user.id}>
+                                    <td>{index + 1}</td>
+                                    <td>{user.username}</td>
+                                    <td>{user.password}</td>
+                                    <td>{user.HoTen}</td>
+                                    <td>{user.email}</td>
+                                    <td>{user.SoDienThoai}</td>
+                                    <td>{user.DiaChi}</td>
+                                    <td>Hoạt động</td>
+                                    <td>
+                                        <button className="btn btn-sm btn-warning me-2" onClick={() => handleEdit(user)}>
+                                            <i className="fas fa-edit"></i> Sửa
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
 
-                                    {user.TrangThai === 1 ? 'Hoạt động' : 'Khóa'}
-
-                                </td>
-                                <td>
-                                    <button className="btn btn-sm btn-warning me-2" onClick={() => handleEdit(user)}>
-                                        <i className="fas fa-edit"></i> Sửa
-                                    </button>
-
-                                </td>
-                            </tr>
-                        ))}
                     </tbody>
                 </table>
             </div>

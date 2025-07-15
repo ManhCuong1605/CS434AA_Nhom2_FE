@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import loginImage from '../assets/login.png';
+import { Link } from "react-router-dom";
 import axios from "axios";
 function LoginForm() {
     const [username, setUsername] = useState("");
@@ -112,10 +113,11 @@ function LoginForm() {
                                         Nhớ tài khoản
                                     </label>
                                 </div>
-                                <a href="/forgot-password" className="text-danger text-decoration-none">
+                                <Link to="/forgot-password" className="text-danger text-decoration-none">
                                     Quên mật khẩu?
-                                </a>
+                                </Link>
                             </div>
+
 
                             {/* Đăng nhập */}
                             <button type="submit" className="btn btn-danger w-100 mb-3">

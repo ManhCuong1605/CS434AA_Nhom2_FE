@@ -1,63 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Button } from "antd";
 import "bootstrap/dist/css/bootstrap.min.css";
 import '../../style/Trangchu.css';
 import { useNavigate } from "react-router-dom";
-
+import nhaDatApi from "../../api/NhaDatApi";
 const { Meta } = Card;
 
-// Danh sách sản phẩm bất động sản
-const trangChuSanPhamData = [
-  {
-    id: 1,
-    title: "Biệt thự biển sang trọng",
-    description: "Thanh Khê",
-    price: "15 tỷ VNĐ",
-    image: require("../../assets/productImages/bds1.jpg")
-  },
-  {
-    id: 2,
-    title: "Nhà phố hiện đại",
-    description: "Sơn Trà",
-    price: "7 tỷ VNĐ",
-    image: require("../../assets/productImages/bds2.jpg")
-  },
-  {
-    id: 3,
-    title: "Biệt thự ven sông",
-    description: "Hải Châu",
-    price: "20 tỷ VNĐ",
-    image: require("../../assets/productImages/bds3.jpg")
-  },
-  {
-    id: 4,
-    title: "Căn hộ cao cấp",
-    description: "Hòa Vang",
-    price: "10 tỷ VNĐ",
-    image: require("../../assets/productImages/bds4.jpg")
-  },
-  {
-    id: 5,
-    title: "Biệt thự biển sang trọng",
-    description: "Thanh Khê",
-    price: "15 tỷ VNĐ",
-    image: require("../../assets/productImages/bds5.jpg")
-  },
-  {
-    id: 6,
-    title: "Nhà phố hiện đại",
-    description: "Sơn Trà",
-    price: "7 tỷ VNĐ",
-    image: require("../../assets/productImages/bds6.jpg")
-  },
-  {
-    id: 7,
-    title: "Biệt thự ven sông",
-    description: "Hải Châu",
-    price: "20 tỷ VNĐ",
-    image: require("../../assets/productImages/bds7.jpg")
-  }
-];
 const diaDiemData = [
   { id: 1, title: "Thành Phố Hồ Chí Minh", image: require("../../assets/locations/hcm.jpg"), large: true },
   { id: 2, title: "Hà Nội", image: require("../../assets/locations/hn.jpg") },
@@ -74,18 +22,43 @@ const realEstateFeatures = [
 ];
 
 const Trangchu = () => {
+  const [nhaDatList, setNhaDatList] = useState([]);
   const navigate = useNavigate();
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const response = await nhaDatApi.getAll({ page: 1, limit: 8 });
+      setNhaDatList(response.data.data);
+    } catch (error) {
+      console.error("Lỗi khi tải dữ liệu:", error);
+      setNhaDatList([]);
+    }
+  }
 
   return (
     <div className="container mt-4">
       <h2 className="text-center mb-4">Sản phẩm nổi bật</h2>
       <Row gutter={[16, 16]}>
-        {trangChuSanPhamData.map((item) => (
+        {nhaDatList.map((item) => (
           <Col xs={24} sm={12} md={6} lg={6} key={item.id}>
-            <Card hoverable cover={<img alt={item.title} src={item.image} className="img-fluid card-image" />} className="shadow-sm card-container">
-              <Meta title={<span className="card-title">{item.title}</span>} description={item.description} />
-              <p className="card-price">{item.price}</p>
-              <Button type="primary" block onClick={() => navigate(`/product/${item.id}`)}>Xem chi tiết</Button>
+            <Card
+              hoverable
+              cover={
+                <img
+                  alt={item.TenNhaDat}
+                  src={item.hinhAnh && item.hinhAnh.length > 0 ? item.hinhAnh[0].url : "/default-image.jpg"}
+                  className="img-fluid card-image"
+                />
+              }
+              className="shadow-sm card-container"
+            >
+              <Meta title={<span className="card-title">{item.TenNhaDat}</span>} />
+              <p className="card-price text-dark fw-normal">{item.Quan}, {item.ThanhPho}</p>
+              <p className="card-price"> {Number(item.GiaBan).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
+              <Button type="primary" block onClick={() => navigate(`/bat-dong-san/${item.id}`)}>Xem chi tiết</Button>
             </Card>
           </Col>
         ))}

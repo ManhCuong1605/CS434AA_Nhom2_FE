@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import nhaDatApi from '../../api/NhaDatApi';
 import { fetchNhaDatList, fetchLoaiNhaDatList } from "../../services/fetchData";
 import Swal from 'sweetalert2';
+import PhanTrang from '../../components/PhanTrang';
 
 function Batdongsan() {
     const [showModal, setShowModal] = useState(false);
@@ -12,7 +13,9 @@ function Batdongsan() {
     const [loaiDatList, setLoaiDatList] = useState([]);
     const [selectedImages, setSelectedImages] = useState([]);
     const [currentImages, setCurrentImages] = useState([]);
-
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
     const [formData, setFormData] = useState({
         MaNhaDat: "",
         TenNhaDat: "",
@@ -31,17 +34,27 @@ function Batdongsan() {
     });
 
     useEffect(() => {
-        loadData();
-    }, []);
+        loadData(currentPage, 5); // Gọi loadData với trang hiện tại
+    }, [currentPage]); // Theo dõi currentPage
 
-    const loadData = async () => {
+    const loadData = async (page = 1, limit = 5) => {
         try {
-            const [nhaDat, loaiDat] = await Promise.all([fetchNhaDatList(), fetchLoaiNhaDatList()]);
-            setNhaDatList(nhaDat);
+            const [nhaDat, loaiDat] = await Promise.all([fetchNhaDatList(page, limit), fetchLoaiNhaDatList()]);
+            setNhaDatList(nhaDat.data);
             setLoaiDatList(loaiDat);
+            setCurrentPage(nhaDat.currentPage);
+            setTotalPages(nhaDat.totalPages);
+            setTotalItems(nhaDat.totalItems);
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu:", error);
         }
+    };
+    const handlePageChange = (newPage) => {
+        // Cập nhật trang hiện tại
+        setCurrentPage(newPage);
+
+        // Tải lại dữ liệu với trang mới
+        loadData(newPage);
     };
 
     const handleChange = (e) => {
@@ -157,56 +170,66 @@ function Batdongsan() {
         <AdminPage>
             <h2 className="mb-4">Bất động sản</h2>
             <button type="button" className="btn btn-primary mb-3" onClick={openModal}>Thêm bất động sản</button>
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th>STT</th>
-                        <th>Mã nhà đất</th>
-                        <th>Tên nhà đất</th>
-                        <th>Loại</th>
-                        <th>Mô tả</th>
-                        <th>Địa chỉ</th>
-                        <th>Giá</th>
-                        <th>Diện tích</th>
-                        <th>Hướng</th>
-                        <th>Trạng thái</th>
-                        <th>Hình ảnh</th>
-                        <th>Hành động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {nhaDatList.map((item, index) => (
-                        <tr key={item.id}>
-                            <td>{index + 1}</td>
-                            <td>{item.MaNhaDat}</td>
-                            <td>{item.TenNhaDat}</td>
-                            <td>{item.LoaiNhaDat?.TenLoaiDat || "Không xác định"}</td>
-                            <td>{item.MoTa}</td>
-                            <td>{`${item.SoNha}, ${item.Duong}, ${item.Phuong}, ${item.Quan}, ${item.ThanhPho}`}</td>
-                            <td>{item.GiaBan.toLocaleString()} VNĐ</td>
-                            <td>{item.DienTich} m²</td>
-                            <td>{item.Huong}</td>
-                            <td>{item.TrangThai === 1 ? 'Đang bán' : 'Đã bán'}</td>
-                            <td>
-                                <div style={{ display: 'flex', gap: '5px', overflowX: 'auto', maxWidth: '150px' }}>
-                                    {item.hinhAnh?.map((img, idx) => (
-                                        <img
-                                            key={idx}
-                                            src={img.url}
-                                            alt={`Hình ảnh ${idx + 1}`}
-                                            style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '5px' }}
-                                        />
-                                    ))}
-                                </div>
-                            </td>
-                            <td>
-                                <button className="btn btn-warning me-2" onClick={() => handleEdit(item)}>Sửa</button>
-                                <button className="btn btn-danger" onClick={() => handleDelete(item.id)}>Xóa</button>
-                            </td>
+            {nhaDatList.length > 0 ? (
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã nhà đất</th>
+                            <th>Tên nhà đất</th>
+                            <th>Loại</th>
+                            <th>Mô tả</th>
+                            <th>Địa chỉ</th>
+                            <th>Giá</th>
+                            <th>Diện tích</th>
+                            <th>Hướng</th>
+                            <th>Trạng thái</th>
+                            <th>Hình ảnh</th>
+                            <th>Hành động</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {nhaDatList.map((item, index) => (
+                            <tr key={item.id}>
+                                <td>{index + 1}</td>
+                                <td>{item.MaNhaDat}</td>
+                                <td>{item.TenNhaDat}</td>
+                                <td>{item.LoaiNhaDat?.TenLoaiDat || "Không xác định"}</td>
+                                <td>{item.MoTa}</td>
+                                <td>{`${item.SoNha}, ${item.Duong}, ${item.Phuong}, ${item.Quan}, ${item.ThanhPho}`}</td>
+                                <td>{item.GiaBan.toLocaleString()} VNĐ</td>
+                                <td>{item.DienTich} m²</td>
+                                <td>{item.Huong}</td>
+                                <td>{item.TrangThai === 1 ? 'Đang bán' : 'Đã bán'}</td>
+                                <td>
+                                    <div style={{ display: 'flex', gap: '5px', overflowX: 'auto', maxWidth: '150px' }}>
+                                        {item.hinhAnh?.map((img, idx) => (
+                                            <img
+                                                key={idx}
+                                                src={img.url}
+                                                alt={`Hình ảnh ${idx + 1}`}
+                                                style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '5px' }}
+                                            />
+                                        ))}
+                                    </div>
+                                </td>
+                                <td>
+                                    <button className="btn btn-warning me-2" onClick={() => handleEdit(item)}>Sửa</button>
+                                    <button className="btn btn-danger" onClick={() => handleDelete(item.id)}>Xóa</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            ) : (
+                <p className="text-center text-muted">Chưa có dữ liệu nhà đất.</p>
+            )}
+
+            <PhanTrang
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
             {showModal && (
                 <div className="modal d-block" tabIndex="-1">
                     <div className="modal-dialog">
@@ -314,6 +337,7 @@ function Batdongsan() {
                             </div>
                         </div>
                     </div>
+
                 </div>
             )}
         </AdminPage>

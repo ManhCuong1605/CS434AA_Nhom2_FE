@@ -66,7 +66,6 @@ function KhachHang() {
             loadData();
             closeModal();
         } catch (error) {
-            console.error('Add/Edit error:', error.response?.data || error);
             const msg = error.response?.data?.error || error.response?.data?.message || 'Vui lòng thử lại.';
             Swal.fire('Lỗi!', msg, 'error');
         }

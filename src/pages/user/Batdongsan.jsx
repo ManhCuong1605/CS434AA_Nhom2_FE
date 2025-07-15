@@ -3,22 +3,27 @@ import { Link } from "react-router-dom";
 import { FaHeart } from "react-icons/fa";
 import banner1 from "../../assets/slide/banner1.jpg";
 import TimKiem from "../../components/TimKiem";
-import { fetchNhaDatList } from "../../services/fetchData";
+import { fetchNhaDatListUser } from "../../services/fetchData";
 import nhaDatApi from "../../api/NhaDatApi";
+import PhanTrang from "../../components/PhanTrang";
 function Batdongsan() {
     const [yeuThich, setYeuThich] = useState([]);
     const [nhaDatList, setNhaDatList] = useState([]);
-
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
-        loadData();
-    }, []);
-    const loadData = async () => {
+        loadData(currentPage);
+    }, [currentPage]);
+    const loadData = async (page = 1) => {
         try {
-            const [nhaDat] = await Promise.all([fetchNhaDatList()]);
-            setNhaDatList(nhaDat);
+            const response = await fetchNhaDatListUser(page, 8);
+            setNhaDatList(response.data);
+            setCurrentPage(response.currentPage);
+            setTotalPages(response.totalPages);
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu:", error);
+            setNhaDatList([]);
         }
     };
     const toggleYeuThich = (id) => {
@@ -92,6 +97,11 @@ function Batdongsan() {
 
 
                 </div>
+                <PhanTrang
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={(page) => setCurrentPage(page)}
+                />
             </div>
         </div>
     );

@@ -135,7 +135,7 @@ function NhanVien() {
                         {employeeList.map((emp, idx) => (
                             <tr key={emp.id}>
                                 <td>{idx + 1}</td>
-                                <td>{emp.MaKH}</td>
+                                <td>{emp.MaNV}</td>
                                 <td>{emp.User?.HoTen}</td>
                                 <td>{emp.User?.email}</td>
                                 <td>{emp.User?.SoDienThoai}</td>
