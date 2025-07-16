@@ -62,6 +62,10 @@ function AdminPage({ children }) {
                     <Menu.Item key="5" icon={<SolutionOutlined />}>
                         <Link to="/admin/nhanVien">Nhân viên</Link>
                     </Menu.Item>
+                    <Menu.Item key="6" icon={<SolutionOutlined />}>
+                        <Link to="/admin/quanLyBaiViet">Quản Lý Bài Viết</Link>
+                    </Menu.Item>
+
                 </Menu>
             </Sider>
 

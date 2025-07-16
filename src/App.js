@@ -16,6 +16,7 @@ import ChatWidget from "./components/ChatWidget"
 import ProfilePage from "./pages/user/ProfilePage";
 import QuenMatKhau from "./pages/user/QuenMatKhau";
 import DoiMatKhau from "./pages/user/DoiMatKhau";
+import BaiViet from "./pages/user/BaiViet";
 function App() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
@@ -37,6 +38,7 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/forgot-password" element={<QuenMatKhau />} />
         <Route path="/reset-password" element={<DoiMatKhau />} />
+        <Route path="/form-bai-viet" element={<BaiViet />} />
       </Routes>
 
       {!isAdminPage && <Footer />}

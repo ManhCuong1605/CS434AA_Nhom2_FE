@@ -7,15 +7,18 @@ import Swal from 'sweetalert2';
 import PhanTrang from '../../components/PhanTrang';
 
 function Batdongsan() {
-    const [showModal, setShowModal] = useState(false);
-    const [nhaDatList, setNhaDatList] = useState([]);
-    const [isEditing, setIsEditing] = useState(false);
-    const [loaiDatList, setLoaiDatList] = useState([]);
-    const [selectedImages, setSelectedImages] = useState([]);
-    const [currentImages, setCurrentImages] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalItems, setTotalItems] = useState(0);
+    const [showModal, setShowModal] = useState(false); // Hiện/ẩn modal thêm/sửa
+    const [nhaDatList, setNhaDatList] = useState([]); // Danh sách nhà đất
+    const [loaiDatList, setLoaiDatList] = useState([]); // Danh sách loại nhà đất
+
+    const [isEditing, setIsEditing] = useState(false); // Trạng thái đang sửa hay thêm
+    const [selectedImages, setSelectedImages] = useState([]); // Ảnh mới chọn (upload)
+    const [currentImages, setCurrentImages] = useState([]); // Ảnh hiện có của nhà đất (khi sửa)
+
+    const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
+    const [totalPages, setTotalPages] = useState(1); // Tổng số trang
+    const [totalItems, setTotalItems] = useState(0); // Tổng số mục
+
     const [formData, setFormData] = useState({
         MaNhaDat: "",
         TenNhaDat: "",
@@ -24,8 +27,8 @@ function Batdongsan() {
         GiaBan: "",
         DienTich: "",
         Huong: "",
-        TrangThai: 1,
-        HinhAnh: "",
+        TrangThai: 1, // trạng thái mặc định, ví dụ 1 là hiển thị
+        HinhAnh: "", // trường này bạn có thể không cần, vì ảnh xử lý qua currentImages / selectedImages
         ThanhPho: "",
         Quan: "",
         Phuong: "",
@@ -33,15 +36,27 @@ function Batdongsan() {
         SoNha: ""
     });
 
+
     useEffect(() => {
-        loadData(currentPage, 5); // Gọi loadData với trang hiện tại
-    }, [currentPage]); // Theo dõi currentPage
+        loadData(currentPage, 5);
+    }, [currentPage]);
 
     const loadData = async (page = 1, limit = 5) => {
         try {
-            const [nhaDat, loaiDat] = await Promise.all([fetchNhaDatList(page, limit), fetchLoaiNhaDatList()]);
+            const [nhaDat, loaiDat] = await Promise.all([
+                fetchNhaDatList(page, limit),  // API lấy danh sách nhà đất phân trang
+                fetchLoaiNhaDatList()          // API lấy danh sách loại nhà đất
+            ]);
+
             setNhaDatList(nhaDat.data);
-            setLoaiDatList(loaiDat);
+            if (Array.isArray(loaiDat.data)) {
+                setLoaiDatList(loaiDat.data);
+            } else if (Array.isArray(loaiDat)) {
+                setLoaiDatList(loaiDat);
+            } else {
+                setLoaiDatList([]);
+            }
+
             setCurrentPage(nhaDat.currentPage);
             setTotalPages(nhaDat.totalPages);
             setTotalItems(nhaDat.totalItems);
@@ -49,24 +64,25 @@ function Batdongsan() {
             console.error("Lỗi khi tải dữ liệu:", error);
         }
     };
-    const handlePageChange = (newPage) => {
-        // Cập nhật trang hiện tại
-        setCurrentPage(newPage);
 
-        // Tải lại dữ liệu với trang mới
-        loadData(newPage);
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+        // Không cần gọi loadData ở đây vì useEffect đã watch currentPage và tự gọi
     };
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: name === "LoaiNhaDat_id" ? (value ? Number(value) : null) : value,
+        setFormData(prev => ({
+            ...prev,
+            [name]: name === "LoaiNhaDat_id" ? (value ? Number(value) : null) : value
         }));
     };
 
+
     const handleSubmit = async () => {
         const { MaNhaDat, TenNhaDat, LoaiNhaDat_id } = formData;
+
         if (!MaNhaDat || !TenNhaDat || !LoaiNhaDat_id) {
             Swal.fire('Lỗi!', 'Vui lòng nhập đầy đủ các thông tin bắt buộc!', 'error');
             return;
@@ -75,39 +91,44 @@ function Batdongsan() {
             Swal.fire('Lỗi!', 'Mã nhà đất quá dài. Vui lòng nhập lại(dưới 10 ký tự)!', 'error');
             return;
         }
+
         try {
             const formDataToSend = new FormData();
             Object.entries(formData).forEach(([key, value]) => {
                 formDataToSend.append(key, value);
             });
-            selectedImages.forEach((img) => {
+
+            selectedImages.forEach(img => {
                 formDataToSend.append("images", img);
             });
 
             if (isEditing) {
-                await nhaDatApi.update(formData.id, formDataToSend); // dùng FormData
+                await nhaDatApi.update(formData.id, formDataToSend);
                 Swal.fire('Cập nhật thành công!', '', 'success');
             } else {
                 await nhaDatApi.add(formDataToSend);
                 Swal.fire('Thêm thành công!', '', 'success');
             }
-            const updatedList = await fetchNhaDatList();
-            setNhaDatList(updatedList);
+
+            // *** Đây là chỗ quan trọng: gọi lại loadData với trang hiện tại ***
+            await loadData(currentPage, 5);
+
+            // Đóng modal và reset form, ảnh đã chọn
             closeModal();
+
         } catch (error) {
             console.log(error);
             const errorMessage = error?.response?.data?.error || error?.response?.data?.message || 'Vui lòng thử lại.';
-
             Swal.fire('Lỗi!', errorMessage, 'error');
         }
-    }
+    };
+
     const handleEdit = (item) => {
         setFormData({
             ...item,
             LoaiNhaDat_id: item.LoaiNhaDat?.id || null,
         });
-        setCurrentImages(item.hinhAnh || []);
-        setSelectedImages([]); // reset ảnh mới được chọn
+        setSelectedImages([]);
         setIsEditing(true);
         setShowModal(true);
     };
@@ -159,8 +180,25 @@ function Batdongsan() {
 
     const closeModal = () => {
         setShowModal(false);
+        setFormData({
+            MaNhaDat: "",
+            TenNhaDat: "",
+            LoaiNhaDat_id: null,
+            MoTa: "",
+            GiaBan: "",
+            DienTich: "",
+            Huong: "",
+            TrangThai: 1,
+            ThanhPho: "",
+            Quan: "",
+            Phuong: "",
+            Duong: "",
+            SoNha: ""
+        });
         setSelectedImages([]);
+        setIsEditing(false);
     };
+
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);
         setSelectedImages(prevImages => [...prevImages, ...files]);

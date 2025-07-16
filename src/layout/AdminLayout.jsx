@@ -6,6 +6,7 @@ import QuanLyBatdongsan from "../pages/admin/QuanLyBatdongsan";
 import NguoiDung from "../pages/admin/NguoiDung";
 import KhachHang from "../pages/admin/KhachHang";
 import NhanVien from "../pages/admin/NhanVien";
+import QuanLyBaiViet from "../pages/admin/QuanLyBaiViet";
 const AdminLayout = () => {
     return (
         <div className="admin-layout">
@@ -17,9 +18,11 @@ const AdminLayout = () => {
                 <Route path="/user" element={<NguoiDung />} />
                 <Route path="/khachhang" element={<KhachHang />} />
                 <Route path="/nhanVien" element={<NhanVien />} />
+                <Route path="/quanLyBaiViet" element={<QuanLyBaiViet />} />
             </Routes>
         </div>
     );
 };
 
 export default AdminLayout;
+

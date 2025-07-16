@@ -49,7 +49,8 @@ const Header = () => {
                             <Nav.Link href="/tin-tuc">Tin tức</Nav.Link>
                             <Nav.Link href="/wiki">Wiki BĐS</Nav.Link>
                             <Nav.Link href="/ban-dat">Bán đất</Nav.Link>
-                            <Nav.Link href="/danh-ba">Danh bạ</Nav.Link>
+                            <Nav.Link href="/form-bai-viet">Đăng bài viết</Nav.Link>
+
                         </Nav>
                         <div className="d-flex ms-3">
                             {user ? (
