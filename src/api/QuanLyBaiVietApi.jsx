@@ -8,13 +8,32 @@ const quanLyBaiVietApi = {
     getChoDuyet: async (token) => axios.get(`${API_URL}/admin/cho-duyet`, {
         headers: { Authorization: 'Bearer ' + token }
     }),
-    getById: async (id, token) => axios.get(`${API_URL}/${id}`, {
-        headers: { Authorization: 'Bearer ' + token }
-    }),
+    
+    // Thêm method lấy bài viết đã duyệt (trạng thái = 1)
+    layBaiVietDaDuyet: async (params = {}) => {
+        // params có thể chứa: page, limit, search, filter
+        const queryParams = new URLSearchParams();
+        if (params.page) queryParams.append('page', params.page);
+        if (params.limit) queryParams.append('limit', params.limit);
+        if (params.search) queryParams.append('search', params.search);
+        if (params.thanhPho) queryParams.append('thanhPho', params.thanhPho);
+        if (params.loaiDat) queryParams.append('loaiDat', params.loaiDat);
+        if (params.khoangGia) queryParams.append('khoangGia', params.khoangGia);
+        if (params.dienTich) queryParams.append('dienTich', params.dienTich);
+        
+        return axios.get(`${API_URL}/da-duyet?${queryParams.toString()}`);
+    },
+    getById: async (id, token) => {
+        const headers = token ? { Authorization: 'Bearer ' + token } : {};
+        return axios.get(`${API_URL}/${id}`, { headers });
+    },
     duyet: async (id, token) => axios.patch(`${API_URL}/admin/${id}/duyet`, {}, {
         headers: { Authorization: 'Bearer ' + token }
     }),
     tuChoi: async (id, token) => axios.patch(`${API_URL}/admin/${id}/tu-choi`, {}, {
+        headers: { Authorization: 'Bearer ' + token }
+    }),
+    xoaBaiViet: async (id, token) => axios.delete(`${API_URL}/admin/${id}`, {
         headers: { Authorization: 'Bearer ' + token }
     }),
     taoBaiViet: async (data, token) => {

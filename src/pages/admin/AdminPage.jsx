@@ -73,7 +73,7 @@ function AdminPage({ children }) {
             <Layout>
                 {/* Header */}
                 <Header
-                    className="d-flex align-items-center justify-content-between px-3"
+                    className={`d-flex align-items-center justify-content-between px-3 ${collapsed ? 'collapsed' : ''}`}
                     style={{
                         padding: 0,
                         background: colorBgContainer,
@@ -123,16 +123,16 @@ function AdminPage({ children }) {
 
                 {/* Content */}
                 <Content
+                    className={collapsed ? 'collapsed' : ''}
                     style={{
-                        margin: '24px 16px',
-                        padding: 24,
-                        minHeight: 280,
                         background: colorBgContainer,
                         borderRadius: borderRadiusLG,
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                     }}
                 >
-                    {children}
+                    <div style={{ padding: '24px', minHeight: '280px' }}>
+                        {children}
+                    </div>
                 </Content>
             </Layout>
         </Layout>

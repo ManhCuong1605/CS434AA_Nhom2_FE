@@ -1,0 +1,43 @@
+/* CSS cho trang chi tiết bài viết */
+.thumbnail-container {
+    margin-top: 12px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.thumbnail {
+    width: 100px;
+    /* Kích thước cố định cho thumbnail */
+    height: 70px;
+    object-fit: cover;
+    /* Lấp đầy khung thumbnail, giữ tỷ lệ */
+    object-position: center;
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.thumbnail.active,
+.thumbnail:hover {
+    opacity: 1;
+    border-color: #007bff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .thumbnail {
+        width: 80px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 576px) {
+    .thumbnail {
+        width: 60px;
+        height: 45px;
+    }
+} 

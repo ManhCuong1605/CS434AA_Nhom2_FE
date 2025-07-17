@@ -6,6 +6,7 @@ import { useChat } from "../../context/ChatContext"; // Import context
 import nhaDatApi from "../../api/NhaDatApi";
 
 
+
 const ChiTietSanPham = () => {
     const { id } = useParams();
     const { setIsChatOpen } = useChat();
@@ -72,14 +73,47 @@ const ChiTietSanPham = () => {
                     <h2 className="product-title">{product.title}</h2>
                     <p className="product-location">Địa chỉ: {product.location}</p>
                     <p className="product-price">Giá Tiền: {product.price}</p>
-                    <p className="product-meta">
-                        Diện tích {product.area} • {product.pricePerM2}
-                    </p>
+                    {product.type === "nhaDat" && (
+                        <p className="product-meta">
+                            Diện tích {product.area} • {product.pricePerM2}
+                        </p>
+                    )}
 
                     <div className="contact-box">
-                        <p><strong>Môi giới: {product.agent}</strong></p>
+                        <p><strong>{product.type === "baiViet" ? "Người đăng" : "Môi giới"}: {product.agent}</strong></p>
                         <p className="contact-number">☎ {product.contact}</p>
-                        <button className="contact-button" onClick={() => setIsChatOpen(true)}>Liên hệ ngay</button>
+                        {product.type === "baiViet" ? (
+                            <div className="contact-buttons">
+                                <button 
+                                    className="contact-button" 
+                                    onClick={() => {
+                                        if (product.contact && product.contact !== "Chưa có số điện thoại") {
+                                            window.open(`tel:${product.contact}`, '_blank');
+                                        } else {
+                                            alert('Không có số điện thoại liên hệ!');
+                                        }
+                                    }}
+                                >
+                                    Gọi ngay
+                                </button>
+                                <button 
+                                    className="contact-button secondary" 
+                                    onClick={() => {
+                                        if (product.contact && product.contact !== "Chưa có số điện thoại") {
+                                            window.open(`https://zalo.me/${product.contact}`, '_blank');
+                                        } else {
+                                            alert('Không có số điện thoại liên hệ!');
+                                        }
+                                    }}
+                                >
+                                    Chat Zalo
+                                </button>
+                            </div>
+                        ) : (
+                            <button className="contact-button" onClick={() => setIsChatOpen(true)}>
+                                Liên hệ ngay
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

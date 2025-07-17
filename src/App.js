@@ -17,6 +17,7 @@ import ProfilePage from "./pages/user/ProfilePage";
 import QuenMatKhau from "./pages/user/QuenMatKhau";
 import DoiMatKhau from "./pages/user/DoiMatKhau";
 import BaiViet from "./pages/user/BaiViet";
+import ChiTietBaiViet from "./pages/user/ChiTietBaiViet";
 function App() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
@@ -39,6 +40,7 @@ function App() {
         <Route path="/forgot-password" element={<QuenMatKhau />} />
         <Route path="/reset-password" element={<DoiMatKhau />} />
         <Route path="/form-bai-viet" element={<BaiViet />} />
+        <Route path="/bai-viet/:id" element={<ChiTietBaiViet />} />
       </Routes>
 
       {!isAdminPage && <Footer />}
