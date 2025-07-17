@@ -7,9 +7,14 @@ function RegisterForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [hoTen, setHoTen] = useState(""); // Thêm họ tên
+  const [hoTen, setHoTen] = useState("");
   const [soDienThoai, setSoDienThoai] = useState("");
   const [email, setEmail] = useState("");
+  const [diaChi, setDiaChi] = useState("");
+  const [otp, setOtp] = useState("");
+  const [showOTP, setShowOTP] = useState(false);
+  const [tempData, setTempData] = useState(null);
+
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,54 +23,62 @@ function RegisterForm() {
   const validateForm = () => {
     const newErrors = {};
     if (!username) newErrors.username = "Vui lòng nhập tên tài khoản.";
-    if (!password) {
-      newErrors.password = "Vui lòng nhập mật khẩu.";
-    } else if (password.length < 6) {
-      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự.";
-    }
+    if (!password) newErrors.password = "Vui lòng nhập mật khẩu.";
+    else if (password.length < 6) newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự.";
     if (password !== confirmPassword) newErrors.confirmPassword = "Mật khẩu xác nhận không khớp.";
     if (!hoTen) newErrors.hoTen = "Vui lòng nhập họ và tên.";
-    if (!soDienThoai) {
-      newErrors.soDienThoai = "Vui lòng nhập số điện thoại.";
-    } else if (!/^0\d{9}$/.test(soDienThoai)) {
-      newErrors.soDienThoai = "Số điện thoại không hợp lệ. Phải bắt đầu bằng 0 và có đúng 10 chữ số.";
-    }
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Email không hợp lệ.";
-    }
+    if (!soDienThoai) newErrors.soDienThoai = "Vui lòng nhập số điện thoại.";
+    else if (!/^0\d{9}$/.test(soDienThoai)) newErrors.soDienThoai = "Số điện thoại không hợp lệ.";
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) newErrors.email = "Email không hợp lệ.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSendOTP = async (e) => {
     e.preventDefault();
     setMessage("");
     if (!validateForm()) return;
 
     setLoading(true);
-
     try {
       const userData = {
         username,
         password,
         HoTen: hoTen,
         SoDienThoai: soDienThoai,
-        email: email
+        email,
+        DiaChi: diaChi,
       };
 
-      await axios.post("http://localhost:5000/api/register", userData, {
+      const res = await axios.post("http://localhost:5000/api/register/send-otp", userData, {
         headers: { "Content-Type": "application/json" },
       });
 
-      setMessage("Đăng ký thành công! Bạn có thể đăng nhập ngay.");
+      setMessage(res.data.message);
+      setShowOTP(true);
+      setTempData(userData); // lưu lại để dùng xác nhận
+    } catch (error) {
+      setMessage(error.response?.data?.error || "Lỗi khi gửi OTP.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleConfirmOTP = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const data = { ...tempData, otp };
+
+      const res = await axios.post("http://localhost:5000/api/register/confirm", data, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      setMessage(res.data.message);
       setTimeout(() => navigate("/dang-nhap"), 2000);
     } catch (error) {
-      const errMsg =
-        error.response?.data?.message || // thông báo lỗi chung
-        "Có lỗi xảy ra, vui lòng thử lại sau.";
-
-      setMessage(errMsg);
+      setMessage(error.response?.data?.message || "Xác nhận OTP thất bại.");
     } finally {
       setLoading(false);
     }
@@ -79,8 +92,7 @@ function RegisterForm() {
           <p className="text-danger text-center fw-bold">Nơi khởi nguồn tổ ấm, đầu tư vững bền.</p>
         </div>
         <div className="col-md-7 p-4">
-          <h2 className="text-start fs-6 fw-bold">Xin chào bạn</h2>
-          <h4 className="text-start fw-bold mb-4 fs-4">Đăng ký tài khoản</h4>
+          <h4 className="fw-bold mb-4">Đăng ký tài khoản</h4>
 
           {message && (
             <div className={`alert ${message.includes("thành công") ? "alert-success" : "alert-danger"}`} role="alert">
@@ -88,91 +100,66 @@ function RegisterForm() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <input
-                type="text"
-                className={`form-control ${errors.username ? "is-invalid" : ""}`}
-                placeholder="Nhập tên tài khoản"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              {errors.username && <div className="text-danger mb-2">{errors.username}</div>}
-            </div>
+          <form onSubmit={showOTP ? handleConfirmOTP : handleSendOTP}>
+            {/* Các ô nhập như username, password, họ tên,... */}
+            {!showOTP && (
+              <>
+                <div className="mb-3">
+                  <input type="text" className={`form-control ${errors.username ? "is-invalid" : ""}`} placeholder="Tên tài khoản" value={username} onChange={(e) => setUsername(e.target.value)} />
+                  {errors.username && <div className="text-danger">{errors.username}</div>}
+                </div>
+                <div className="mb-3">
+                  <input type="password" className={`form-control ${errors.password ? "is-invalid" : ""}`} placeholder="Mật khẩu" value={password} onChange={(e) => setPassword(e.target.value)} />
+                  {errors.password && <div className="text-danger">{errors.password}</div>}
+                </div>
+                <div className="mb-3">
+                  <input type="password" className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`} placeholder="Xác nhận mật khẩu" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                  {errors.confirmPassword && <div className="text-danger">{errors.confirmPassword}</div>}
+                </div>
+                <div className="mb-3">
+                  <input type="text" className={`form-control ${errors.hoTen ? "is-invalid" : ""}`} placeholder="Họ và tên" value={hoTen} onChange={(e) => setHoTen(e.target.value)} />
+                  {errors.hoTen && <div className="text-danger">{errors.hoTen}</div>}
+                </div>
+                <div className="mb-3">
+                  <input type="email" className={`form-control ${errors.email ? "is-invalid" : ""}`} placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  {errors.email && <div className="text-danger">{errors.email}</div>}
+                </div>
+                <div className="mb-3">
+                  <input type="text" className={`form-control ${errors.soDienThoai ? "is-invalid" : ""}`} placeholder="Số điện thoại" value={soDienThoai} onChange={(e) => setSoDienThoai(e.target.value)} />
+                  {errors.soDienThoai && <div className="text-danger">{errors.soDienThoai}</div>}
+                </div>
 
-            <div className="mb-3">
-              <input
-                type="password"
-                className={`form-control ${errors.password ? "is-invalid" : ""}`}
-                placeholder="Nhập mật khẩu"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              {errors.password && <div className="text-danger mb-2">{errors.password}</div>}
-            </div>
 
-            <div className="mb-3">
-              <input
-                type="password"
-                className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
-                placeholder="Xác nhận mật khẩu"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-              {errors.confirmPassword && <div className="text-danger mb-2">{errors.confirmPassword}</div>}
-            </div>
+              </>
+            )}
 
-            <div className="mb-3">
-              <input
-                type="text"
-                className={`form-control ${errors.hoTen ? "is-invalid" : ""}`}
-                placeholder="Nhập họ và tên"
-                value={hoTen}
-                onChange={(e) => setHoTen(e.target.value)}
-              />
-              {errors.hoTen && <div className="text-danger mb-2">{errors.hoTen}</div>}
-            </div>
+            {showOTP && (
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Nhập mã OTP đã gửi đến email"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                />
+              </div>
+            )}
 
-            <div className="mb-3">
-              <input
-                type="text"
-                className={`form-control ${errors.soDienThoai ? "is-invalid" : ""}`}
-                placeholder="Nhập số điện thoại"
-                value={soDienThoai}
-                onChange={(e) => setSoDienThoai(e.target.value)}
-              />
-              {errors.soDienThoai && <div className="text-danger mb-2">{errors.soDienThoai}</div>}
-            </div>
-
-            <div className="mb-3">
-              <input
-                type="email"
-                className={`form-control ${errors.email ? "is-invalid" : ""}`}
-                placeholder="Nhập email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              {errors.email && <div className="text-danger mb-2">{errors.email}</div>}
-            </div>
-
-            <button type="submit" className="btn btn-danger w-100 mb-3" disabled={loading}>
+            <button type="submit" className="btn btn-danger w-100" disabled={loading}>
               {loading ? (
                 <>
                   <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  Đang đăng ký...
+                  {showOTP ? "Xác nhận OTP..." : "Gửi mã OTP..."}
                 </>
               ) : (
-                "Đăng ký"
+                showOTP ? "Xác nhận OTP" : "Đăng ký"
               )}
             </button>
           </form>
 
           <p className="text-center mt-3">
             Đã có tài khoản?{" "}
-            <button
-              className="text-danger text-decoration-none btn btn-link"
-              onClick={() => navigate("/dang-nhap")}
-            >
+            <button className="btn btn-link text-danger" onClick={() => navigate("/dang-nhap")}>
               Đăng nhập ngay
             </button>
           </p>

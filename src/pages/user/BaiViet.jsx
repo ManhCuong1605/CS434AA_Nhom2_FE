@@ -115,8 +115,9 @@ const BaiViet = () => {
                     <Col md={8} lg={7}>
                         <Card className="shadow-lg">
                             <Card.Body>
-                                <h3 className="mb-4 text-center" style={{ color: '#0d6efd' }}>Đăng bài viết bất động sản</h3>
-                                {/* KHÔNG dùng Alert nữa */}
+                                <h3 className="mb-4 text-center text-black">
+                                    Đăng bài viết bất động sản
+                                </h3>                                {/* KHÔNG dùng Alert nữa */}
                                 <Form onSubmit={handleSubmit} encType="multipart/form-data">
                                     <Form.Group className="mb-3" controlId="tieuDe">
                                         <Form.Label>Tiêu đề <span style={{ color: 'red' }}>*</span></Form.Label>
@@ -193,15 +194,17 @@ const BaiViet = () => {
                                         </div>
                                     )}
                                     <div className="d-grid">
-                                        <Button variant="primary" size="lg" type="submit" disabled={loading}>
-                                            {loading && <Spinner
-                                                as="span"
-                                                animation="border"
-                                                size="sm"
-                                                role="status"
-                                                aria-hidden="true"
-                                                className="me-2"
-                                            />}
+                                        <Button variant="dark" size="lg" type="submit" disabled={loading}>
+                                            {loading && (
+                                                <Spinner
+                                                    as="span"
+                                                    animation="border"
+                                                    size="sm"
+                                                    role="status"
+                                                    aria-hidden="true"
+                                                    className="me-2"
+                                                />
+                                            )}
                                             {loading ? "Đang xử lý..." : "Gửi bài viết"}
                                         </Button>
                                     </div>
