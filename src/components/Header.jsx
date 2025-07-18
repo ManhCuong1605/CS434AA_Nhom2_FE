@@ -44,9 +44,10 @@ const Header = () => {
                         <Nav className="ms-auto">
                             <Nav.Link onClick={() => navigate("/")}>Trang Chủ</Nav.Link>
                             <Nav.Link onClick={() => navigate("/bat-dong-san")}>Bất động sản</Nav.Link>
+                            <Nav.Link href="/tin-tuc">Tin tức</Nav.Link>
                             <Nav.Link href="/gioi-thieu">Giới thiệu</Nav.Link>
                             <Nav.Link href="/du-an">Dự án</Nav.Link>
-                            <Nav.Link href="/tin-tuc">Tin tức</Nav.Link>
+                           
                             <Nav.Link href="/wiki">Wiki BĐS</Nav.Link>
                             <Nav.Link href="/ban-dat">Bán đất</Nav.Link>
                             <Nav.Link href="/form-bai-viet">Đăng bài viết</Nav.Link>

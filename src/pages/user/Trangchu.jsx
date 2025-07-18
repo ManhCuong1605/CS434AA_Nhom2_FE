@@ -25,20 +25,35 @@ const realEstateFeatures = [
 
 const Trangchu = () => {
     const [nhaDatList, setNhaDatList] = useState([]);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        loadData();
+        loadData(1, true); // load trang đầu khi vào trang chủ
     }, []);
 
-    const loadData = async () => {
+    const loadData = async (pageToLoad = 1, isFirst = false) => {
         try {
-            const response = await nhaDatApi.getAll({ page: 1, limit: 8 });
-            setNhaDatList(response.data.data);
+            const response = await nhaDatApi.getAll({ page: pageToLoad, limit: 8 });
+            const newData = response.data.data;
+            if (isFirst) {
+                setNhaDatList(newData);
+            } else {
+                setNhaDatList(prev => [...prev, ...newData]);
+            }
+            setHasMore(newData.length === 8); // Nếu trả về đủ 8 thì còn dữ liệu
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu:", error);
-            setNhaDatList([]);
+            if (isFirst) setNhaDatList([]);
+            setHasMore(false);
         }
+    };
+
+    const handleXemThem = () => {
+        const nextPage = page + 1;
+        loadData(nextPage);
+        setPage(nextPage);
     };
 
     return (
@@ -140,6 +155,13 @@ const Trangchu = () => {
                         </Col>
                     ))}
                 </Row>
+                {hasMore && (
+                    <div className="d-flex justify-content-center mt-4">
+                        <Button type="primary" size="large" style={{ borderRadius: 24, fontWeight: 600, padding: '8px 36px' }} onClick={handleXemThem}>
+                            Xem thêm
+                        </Button>
+                    </div>
+                )}
             </Container>
 
             {/* Bất động sản theo địa điểm */}

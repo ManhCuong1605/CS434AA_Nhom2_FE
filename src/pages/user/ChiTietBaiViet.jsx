@@ -12,6 +12,7 @@ const ChiTietBaiViet = () => {
     const [baiViet, setBaiViet] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState(0);
+    const [relatedPosts, setRelatedPosts] = useState([]);
 
     useEffect(() => {
         const fetchChiTiet = async () => {
@@ -35,6 +36,20 @@ const ChiTietBaiViet = () => {
         if (id) {
             fetchChiTiet();
         }
+    }, [id]);
+
+    // Lấy bài viết liên quan
+    useEffect(() => {
+        const fetchRelated = async () => {
+            if (!id) return;
+            try {
+                const res = await quanLyBaiVietApi.layBaiVietLienQuan(id);
+                setRelatedPosts(res.data || []);
+            } catch (e) {
+                setRelatedPosts([]);
+            }
+        };
+        fetchRelated();
     }, [id]);
 
     if (loading) {
@@ -66,7 +81,7 @@ const ChiTietBaiViet = () => {
 
             <Row>
                 {/* Hình ảnh */}
-                <Col lg={8} md={12} className="mb-4">
+                <Col lg={7} md={12} className="mb-4">
                     <Card className="border-0 shadow-sm">
                         <div style={{ position: 'relative' }}>
                             {baiViet.hinhAnh && baiViet.hinhAnh.length > 0 ? (
@@ -143,8 +158,8 @@ const ChiTietBaiViet = () => {
                 </Col>
 
                 {/* Thông tin chi tiết */}
-                <Col lg={4} md={12}>
-                    <Card className="border-0 shadow-sm h-100">
+                <Col lg={5} md={12}>
+                    <Card className="border-0 shadow-sm h-100" style={{minHeight: 600}}>
                         <Card.Header className="bg-primary text-white">
                             <h4 className="mb-0">
                                 <i className="fas fa-info-circle me-2"></i>
@@ -161,7 +176,16 @@ const ChiTietBaiViet = () => {
                                     {baiViet.gia ? Number(baiViet.gia).toLocaleString() + ' VNĐ' : 'Liên hệ'}
                                 </h3>
                             </div>
-
+                            {/* Đưa mô tả chi tiết lên trên */}
+                            <div className="mb-4">
+                                <h5>Mô tả chi tiết</h5>
+                                <div className="bg-light p-3 rounded">
+                                    <p className="mb-0" style={{whiteSpace: 'pre-wrap', lineHeight: '1.6'}}>
+                                        {baiViet.noiDung}
+                                    </p>
+                                </div>
+                            </div>
+                            {/* Thông tin liên hệ xuống dưới */}
                             <div className="mb-4">
                                 <h5>Thông tin liên hệ</h5>
                                 <div className="d-flex align-items-center mb-2">
@@ -177,7 +201,6 @@ const ChiTietBaiViet = () => {
                                     <span><strong>Ngày đăng:</strong> {baiViet.ngayDang ? new Date(baiViet.ngayDang).toLocaleDateString('vi-VN') : '--'}</span>
                                 </div>
                             </div>
-
                             <div className="mb-4">
                                 <h5>Địa chỉ</h5>
                                 <p className="mb-0">
@@ -185,7 +208,6 @@ const ChiTietBaiViet = () => {
                                     {baiViet.diaChi}
                                 </p>
                             </div>
-
                             <div className="mb-4">
                                 <h5>Thông tin bổ sung</h5>
                                 <div className="row">
@@ -195,19 +217,9 @@ const ChiTietBaiViet = () => {
                                     </div>
                                 </div>
                             </div>
-
-                            <div className="mb-4">
-                                <h5>Mô tả chi tiết</h5>
-                                <div className="bg-light p-3 rounded">
-                                    <p className="mb-0" style={{whiteSpace: 'pre-wrap', lineHeight: '1.6'}}>
-                                        {baiViet.noiDung}
-                                    </p>
-                                </div>
-                            </div>
-
                             <div className="d-grid gap-2">
                                 <Button 
-                                    variant="success" 
+                                    variant="primary" 
                                     size="lg"
                                     onClick={() => setIsChatOpen(true)}
                                 >
@@ -225,9 +237,15 @@ const ChiTietBaiViet = () => {
                                             alert('Không có số điện thoại liên hệ!');
                                         }
                                     }}
+                                    style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8}}
                                 >
-                                    <i className="fab fa-facebook-messenger me-2"></i>
-                                    Chat Zalo
+                                    <span style={{display:'flex',alignItems:'center',width:22,height:22}}>
+                                        <svg width="22" height="22" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect width="48" height="48" rx="12" fill="#0180DE"/>
+                                            <path d="M24 13C17.3726 13 12 17.4772 12 23C12 25.7614 13.3431 28.2386 15.5147 29.9992C15.1862 31.0932 14.3932 32.3932 13.5 33.5C13.5 33.5 16.5 33 19.5 31.5C21.0192 31.8202 22.4841 32 24 32C30.6274 32 36 27.5228 36 22C36 16.4772 30.6274 13 24 13Z" fill="white"/>
+                                        </svg>
+                                    </span>
+                                    <span style={{display:'inline-block'}}>Chat Zalo</span>
                                 </Button>
                             </div>
 
@@ -239,7 +257,31 @@ const ChiTietBaiViet = () => {
             {/* Các bài viết liên quan */}
             <div className="mt-5">
                 <h3 className="mb-4" style={{ color: '#198754' }}>Bài viết liên quan</h3>
-                <p className="text-muted">Tính năng đang phát triển...</p>
+                {relatedPosts.length === 0 ? (
+                    <p className="text-muted">Không có bài viết liên quan.</p>
+                ) : (
+                    <Row>
+                        {relatedPosts.map((bv, idx) => (
+                            <Col md={4} sm={6} xs={12} key={bv.id || idx} className="mb-4">
+                                <Card className="h-100 shadow-sm">
+                                    <Card.Img variant="top" src={bv.hinhAnh?.[0]?.url || '/no-image.png'} style={{height:140, objectFit:'cover'}} />
+                                    <Card.Body>
+                                        <Card.Title style={{fontSize: '1.1rem', fontWeight: 600}}>{bv.tieuDe}</Card.Title>
+                                        <div style={{fontSize: '0.97rem', color: '#444', marginBottom: 6}}>
+                                            {bv.noiDung ? bv.noiDung.substring(0, 80) + (bv.noiDung.length > 80 ? '...' : '') : ''}
+                                        </div>
+                                        <div style={{color:'#e74c3c', fontWeight:700, fontSize:'1rem', marginBottom: 8}}>
+                                            {bv.gia ? Number(bv.gia).toLocaleString() + ' VNĐ' : '---'}
+                                        </div>
+                                        <Button variant="outline-primary" size="sm" onClick={() => navigate(`/bai-viet/${bv.id}`)}>
+                                            Xem chi tiết
+                                        </Button>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        ))}
+                    </Row>
+                )}
             </div>
         </Container>
     );

@@ -53,6 +53,9 @@ const quanLyBaiVietApi = {
                 "Content-Type": "multipart/form-data",
             },
         });
+    },
+    layBaiVietLienQuan: async (id) => {
+        return axios.get(`${API_URL}/lien-quan/${id}`);
     }
 }
 export default quanLyBaiVietApi;
