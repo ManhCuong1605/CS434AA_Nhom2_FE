@@ -15,6 +15,7 @@ const BaiViet = () => {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [showToast, setShowToast] = useState(false);
+    const [giaHienThi, setGiaHienThi] = useState("");
 
     // Hiển thị toast khi có statusMessage
     React.useEffect(() => {
@@ -29,7 +30,14 @@ const BaiViet = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setForm({ ...form, [name]: value });
+        if (name === "gia") {
+            const rawValue = value.replace(/\./g, "").replace(/[^0-9]/g, "");
+            const formatted = new Intl.NumberFormat("vi-VN").format(Number(rawValue || 0));
+            setGiaHienThi(formatted);
+            setForm({ ...form, gia: rawValue });
+        } else {
+            setForm({ ...form, [name]: value });
+        }
     };
 
     const handleImageChange = (e) => {
@@ -65,7 +73,7 @@ const BaiViet = () => {
             const formData = new FormData();
             formData.append("tieuDe", form.tieuDe);
             formData.append("noiDung", form.noiDung);
-            formData.append("gia", form.gia);
+            formData.append("gia", form.gia.replace(/\./g, ""));
             formData.append("diaChi", form.diaChi);
             images.forEach(img => {
                 formData.append("images", img);
@@ -147,15 +155,16 @@ const BaiViet = () => {
                                     <Form.Group className="mb-3" controlId="gia">
                                         <Form.Label>Giá (VNĐ) <span style={{ color: 'red' }}>*</span></Form.Label>
                                         <Form.Control
-                                            type="number"
+                                            type="text"
                                             name="gia"
-                                            value={form.gia}
+                                            value={giaHienThi}
                                             onChange={handleChange}
                                             placeholder="Nhập giá bán hoặc cho thuê"
                                             isInvalid={!!errors.gia}
                                         />
                                         <Form.Control.Feedback type="invalid">{errors.gia}</Form.Control.Feedback>
                                     </Form.Group>
+
                                     <Form.Group className="mb-3" controlId="diaChi">
                                         <Form.Label>Địa chỉ <span style={{ color: 'red' }}>*</span></Form.Label>
                                         <Form.Control
