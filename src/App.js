@@ -18,6 +18,7 @@ import QuenMatKhau from "./pages/user/QuenMatKhau";
 import DoiMatKhau from "./pages/user/DoiMatKhau";
 import BaiViet from "./pages/user/BaiViet";
 import ChiTietBaiViet from "./pages/user/ChiTietBaiViet";
+import DanhMucYeuThich from "./pages/user/DanhMucYeuThich"; // Import 
 function App() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
@@ -37,6 +38,7 @@ function App() {
         <Route path="/tin-tuc" element={<TinTuc />} />
         <Route path="/gioi-thieu" element={<GioiThieu />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/danh-muc-yeu-thich" element={<DanhMucYeuThich />} />
         <Route path="/forgot-password" element={<QuenMatKhau />} />
         <Route path="/reset-password" element={<DoiMatKhau />} />
         <Route path="/form-bai-viet" element={<BaiViet />} />

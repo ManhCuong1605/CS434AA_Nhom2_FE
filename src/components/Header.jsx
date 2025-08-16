@@ -58,9 +58,13 @@ const Header = () => {
                                 <NavDropdown title={<span className="fw-bold fs-5">{user}</span>} id="user-dropdown">
 
                                     <NavDropdown.Item onClick={() => navigate("/profile")}>Hồ sơ</NavDropdown.Item>
+                                   
+                                    <NavDropdown.Item onClick={() => navigate("/danh-muc-yeu-thich")}>
+                                    Danh mục yêu thích
+                                </NavDropdown.Item>
                                     <NavDropdown.Item onClick={handleLogout}>Đăng xuất</NavDropdown.Item>
                                 </NavDropdown>
-                            ) : (
+                            ) : (   
                                 <>
                                     <Button variant="outline-primary" className="me-2" onClick={() => navigate("/dang-nhap")}>
                                         Đăng nhập
