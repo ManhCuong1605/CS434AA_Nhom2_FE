@@ -2,22 +2,26 @@ import React, { useState, useEffect } from 'react';
 import AdminPage from './AdminPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import nhaDatApi from '../../api/NhaDatApi';
-import { fetchNhaDatList, fetchLoaiNhaDatList } from "../../services/fetchData";
+import { fetchNhaDatList, fetchLoaiNhaDatList } from '../../services/fetchData';
 import Swal from 'sweetalert2';
 import PhanTrang from '../../components/PhanTrang';
+import diaChiApi from '../../api/DiaChiApi';
 
 function Batdongsan() {
-    const [showModal, setShowModal] = useState(false); // Hiện/ẩn modal thêm/sửa
-    const [nhaDatList, setNhaDatList] = useState([]); // Danh sách nhà đất
-    const [loaiDatList, setLoaiDatList] = useState([]); // Danh sách loại nhà đất
+    const [showModal, setShowModal] = useState(false);
+    const [nhaDatList, setNhaDatList] = useState([]);
+    const [loaiDatList, setLoaiDatList] = useState([]);
+    const [provinces, setProvinces] = useState([]);
+    const [districts, setDistricts] = useState([]);
+    const [wards, setWards] = useState([]);
 
-    const [isEditing, setIsEditing] = useState(false); // Trạng thái đang sửa hay thêm
-    const [selectedImages, setSelectedImages] = useState([]); // Ảnh mới chọn (upload)
-    const [currentImages, setCurrentImages] = useState([]); // Ảnh hiện có của nhà đất (khi sửa)
+    const [isEditing, setIsEditing] = useState(false);
+    const [selectedImages, setSelectedImages] = useState([]);
+    const [currentImages, setCurrentImages] = useState([]);
 
-    const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
-    const [totalPages, setTotalPages] = useState(1); // Tổng số trang
-    const [totalItems, setTotalItems] = useState(0); // Tổng số mục
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
 
     const [formData, setFormData] = useState({
         MaNhaDat: "",
@@ -27,8 +31,8 @@ function Batdongsan() {
         GiaBan: "",
         DienTich: "",
         Huong: "",
-        TrangThai: 1, // trạng thái mặc định, ví dụ 1 là hiển thị
-        HinhAnh: "", // trường này bạn có thể không cần, vì ảnh xử lý qua currentImages / selectedImages
+        TrangThai: 1,
+        HinhAnh: "",
         ThanhPho: "",
         Quan: "",
         Phuong: "",
@@ -36,16 +40,20 @@ function Batdongsan() {
         SoNha: ""
     });
 
+    const [selectedProvince, setSelectedProvince] = useState("");
+    const [selectedDistrict, setSelectedDistrict] = useState("");
+    const [selectedWard, setSelectedWard] = useState("");
 
     useEffect(() => {
         loadData(currentPage, 5);
+        fetchProvinces();
     }, [currentPage]);
 
     const loadData = async (page = 1, limit = 5) => {
         try {
             const [nhaDat, loaiDat] = await Promise.all([
-                fetchNhaDatList(page, limit),  // API lấy danh sách nhà đất phân trang
-                fetchLoaiNhaDatList()          // API lấy danh sách loại nhà đất
+                fetchNhaDatList(page, limit),
+                fetchLoaiNhaDatList()
             ]);
 
             setNhaDatList(nhaDat.data);
@@ -65,11 +73,39 @@ function Batdongsan() {
         }
     };
 
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
-        // Không cần gọi loadData ở đây vì useEffect đã watch currentPage và tự gọi
+    const fetchProvinces = async () => {
+        try {
+            const data = await diaChiApi.getAllProvinces();
+            setProvinces(data);
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách tỉnh/thành:", error);
+        }
     };
 
+    const fetchDistricts = async (provinceCode) => {
+        try {
+            const data = await diaChiApi.getDistrictsByProvince(provinceCode);
+            setDistricts(data);
+            setSelectedDistrict(""); // Reset district and ward
+            setSelectedWard("");
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách quận/huyện:", error);
+        }
+    };
+
+    const fetchWards = async (districtCode) => {
+        try {
+            const data = await diaChiApi.getWardsByDistrict(districtCode);
+            setWards(data);
+            setSelectedWard("");
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách xã/phường:", error);
+        }
+    };
+
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -79,11 +115,10 @@ function Batdongsan() {
         }));
     };
 
-
     const handleSubmit = async () => {
         const { MaNhaDat, TenNhaDat, LoaiNhaDat_id } = formData;
-
-        if (!MaNhaDat || !TenNhaDat || !LoaiNhaDat_id) {
+    
+        if (!MaNhaDat || !TenNhaDat || !LoaiNhaDat_id || !selectedProvince || !selectedDistrict || !selectedWard) {
             Swal.fire('Lỗi!', 'Vui lòng nhập đầy đủ các thông tin bắt buộc!', 'error');
             return;
         }
@@ -91,17 +126,22 @@ function Batdongsan() {
             Swal.fire('Lỗi!', 'Mã nhà đất quá dài. Vui lòng nhập lại(dưới 10 ký tự)!', 'error');
             return;
         }
-
+    
         try {
             const formDataToSend = new FormData();
-            Object.entries(formData).forEach(([key, value]) => {
+            Object.entries({
+                ...formData,
+                ThanhPho: selectedProvince,
+                Quan: selectedDistrict,
+                Phuong: selectedWard
+            }).forEach(([key, value]) => {
                 formDataToSend.append(key, value);
             });
-
+    
             selectedImages.forEach(img => {
                 formDataToSend.append("images", img);
             });
-
+    
             if (isEditing) {
                 await nhaDatApi.update(formData.id, formDataToSend);
                 Swal.fire('Cập nhật thành công!', '', 'success');
@@ -109,30 +149,34 @@ function Batdongsan() {
                 await nhaDatApi.add(formDataToSend);
                 Swal.fire('Thêm thành công!', '', 'success');
             }
-
-            // *** Đây là chỗ quan trọng: gọi lại loadData với trang hiện tại ***
-            await loadData(currentPage, 5);
-
-            // Đóng modal và reset form, ảnh đã chọn
+    
+            // Làm mới trang sau khi thêm/sửa thành công
+            window.location.reload();
+            // Hoặc sử dụng loadData để cập nhật mà không làm mới toàn bộ trang
+            // await loadData(currentPage, 5);
             closeModal();
-
         } catch (error) {
             console.log(error);
             const errorMessage = error?.response?.data?.error || error?.response?.data?.message || 'Vui lòng thử lại.';
             Swal.fire('Lỗi!', errorMessage, 'error');
         }
     };
-
     const handleEdit = (item) => {
         setFormData({
             ...item,
             LoaiNhaDat_id: item.LoaiNhaDat?.id || null,
         });
+        setSelectedProvince(item.ThanhPho || "");
+        fetchDistricts(item.ThanhPho).then(() => {
+            setSelectedDistrict(item.Quan || "");
+            fetchWards(item.Quan).then(() => {
+                setSelectedWard(item.Phuong || "");
+            });
+        });
         setSelectedImages([]);
         setIsEditing(true);
         setShowModal(true);
     };
-
 
     const handleDelete = async (id) => {
         const confirm = await Swal.fire({
@@ -143,13 +187,13 @@ function Batdongsan() {
             confirmButtonText: 'Có, xóa!',
             cancelButtonText: 'Hủy'
         });
-
+    
         if (confirm.isConfirmed) {
             try {
                 await nhaDatApi.delete(id);
                 Swal.fire('Đã xóa!', 'Bất động sản đã bị xóa.', 'success');
-                const updatedList = await fetchNhaDatList();
-                setNhaDatList(updatedList);
+                // Làm mới trang sau khi xóa thành công
+                window.location.reload();
             } catch (error) {
                 Swal.fire('Lỗi!', 'Không thể xóa.', 'error');
             }
@@ -173,6 +217,9 @@ function Batdongsan() {
             Duong: "",
             SoNha: ""
         });
+        setSelectedProvince("");
+        setSelectedDistrict("");
+        setSelectedWard("");
         setIsEditing(false);
         setShowModal(true);
         setSelectedImages([]);
@@ -195,6 +242,9 @@ function Batdongsan() {
             Duong: "",
             SoNha: ""
         });
+        setSelectedProvince("");
+        setSelectedDistrict("");
+        setSelectedWard("");
         setSelectedImages([]);
         setIsEditing(false);
     };
@@ -310,9 +360,59 @@ function Batdongsan() {
                                         <label className="form-label">Địa chỉ</label>
                                         <input type="text" className="form-control" name="SoNha" value={formData.SoNha} onChange={handleChange} placeholder="Số nhà" />
                                         <input type="text" className="form-control mt-2" name="Duong" value={formData.Duong} onChange={handleChange} placeholder="Đường" />
-                                        <input type="text" className="form-control mt-2" name="Phuong" value={formData.Phuong} onChange={handleChange} placeholder="Phường" />
-                                        <input type="text" className="form-control mt-2" name="Quan" value={formData.Quan} onChange={handleChange} placeholder="Quận" />
-                                        <input type="text" className="form-control mt-2" name="ThanhPho" value={formData.ThanhPho} onChange={handleChange} placeholder="Thành phố" />
+                                        <div className="mb-3 mt-2">
+                                        <label className="form-label">Tỉnh/Thành *</label>
+                                        <select
+                                            className="form-select"
+                                            value={selectedProvince}
+                                            onChange={(e) => {
+                                                setSelectedProvince(e.target.value);
+                                                fetchDistricts(e.target.value);
+                                            }}
+                                        >
+                                            <option value="">-- Chọn tỉnh/thành --</option>
+                                            {provinces.map(province => (
+                                                <option key={province.code || province.Id} value={province.code || province.Id}>
+                                                    {province.Name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label">Quận/Huyện *</label>
+                                        <select
+                                            className="form-select"
+                                            value={selectedDistrict}
+                                            onChange={(e) => {
+                                                setSelectedDistrict(e.target.value);
+                                                fetchWards(e.target.value);
+                                            }}
+                                            disabled={!selectedProvince}
+                                        >
+                                            <option value="">-- Chọn quận/huyện --</option>
+                                            {districts.map(district => (
+                                                <option key={district.code || district.Id} value={district.code || district.Id}>
+                                                    {district.Name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label">Phường/Xã *</label>
+                                        <select
+                                            className="form-select"
+                                            value={selectedWard}
+                                            onChange={(e) => setSelectedWard(e.target.value)}
+                                            disabled={!selectedDistrict}
+                                        >
+                                            <option value="">-- Chọn phường/xã --</option>
+                                            {wards.map(ward => (
+                                                <option key={ward.code || ward.Id} value={ward.code || ward.Id}>
+                                                    {ward.Name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
                                     </div>
                                     <div className="row mb-3">
                                         <div className="col-md-4">
@@ -339,7 +439,6 @@ function Batdongsan() {
                                             accept="image/*"
                                         />
 
-                                        {/* Hiển thị ảnh hiện tại (khi edit) */}
                                         {isEditing && currentImages.length > 0 && (
                                             <div className="mt-2">
                                                 <div className="d-flex flex-wrap gap-2">
@@ -355,7 +454,6 @@ function Batdongsan() {
                                             </div>
                                         )}
 
-                                        {/* Hiển thị preview ảnh mới chọn */}
                                         <div className="mt-2 d-flex flex-wrap gap-2">
                                             {selectedImages.map((file, index) => (
                                                 <img
@@ -375,7 +473,6 @@ function Batdongsan() {
                             </div>
                         </div>
                     </div>
-
                 </div>
             )}
         </AdminPage>
