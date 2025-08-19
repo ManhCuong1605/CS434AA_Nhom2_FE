@@ -10,13 +10,13 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode> {/* Tắt Strict Mode để tránh duplicate calls */}
     <ChatProvider> {/* Bọc ChatProvider quanh App */}
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </ChatProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );
 
 // Nếu cần đo hiệu suất
