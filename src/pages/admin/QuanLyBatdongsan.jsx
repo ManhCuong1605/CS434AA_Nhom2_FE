@@ -22,6 +22,7 @@ function Batdongsan() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     const [formData, setFormData] = useState({
         MaNhaDat: "",
@@ -117,17 +118,19 @@ function Batdongsan() {
 
     const handleSubmit = async () => {
         const { MaNhaDat, TenNhaDat, LoaiNhaDat_id } = formData;
-    
+
         if (!MaNhaDat || !TenNhaDat || !LoaiNhaDat_id || !selectedProvince || !selectedDistrict || !selectedWard) {
             Swal.fire('Lỗi!', 'Vui lòng nhập đầy đủ các thông tin bắt buộc!', 'error');
             return;
         }
         if (MaNhaDat.length > 10) {
-            Swal.fire('Lỗi!', 'Mã nhà đất quá dài. Vui lòng nhập lại(dưới 10 ký tự)!', 'error');
+            Swal.fire('Lỗi!', 'Mã nhà đất quá dài. Vui lòng nhập lại (dưới 10 ký tự)!', 'error');
             return;
         }
-    
+
         try {
+            showLoading(); // <-- bật loading
+
             const formDataToSend = new FormData();
             Object.entries({
                 ...formData,
@@ -137,30 +140,30 @@ function Batdongsan() {
             }).forEach(([key, value]) => {
                 formDataToSend.append(key, value);
             });
-    
+
             selectedImages.forEach(img => {
                 formDataToSend.append("images", img);
             });
-    
+
             if (isEditing) {
                 await nhaDatApi.update(formData.id, formDataToSend);
+                hideLoading(); // <-- tắt loading
                 Swal.fire('Cập nhật thành công!', '', 'success');
             } else {
                 await nhaDatApi.add(formDataToSend);
+                hideLoading();
                 Swal.fire('Thêm thành công!', '', 'success');
             }
-    
-            // Làm mới trang sau khi thêm/sửa thành công
+
             window.location.reload();
-            // Hoặc sử dụng loadData để cập nhật mà không làm mới toàn bộ trang
-            // await loadData(currentPage, 5);
             closeModal();
         } catch (error) {
-            console.log(error);
+            hideLoading();
             const errorMessage = error?.response?.data?.error || error?.response?.data?.message || 'Vui lòng thử lại.';
             Swal.fire('Lỗi!', errorMessage, 'error');
         }
     };
+
     const handleEdit = (item) => {
         setFormData({
             ...item,
@@ -187,18 +190,21 @@ function Batdongsan() {
             confirmButtonText: 'Có, xóa!',
             cancelButtonText: 'Hủy'
         });
-    
+
         if (confirm.isConfirmed) {
             try {
+                showLoading(); // bật loading
                 await nhaDatApi.delete(id);
+                hideLoading(); // tắt loading
                 Swal.fire('Đã xóa!', 'Bất động sản đã bị xóa.', 'success');
-                // Làm mới trang sau khi xóa thành công
                 window.location.reload();
             } catch (error) {
+                hideLoading();
                 Swal.fire('Lỗi!', 'Không thể xóa.', 'error');
             }
         }
     };
+
 
     const openModal = () => {
         setFormData({
@@ -253,7 +259,19 @@ function Batdongsan() {
         const files = Array.from(e.target.files);
         setSelectedImages(prevImages => [...prevImages, ...files]);
     };
-
+    const showLoading = () => {
+        Swal.fire({
+            title: 'Đang xử lý...',
+            text: 'Vui lòng chờ trong giây lát',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    };
+    const hideLoading = () => {
+        Swal.close();
+    };
     return (
         <AdminPage>
             <h2 className="mb-4">Bất động sản</h2>
@@ -284,7 +302,7 @@ function Batdongsan() {
                                 <td>{item.TenNhaDat}</td>
                                 <td>{item.LoaiNhaDat?.TenLoaiDat || "Không xác định"}</td>
                                 <td>{item.MoTa}</td>
-                                <td>{`${item.SoNha}, ${item.Duong}, ${item.Phuong}, ${item.Quan}, ${item.ThanhPho}`}</td>
+                                <td>{`${item.Duong}, ${item.Phuong}, ${item.Quan}, ${item.ThanhPho}`}</td>
                                 <td>{item.GiaBan.toLocaleString()} VNĐ</td>
                                 <td>{item.DienTich} m²</td>
                                 <td>{item.Huong}</td>
@@ -358,61 +376,60 @@ function Batdongsan() {
                                     </div>
                                     <div className="mb-3">
                                         <label className="form-label">Địa chỉ</label>
-                                        <input type="text" className="form-control" name="SoNha" value={formData.SoNha} onChange={handleChange} placeholder="Số nhà" />
                                         <input type="text" className="form-control mt-2" name="Duong" value={formData.Duong} onChange={handleChange} placeholder="Đường" />
                                         <div className="mb-3 mt-2">
-                                        <label className="form-label">Tỉnh/Thành *</label>
-                                        <select
-                                            className="form-select"
-                                            value={selectedProvince}
-                                            onChange={(e) => {
-                                                setSelectedProvince(e.target.value);
-                                                fetchDistricts(e.target.value);
-                                            }}
-                                        >
-                                            <option value="">-- Chọn tỉnh/thành --</option>
-                                            {provinces.map(province => (
-                                                <option key={province.code || province.Id} value={province.code || province.Id}>
-                                                    {province.Name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label">Quận/Huyện *</label>
-                                        <select
-                                            className="form-select"
-                                            value={selectedDistrict}
-                                            onChange={(e) => {
-                                                setSelectedDistrict(e.target.value);
-                                                fetchWards(e.target.value);
-                                            }}
-                                            disabled={!selectedProvince}
-                                        >
-                                            <option value="">-- Chọn quận/huyện --</option>
-                                            {districts.map(district => (
-                                                <option key={district.code || district.Id} value={district.code || district.Id}>
-                                                    {district.Name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label">Phường/Xã *</label>
-                                        <select
-                                            className="form-select"
-                                            value={selectedWard}
-                                            onChange={(e) => setSelectedWard(e.target.value)}
-                                            disabled={!selectedDistrict}
-                                        >
-                                            <option value="">-- Chọn phường/xã --</option>
-                                            {wards.map(ward => (
-                                                <option key={ward.code || ward.Id} value={ward.code || ward.Id}>
-                                                    {ward.Name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                            <label className="form-label">Tỉnh/Thành *</label>
+                                            <select
+                                                className="form-select"
+                                                value={selectedProvince}
+                                                onChange={(e) => {
+                                                    setSelectedProvince(e.target.value);
+                                                    fetchDistricts(e.target.value);
+                                                }}
+                                            >
+                                                <option value="">-- Chọn tỉnh/thành --</option>
+                                                {provinces.map(province => (
+                                                    <option key={province.code || province.Id} value={province.code || province.Id}>
+                                                        {province.Name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="mb-3">
+                                            <label className="form-label">Quận/Huyện *</label>
+                                            <select
+                                                className="form-select"
+                                                value={selectedDistrict}
+                                                onChange={(e) => {
+                                                    setSelectedDistrict(e.target.value);
+                                                    fetchWards(e.target.value);
+                                                }}
+                                                disabled={!selectedProvince}
+                                            >
+                                                <option value="">-- Chọn quận/huyện --</option>
+                                                {districts.map(district => (
+                                                    <option key={district.code || district.Id} value={district.code || district.Id}>
+                                                        {district.Name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="mb-3">
+                                            <label className="form-label">Phường/Xã *</label>
+                                            <select
+                                                className="form-select"
+                                                value={selectedWard}
+                                                onChange={(e) => setSelectedWard(e.target.value)}
+                                                disabled={!selectedDistrict}
+                                            >
+                                                <option value="">-- Chọn phường/xã --</option>
+                                                {wards.map(ward => (
+                                                    <option key={ward.code || ward.Id} value={ward.code || ward.Id}>
+                                                        {ward.Name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
                                     </div>
                                     <div className="row mb-3">
                                         <div className="col-md-4">

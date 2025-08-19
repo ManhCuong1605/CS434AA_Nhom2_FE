@@ -3,10 +3,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import banner1 from "../assets/slide/banner1.jpg";
 import banner2 from "../assets/slide/banner2.jpg";
 import banner3 from "../assets/slide/banner3.jpg";
+import banner4 from "../assets/slide/banner4.jpg";
 
 function Slide() {
     const [activeIndex, setActiveIndex] = useState(0);
-    const images = [banner1, banner2, banner3];
+    const images = [banner1, banner2, banner3, banner4];
 
 
     const prevSlide = () => {
