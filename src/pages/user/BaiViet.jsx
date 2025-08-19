@@ -125,7 +125,7 @@ const BaiViet = () => {
                             <Card.Body>
                                 <h3 className="mb-4 text-center text-black">
                                     Đăng bài viết bất động sản
-                                </h3>                                {/* KHÔNG dùng Alert nữa */}
+                                </h3>
                                 <Form onSubmit={handleSubmit} encType="multipart/form-data">
                                     <Form.Group className="mb-3" controlId="tieuDe">
                                         <Form.Label>Tiêu đề <span style={{ color: 'red' }}>*</span></Form.Label>

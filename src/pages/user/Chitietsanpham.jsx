@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { Modal, Button, Form } from "react-bootstrap"; // Import React Bootstrap
 import "../../style/Chitietsanpham.css";
 import MoTaChiTiet from "../../components/MoTaChiTiet";
-import { useChat } from "../../context/ChatContext"; // Import context
+import { useChat } from "../../context/ChatContext";
 import nhaDatApi from "../../api/NhaDatApi";
-
-
+import datLichHenApi from "../../api/DatLichHenApi";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ChiTietSanPham = () => {
     const { id } = useParams();
@@ -13,13 +15,17 @@ const ChiTietSanPham = () => {
     const [product, setProduct] = useState(null);
     const [selectedImage, setSelectedImage] = useState("");
 
+    // State modal
+    const [showModal, setShowModal] = useState(false);
+    const [selectedDate, setSelectedDate] = useState("");
+    const [selectedTime, setSelectedTime] = useState("");
+
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const res = await nhaDatApi.getById(id); // Gọi API BE
+                const res = await nhaDatApi.getById(id);
                 const data = res.data;
 
-                // Mapping dữ liệu BE sang UI
                 const mappedData = {
                     title: data.TenNhaDat,
                     price: `${Number(data.GiaBan).toLocaleString()} VND`,
@@ -27,9 +33,10 @@ const ChiTietSanPham = () => {
                     pricePerM2: data.GiaBan && data.DienTich ? `${Math.round(data.GiaBan / data.DienTich).toLocaleString()} VND/m²` : "",
                     location: `${data.Duong}, ${data.Phuong}, ${data.Quan}, ${data.ThanhPho}`,
                     images: data.hinhAnh?.map(img => img.url) || [],
-                    contact: "0969 524 111", // tạm thời hardcode
-                    agent: "Nguyễn Bình Gold", // tạm thời hardcode
+                    contact: "0969 524 111",
+                    agent: "Nguyễn Bình Gold",
                     description: data.MoTa,
+                    type: "nhaDat" // giả sử mặc định là nhà đất
                 };
 
                 setProduct(mappedData);
@@ -46,6 +53,30 @@ const ChiTietSanPham = () => {
         return <div className="product-container">Đang tải chi tiết sản phẩm...</div>;
     }
 
+    const handleBookAppointment = async () => {
+        if (!selectedDate || !selectedTime) {
+            toast.error("Vui lòng chọn ngày và giờ hẹn!");
+            return;
+        }
+
+        const selectedDateTime = new Date(`${selectedDate}T${selectedTime}:00`);
+        const now = new Date();
+
+        if (selectedDateTime < now) {
+            toast.error("Ngày giờ hẹn không được nhỏ hơn hiện tại!");
+            return;
+        }
+
+        try {
+            const res = await datLichHenApi.datLichHen(id, selectedDateTime.toISOString());
+            toast.success(res.data.message); // thông báo thành công
+            setShowModal(false);
+            setSelectedDate("");
+            setSelectedTime("");
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Đặt lịch thất bại");
+        }
+    };
     return (
         <div className="product-container">
             <div className="product-top">
@@ -54,7 +85,6 @@ const ChiTietSanPham = () => {
                     <div className="main-image-wrapper">
                         <img src={selectedImage} alt="Ảnh chính" className="main-image" />
                     </div>
-
                     <div className="thumbnail-list">
                         {product.images.map((img, index) => (
                             <img
@@ -80,40 +110,24 @@ const ChiTietSanPham = () => {
                     )}
 
                     <div className="contact-box">
-                        <p><strong>{product.type === "baiViet" ? "Người đăng" : "Môi giới"}: {product.agent}</strong></p>
+                        <p><strong>Môi giới: {product.agent}</strong></p>
                         <p className="contact-number">☎ {product.contact}</p>
-                        {product.type === "baiViet" ? (
-                            <div className="contact-buttons">
-                                <button 
-                                    className="contact-button" 
-                                    onClick={() => {
-                                        if (product.contact && product.contact !== "Chưa có số điện thoại") {
-                                            window.open(`tel:${product.contact}`, '_blank');
-                                        } else {
-                                            alert('Không có số điện thoại liên hệ!');
-                                        }
-                                    }}
-                                >
-                                    Gọi ngay
-                                </button>
-                                <button 
-                                    className="contact-button secondary" 
-                                    onClick={() => {
-                                        if (product.contact && product.contact !== "Chưa có số điện thoại") {
-                                            window.open(`https://zalo.me/${product.contact}`, '_blank');
-                                        } else {
-                                            alert('Không có số điện thoại liên hệ!');
-                                        }
-                                    }}
-                                >
-                                    Chat Zalo
-                                </button>
-                            </div>
-                        ) : (
-                            <button className="contact-button" onClick={() => setIsChatOpen(true)}>
+
+                        <div className="d-flex">
+                            <button
+                                className="btn btn-primary me-2"
+                                onClick={() => setIsChatOpen(true)}
+                            >
                                 Liên hệ ngay
                             </button>
-                        )}
+
+                            <button
+                                className="btn btn-outline-primary"
+                                onClick={() => setShowModal(true)}
+                            >
+                                Đặt lịch hẹn
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -122,8 +136,45 @@ const ChiTietSanPham = () => {
             <div className="product-description">
                 <MoTaChiTiet description={product.description} />
             </div>
-        </div>
 
+            {/* Modal đặt lịch hẹn */}
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Đặt lịch hẹn</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Chọn ngày hẹn</Form.Label>
+                            <Form.Control
+                                type="date"
+                                value={selectedDate}
+                                onChange={(e) => setSelectedDate(e.target.value)}
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Chọn giờ hẹn</Form.Label>
+                            <Form.Control
+                                type="time"
+                                value={selectedTime}
+                                onChange={(e) => setSelectedTime(e.target.value)}
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                        Hủy
+                    </Button>
+                    <Button variant="primary" onClick={handleBookAppointment}>
+                        Đặt lịch
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <ToastContainer position="top-right" autoClose={3000} />
+
+        </div>
     );
-}
+};
+
 export default ChiTietSanPham;

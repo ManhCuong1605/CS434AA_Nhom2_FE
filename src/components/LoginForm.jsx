@@ -28,7 +28,7 @@ function LoginForm() {
                 window.dispatchEvent(new Event("storage")); // Cập nhật Header ngay lập tức
 
                 alert("Đăng nhập thành công!");
-                if (response.data.roles?.includes("ADMIN")) {
+                if (response.data.roles?.some(role => ["ADMIN", "NHANVIEN"].includes(role))) {
                     navigate("/admin", { replace: true });
                 } else {
                     navigate("/", { replace: true });

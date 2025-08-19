@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import '../../style/AdminPage.css';
 import { useNavigate } from "react-router-dom";
@@ -8,8 +8,9 @@ import {
     UserOutlined,
     ClusterOutlined,
     HomeOutlined,
-    ShoppingCartOutlined,
-    SolutionOutlined,
+    TeamOutlined,
+    IdcardOutlined,
+    FileTextOutlined,
 } from '@ant-design/icons';
 import { Button, Layout, Menu, theme } from 'antd';
 import { Avatar } from 'antd';
@@ -18,8 +19,15 @@ const { Header, Sider, Content } = Layout;
 
 function AdminPage({ children }) {
     const [collapsed, setCollapsed] = useState(false);
+    const [roles, setRoles] = useState([]);
     const { token: { colorBgContainer, borderRadiusLG } } = theme.useToken();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const storedRoles = JSON.parse(localStorage.getItem('roles') || '[]');
+        setRoles(storedRoles);
+    }, []);
+
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
@@ -27,6 +35,8 @@ function AdminPage({ children }) {
         window.dispatchEvent(new Event("storage")); // Gửi sự kiện cập nhật
         navigate("/dang-nhap", { replace: true }); // Điều hướng đến trang đăng nhập
     };
+
+    const isAdmin = roles.includes('ADMIN');
 
     return (
         <Layout>
@@ -53,19 +63,22 @@ function AdminPage({ children }) {
                     <Menu.Item key="2" icon={<HomeOutlined />}>
                         <Link to="/admin/batdongsan">Bất động sản</Link>
                     </Menu.Item>
-                    <Menu.Item key="3" icon={<UserOutlined />}>
-                        <Link to="/admin/user">Người dùng</Link>
-                    </Menu.Item>
-                    <Menu.Item key="4" icon={<ShoppingCartOutlined />}>
+                    {isAdmin && (
+                        <Menu.Item key="3" icon={<UserOutlined />}>
+                            <Link to="/admin/user">Người dùng</Link>
+                        </Menu.Item>
+                    )}
+                    <Menu.Item key="4" icon={<TeamOutlined />}>
                         <Link to="/admin/khachhang">Khách hàng</Link>
                     </Menu.Item>
-                    <Menu.Item key="5" icon={<SolutionOutlined />}>
-                        <Link to="/admin/nhanVien">Nhân viên</Link>
-                    </Menu.Item>
-                    <Menu.Item key="6" icon={<SolutionOutlined />}>
+                    {isAdmin && (   //Phân quyền Admin và nhân viên
+                        <Menu.Item key="5" icon={<IdcardOutlined />}>
+                            <Link to="/admin/nhanVien">Nhân viên</Link>
+                        </Menu.Item>
+                    )}
+                    <Menu.Item key="6" icon={<FileTextOutlined />}>
                         <Link to="/admin/quanLyBaiViet">Quản Lý Bài Viết</Link>
                     </Menu.Item>
-
                 </Menu>
             </Sider>
 
@@ -117,7 +130,6 @@ function AdminPage({ children }) {
                         >
                             Logout
                         </Button>
-
                     </div>
                 </Header>
 

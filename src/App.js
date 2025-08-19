@@ -18,6 +18,8 @@ import QuenMatKhau from "./pages/user/QuenMatKhau";
 import DoiMatKhau from "./pages/user/DoiMatKhau";
 import BaiViet from "./pages/user/BaiViet";
 import ChiTietBaiViet from "./pages/user/ChiTietBaiViet";
+
+
 function App() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
@@ -28,9 +30,10 @@ function App() {
       {!isAdminPage && <Header />}
 
       <Routes>
-        <Route element={<PrivateRoute allowedRoles={["ADMIN"]} />}>
+        <Route element={<PrivateRoute allowedRoles={["ADMIN", "NHANVIEN"]} />}>
           <Route path="/admin/*" element={<AdminLayout />} />
         </Route>
+
         <Route path="/*" element={<MainLayout onChatToggle={() => setIsChatOpen(true)} />} />
         <Route path="/dang-nhap" element={<LoginForm />} />
         <Route path="/dang-ky" element={<RegisterForm />} />
