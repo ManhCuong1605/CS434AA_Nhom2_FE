@@ -5,8 +5,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../../style/Trangchu.css";
 import { useNavigate } from "react-router-dom";
 import nhaDatApi from "../../api/NhaDatApi";
+import NhaDatNoiBat from "../../components/NhaDatNoiBat";
 
-const { Meta } = Card;
 
 const diaDiemData = [
     { id: 1, title: "Thành Phố Hồ Chí Minh", image: require("../../assets/locations/hcm.jpg"), large: true },
@@ -119,49 +119,7 @@ const Trangchu = () => {
 
             {/* Sản phẩm nổi bật */}
             <Container>
-                <h2 className="text-center mb-4">Sản phẩm nổi bật</h2>
-                <Row gutter={[16, 16]}>
-                    {nhaDatList.map((item) => (
-                        <Col xs={24} sm={12} md={6} lg={6} key={item.id}>
-                            <Card
-                                hoverable
-                                cover={
-                                    <img
-                                        alt={item.TenNhaDat}
-                                        src={
-                                            item.hinhAnh && item.hinhAnh.length > 0
-                                                ? item.hinhAnh[0].url
-                                                : "/default-image.jpg"
-                                        }
-                                        className="img-fluid card-image"
-                                    />
-                                }
-                                className="shadow-sm card-container"
-                            >
-                                <Meta title={<span className="card-title">{item.TenNhaDat}</span>} />
-                                <p className="card-price text-dark fw-normal">
-                                    {item.Quan}, {item.ThanhPho}
-                                </p>
-                                <p className="card-price">
-                                    {Number(item.GiaBan).toLocaleString("vi-VN", {
-                                        style: "currency",
-                                        currency: "VND",
-                                    })}
-                                </p>
-                                <Button type="primary" block onClick={() => navigate(`/bat-dong-san/${item.id}`)}>
-                                    Xem chi tiết
-                                </Button>
-                            </Card>
-                        </Col>
-                    ))}
-                </Row>
-                {hasMore && (
-                    <div className="d-flex justify-content-center mt-4">
-                        <Button type="primary" size="large" style={{ borderRadius: 24, fontWeight: 600, padding: '8px 36px' }} onClick={handleXemThem}>
-                            Xem thêm
-                        </Button>
-                    </div>
-                )}
+                <NhaDatNoiBat />
             </Container>
 
             {/* Bất động sản theo địa điểm */}

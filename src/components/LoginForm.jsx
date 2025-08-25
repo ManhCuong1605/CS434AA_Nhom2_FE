@@ -22,19 +22,23 @@ function LoginForm() {
             if (response.data?.token) {
                 localStorage.setItem("token", response.data.token);
                 localStorage.setItem("username", username);
-                // eslint-disable-next-line no-unused-vars
                 localStorage.setItem("roles", JSON.stringify(response.data.roles || []));
+
+                // Lưu nhanVienId nếu có
+                if (response.data.nhanVienId) {
+                    localStorage.setItem("nhanVienId", response.data.nhanVienId);
+                }
 
                 window.dispatchEvent(new Event("storage")); // Cập nhật Header ngay lập tức
 
                 alert("Đăng nhập thành công!");
+
                 if (response.data.roles?.some(role => ["ADMIN", "NHANVIEN"].includes(role))) {
                     navigate("/admin", { replace: true });
                 } else {
                     navigate("/", { replace: true });
                 }
-            }
-            else {
+            } else {
                 setError("Dữ liệu phản hồi không hợp lệ!");
             }
         } catch (error) {
@@ -42,6 +46,7 @@ function LoginForm() {
             setError(error.response?.data?.error || "Đăng nhập thất bại!");
         }
     };
+
     return (
         <>
             <div className="container d-flex justify-content-center align-items-center vh-100 bg-light">

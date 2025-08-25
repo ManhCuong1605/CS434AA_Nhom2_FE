@@ -11,6 +11,7 @@ import {
     TeamOutlined,
     IdcardOutlined,
     FileTextOutlined,
+    CalendarOutlined,
 } from '@ant-design/icons';
 import { Button, Layout, Menu, theme } from 'antd';
 import { Avatar } from 'antd';
@@ -37,6 +38,7 @@ function AdminPage({ children }) {
     };
 
     const isAdmin = roles.includes('ADMIN');
+    const isNhanVien = roles.includes("NHANVIEN");
 
     return (
         <Layout>
@@ -58,10 +60,10 @@ function AdminPage({ children }) {
                     mode="inline"
                     defaultSelectedKeys={['1']}>
                     <Menu.Item key="1" icon={<ClusterOutlined />}>
-                        <Link to="/admin/loaidat">Loại đất</Link>
+                        <Link to="/admin/loaiDat">Loại đất</Link>
                     </Menu.Item>
                     <Menu.Item key="2" icon={<HomeOutlined />}>
-                        <Link to="/admin/batdongsan">Bất động sản</Link>
+                        <Link to="/admin/batDongSan">Bất động sản</Link>
                     </Menu.Item>
                     {isAdmin && (
                         <Menu.Item key="3" icon={<UserOutlined />}>
@@ -69,7 +71,7 @@ function AdminPage({ children }) {
                         </Menu.Item>
                     )}
                     <Menu.Item key="4" icon={<TeamOutlined />}>
-                        <Link to="/admin/khachhang">Khách hàng</Link>
+                        <Link to="/admin/khachHang">Khách hàng</Link>
                     </Menu.Item>
                     {isAdmin && (   //Phân quyền Admin và nhân viên
                         <Menu.Item key="5" icon={<IdcardOutlined />}>
@@ -77,8 +79,20 @@ function AdminPage({ children }) {
                         </Menu.Item>
                     )}
                     <Menu.Item key="6" icon={<FileTextOutlined />}>
-                        <Link to="/admin/quanLyBaiViet">Quản Lý Bài Viết</Link>
+                        <Link to="/admin/quanLyBaiViet">Quản Lý bài viết</Link>
                     </Menu.Item>
+                    {isAdmin && (
+                        <Menu.Item key="7" icon={<CalendarOutlined />}>
+                            <Link to="/admin/quanLyLichHen">Quản Lý lịch hẹn</Link>
+                        </Menu.Item>
+                    )}
+                    {isNhanVien && (
+                        <Menu.Item key="nv1" icon={<CalendarOutlined />}>
+                            <Link to={`/admin/nhanvien/lichhen/${localStorage.getItem("nhanVienId")}`}>
+                                Lịch hẹn của tôi
+                            </Link>
+                        </Menu.Item>
+                    )}
                 </Menu>
             </Sider>
 

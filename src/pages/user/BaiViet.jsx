@@ -481,7 +481,7 @@ const BaiViet = () => {
                                     <div className="text-center">
                                         <Button
                                             type="submit"
-                                            variant="primary"
+                                            variant="dark"
                                             size="lg"
                                             disabled={loading}
                                             className="px-5"

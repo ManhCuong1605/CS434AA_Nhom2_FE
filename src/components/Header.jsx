@@ -44,10 +44,10 @@ const Header = () => {
                         <Nav className="ms-auto">
                             <Nav.Link onClick={() => navigate("/")}>Trang Chủ</Nav.Link>
                             <Nav.Link onClick={() => navigate("/bat-dong-san")}>Bất động sản</Nav.Link>
-                            <Nav.Link href="/tin-tuc">Tin tức</Nav.Link>
+                            <Nav.Link href="/tin-tuc">Bài viết</Nav.Link>
                             <Nav.Link href="/gioi-thieu">Giới thiệu</Nav.Link>
                             <Nav.Link href="/du-an">Dự án</Nav.Link>
-                           
+
                             <Nav.Link href="/wiki">Wiki BĐS</Nav.Link>
                             <Nav.Link href="/ban-dat">Bán đất</Nav.Link>
                             <Nav.Link href="/form-bai-viet">Đăng bài viết</Nav.Link>
@@ -58,13 +58,13 @@ const Header = () => {
                                 <NavDropdown title={<span className="fw-bold fs-5">{user}</span>} id="user-dropdown">
 
                                     <NavDropdown.Item onClick={() => navigate("/profile")}>Hồ sơ</NavDropdown.Item>
-                                   
+
                                     <NavDropdown.Item onClick={() => navigate("/danh-muc-yeu-thich")}>
-                                    Danh mục yêu thích
-                                </NavDropdown.Item>
+                                        Danh mục yêu thích
+                                    </NavDropdown.Item>
                                     <NavDropdown.Item onClick={handleLogout}>Đăng xuất</NavDropdown.Item>
                                 </NavDropdown>
-                            ) : (   
+                            ) : (
                                 <>
                                     <Button variant="outline-primary" className="me-2" onClick={() => navigate("/dang-nhap")}>
                                         Đăng nhập

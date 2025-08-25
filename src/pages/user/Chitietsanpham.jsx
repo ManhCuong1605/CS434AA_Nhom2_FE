@@ -1,24 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Modal, Button, Form } from "react-bootstrap"; // Import React Bootstrap
 import "../../style/Chitietsanpham.css";
 import MoTaChiTiet from "../../components/MoTaChiTiet";
 import { useChat } from "../../context/ChatContext";
 import nhaDatApi from "../../api/NhaDatApi";
-import datLichHenApi from "../../api/DatLichHenApi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import DatLichHenModal from "../../components/DatLichHenModal";
 
 const ChiTietSanPham = () => {
     const { id } = useParams();
     const { setIsChatOpen } = useChat();
     const [product, setProduct] = useState(null);
     const [selectedImage, setSelectedImage] = useState("");
-
-    // State modal
     const [showModal, setShowModal] = useState(false);
-    const [selectedDate, setSelectedDate] = useState("");
-    const [selectedTime, setSelectedTime] = useState("");
+
+
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -53,34 +50,10 @@ const ChiTietSanPham = () => {
         return <div className="product-container">Đang tải chi tiết sản phẩm...</div>;
     }
 
-    const handleBookAppointment = async () => {
-        if (!selectedDate || !selectedTime) {
-            toast.error("Vui lòng chọn ngày và giờ hẹn!");
-            return;
-        }
 
-        const selectedDateTime = new Date(`${selectedDate}T${selectedTime}:00`);
-        const now = new Date();
-
-        if (selectedDateTime < now) {
-            toast.error("Ngày giờ hẹn không được nhỏ hơn hiện tại!");
-            return;
-        }
-
-        try {
-            const res = await datLichHenApi.datLichHen(id, selectedDateTime.toISOString());
-            toast.success(res.data.message); // thông báo thành công
-            setShowModal(false);
-            setSelectedDate("");
-            setSelectedTime("");
-        } catch (error) {
-            toast.error(error.response?.data?.message || "Đặt lịch thất bại");
-        }
-    };
     return (
         <div className="product-container">
             <div className="product-top">
-                {/* BÊN TRÁI - HÌNH ẢNH */}
                 <div className="product-left">
                     <div className="main-image-wrapper">
                         <img src={selectedImage} alt="Ảnh chính" className="main-image" />
@@ -98,7 +71,6 @@ const ChiTietSanPham = () => {
                     </div>
                 </div>
 
-                {/* BÊN PHẢI - THÔNG TIN */}
                 <div className="product-right">
                     <h2 className="product-title">{product.title}</h2>
                     <p className="product-location">Địa chỉ: {product.location}</p>
@@ -123,7 +95,14 @@ const ChiTietSanPham = () => {
 
                             <button
                                 className="btn btn-outline-primary"
-                                onClick={() => setShowModal(true)}
+                                onClick={() => {
+                                    const token = localStorage.getItem("token"); // kiểm tra token
+                                    if (!token) {
+                                        toast.error("Vui lòng đăng nhập để đặt lịch hẹn!");
+                                    } else {
+                                        setShowModal(true); // mở modal nếu đã đăng nhập
+                                    }
+                                }}
                             >
                                 Đặt lịch hẹn
                             </button>
@@ -132,49 +111,22 @@ const ChiTietSanPham = () => {
                 </div>
             </div>
 
-            {/* PHẦN MÔ TẢ NẰM DƯỚI */}
             <div className="product-description">
                 <MoTaChiTiet description={product.description} />
             </div>
 
             {/* Modal đặt lịch hẹn */}
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Đặt lịch hẹn</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Chọn ngày hẹn</Form.Label>
-                            <Form.Control
-                                type="date"
-                                value={selectedDate}
-                                onChange={(e) => setSelectedDate(e.target.value)}
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Chọn giờ hẹn</Form.Label>
-                            <Form.Control
-                                type="time"
-                                value={selectedTime}
-                                onChange={(e) => setSelectedTime(e.target.value)}
-                            />
-                        </Form.Group>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowModal(false)}>
-                        Hủy
-                    </Button>
-                    <Button variant="primary" onClick={handleBookAppointment}>
-                        Đặt lịch
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-            <ToastContainer position="top-right" autoClose={3000} />
+            <DatLichHenModal
+                show={showModal}
+                onClose={() => setShowModal(false)}
+                nhaDatId={id}
+            />
 
+            <ToastContainer position="top-right" autoClose={3000} />
         </div>
     );
 };
+
+
 
 export default ChiTietSanPham;

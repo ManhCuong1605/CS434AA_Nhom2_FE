@@ -50,6 +50,7 @@ function App() {
         <Route path="/reset-password" element={<DoiMatKhau />} />
         <Route path="/form-bai-viet" element={<BaiViet />} />
         <Route path="/bai-viet/:id" element={<ChiTietBaiViet />} />
+
       </Routes>
 
       {/* Footer + Chat chỉ hiện ở user */}
