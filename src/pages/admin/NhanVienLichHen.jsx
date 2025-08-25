@@ -3,7 +3,7 @@ import datLichHenApi from "../../api/DatLichHenApi";
 import Swal from "sweetalert2";
 import AdminPage from './AdminPage'; // layout chính
 
-const NhanVien_LichHen = () => {
+const NhanVienLichHen = () => {
     const [lichHenList, setLichHenList] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -105,4 +105,4 @@ const NhanVien_LichHen = () => {
     );
 };
 
-export default NhanVien_LichHen;
+export default NhanVienLichHen;

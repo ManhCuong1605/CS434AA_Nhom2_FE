@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, Container, Row, Col, Button, Spinner, Badge } from "react-bootstrap";
+import { Card, Container, Row, Col, Button, Spinner } from "react-bootstrap";
 import quanLyBaiVietApi from "../../api/QuanLyBaiVietApi.jsx";
 import diaChiApi from "../../api/DiaChiApi.jsx";
 import { useChat } from "../../context/ChatContext";
@@ -315,7 +315,7 @@ const ChiTietBaiViet = () => {
                                 </div>
                             </div>
 
-                           
+
 
                             <div className="d-grid gap-2">
                                 <Button

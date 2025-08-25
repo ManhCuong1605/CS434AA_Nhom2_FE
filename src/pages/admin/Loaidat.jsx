@@ -42,7 +42,7 @@ function Loaidat() {
 
     const handleSubmit = async () => {
         const maLoaiRegex = /^[A-Za-z0-9]+$/; // Cho phép chữ và số, không có ký tự đặc biệt
-        const tenLoaiRegex = /^[A-Za-zÀ-ỹ0-9\s\-]+$/; // Cho phép tiếng Việt, chữ, số, khoảng trắng và dấu gạch ngang
+        const tenLoaiRegex = /^[A-Za-zÀ-ỹ0-9\s-]+$/; // Cho phép tiếng Việt, chữ, số, khoảng trắng và dấu gạch ngang
 
         if (!formData.MaLoaiDat.trim()) {
             Swal.fire({

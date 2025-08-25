@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import quanLyBaiVietApi from "../../api/QuanLyBaiVietApi.jsx";
 import diaChiApi from "../../api/DiaChiApi.jsx";
-import { Card, Button, Spinner, Container, Row, Col } from "react-bootstrap";
+import { Button, Spinner, Container, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PhanTrang from "../../components/PhanTrang.jsx";

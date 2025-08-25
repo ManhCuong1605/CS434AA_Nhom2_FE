@@ -8,7 +8,7 @@ import KhachHang from "../pages/admin/KhachHang";
 import NhanVien from "../pages/admin/NhanVien";
 import QuanLyBaiViet from "../pages/admin/QuanLyBaiViet";
 import QuanLyLichHen from "../pages/admin/QuanLyLichHen";
-import NhanVien_LichHen from "../pages/admin/NhanVien_LichHen";
+import NhanVienLichHen from "../pages/admin/NhanVienLichHen";
 
 const AdminLayout = () => {
     return (
@@ -25,7 +25,7 @@ const AdminLayout = () => {
                 <Route path="/quanLyLichHen" element={<QuanLyLichHen />} />
                 <Route
                     path="/nhanvien/lichhen/:nhanVienId"
-                    element={<NhanVien_LichHen />}
+                    element={<NhanVienLichHen />}
                 />
             </Routes>
         </div>

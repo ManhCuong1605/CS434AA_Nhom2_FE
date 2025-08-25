@@ -259,7 +259,7 @@ const BaiViet = () => {
                     show={showToast}
                     delay={3000}
                     autohide
-                    className="custom-toast"
+                    className={`custom-toast ${statusType === 'success' ? 'bg-success text-white' : 'bg-danger text-white'}`}
                 >
                     <Toast.Body className="custom-toast-body">
                         {statusMessage}

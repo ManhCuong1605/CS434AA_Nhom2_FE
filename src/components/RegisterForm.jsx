@@ -10,7 +10,6 @@ function RegisterForm() {
   const [hoTen, setHoTen] = useState("");
   const [soDienThoai, setSoDienThoai] = useState("");
   const [email, setEmail] = useState("");
-  const [diaChi, setDiaChi] = useState("");
   const [otp, setOtp] = useState("");
   const [showOTP, setShowOTP] = useState(false);
   const [tempData, setTempData] = useState(null);
@@ -48,7 +47,6 @@ function RegisterForm() {
         HoTen: hoTen,
         SoDienThoai: soDienThoai,
         email,
-        DiaChi: diaChi,
       };
 
       const res = await axios.post("http://localhost:5000/api/register/send-otp", userData, {

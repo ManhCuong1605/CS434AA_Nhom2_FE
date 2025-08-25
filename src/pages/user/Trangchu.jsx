@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Card, Col, Row, Button } from "antd";
 import { Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../style/Trangchu.css";
 import { useNavigate } from "react-router-dom";
-import nhaDatApi from "../../api/NhaDatApi";
+
 import NhaDatNoiBat from "../../components/NhaDatNoiBat";
 
 
@@ -24,38 +24,8 @@ const realEstateFeatures = [
 ];
 
 const Trangchu = () => {
-    const [nhaDatList, setNhaDatList] = useState([]);
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
+
     const navigate = useNavigate();
-
-    useEffect(() => {
-        loadData(1, true); // load trang đầu khi vào trang chủ
-    }, []);
-
-    const loadData = async (pageToLoad = 1, isFirst = false) => {
-        try {
-            const response = await nhaDatApi.getAll({ page: pageToLoad, limit: 8 });
-            const newData = response.data.data;
-            if (isFirst) {
-                setNhaDatList(newData);
-            } else {
-                setNhaDatList(prev => [...prev, ...newData]);
-            }
-            setHasMore(newData.length === 8); // Nếu trả về đủ 8 thì còn dữ liệu
-        } catch (error) {
-            console.error("Lỗi khi tải dữ liệu:", error);
-            if (isFirst) setNhaDatList([]);
-            setHasMore(false);
-        }
-    };
-
-    const handleXemThem = () => {
-        const nextPage = page + 1;
-        loadData(nextPage);
-        setPage(nextPage);
-    };
-
     return (
         <>
             {/* Banner/Hero Section */}

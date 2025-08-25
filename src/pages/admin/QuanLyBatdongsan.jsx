@@ -22,7 +22,6 @@ function Batdongsan() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
-    const [loading, setLoading] = useState(false);
 
     const [formData, setFormData] = useState({
         MaNhaDat: "",
@@ -177,6 +176,7 @@ function Batdongsan() {
             });
         });
         setSelectedImages([]);
+        setCurrentImages(item.hinhAnh);
         setIsEditing(true);
         setShowModal(true);
     };
@@ -252,6 +252,7 @@ function Batdongsan() {
         setSelectedDistrict("");
         setSelectedWard("");
         setSelectedImages([]);
+        setCurrentImages([]);
         setIsEditing(false);
     };
 
@@ -275,6 +276,7 @@ function Batdongsan() {
     return (
         <AdminPage>
             <h2 className="mb-4">Bất động sản</h2>
+            <p className="text-muted">Tổng số bất động sản: {totalItems}</p>
             <button type="button" className="btn btn-primary mb-3" onClick={openModal}>Thêm bất động sản</button>
             {nhaDatList.length > 0 ? (
                 <table className="table">
