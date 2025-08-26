@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import '../../style/AdminPage.css';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -23,11 +23,17 @@ function AdminPage({ children }) {
     const [roles, setRoles] = useState([]);
     const { token: { colorBgContainer, borderRadiusLG } } = theme.useToken();
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const storedRoles = JSON.parse(localStorage.getItem('roles') || '[]');
         setRoles(storedRoles);
-    }, []);
+
+        // Kiểm tra và điều hướng nếu là ADMIN và không phải đang ở trang đăng nhập
+        if (storedRoles.includes('ADMIN') && location.pathname === '/admin') {
+            navigate('/admin/loaiDat', { replace: true });
+        }
+    }, [navigate, location.pathname]);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -39,6 +45,21 @@ function AdminPage({ children }) {
 
     const isAdmin = roles.includes('ADMIN');
     const isNhanVien = roles.includes("NHANVIEN");
+
+    // Ánh xạ URL với key số
+    const pathToKey = {
+        '/admin/loaiDat': '1',
+        '/admin/batDongSan': '2',
+        '/admin/user': '3',
+        '/admin/khachHang': '4',
+        '/admin/nhanVien': '5',
+        '/admin/quanLyBaiViet': '6',
+        '/admin/quanLyLichHen': '7',
+        [`/admin/nhanvien/lichhen/${localStorage.getItem("nhanVienId")}`]: 'nv1',
+    };
+
+    // Lấy key tương ứng với URL hiện tại
+    const selectedKey = pathToKey[location.pathname] || '1'; // Mặc định là '1' nếu không khớp
 
     return (
         <Layout>
@@ -58,7 +79,7 @@ function AdminPage({ children }) {
                 <Menu
                     theme="dark"
                     mode="inline"
-                    defaultSelectedKeys={['1']}>
+                    selectedKeys={[selectedKey]}>
                     <Menu.Item key="1" icon={<ClusterOutlined />}>
                         <Link to="/admin/loaiDat">Loại đất</Link>
                     </Menu.Item>
@@ -73,7 +94,7 @@ function AdminPage({ children }) {
                     <Menu.Item key="4" icon={<TeamOutlined />}>
                         <Link to="/admin/khachHang">Khách hàng</Link>
                     </Menu.Item>
-                    {isAdmin && (   //Phân quyền Admin và nhân viên
+                    {isAdmin && (
                         <Menu.Item key="5" icon={<IdcardOutlined />}>
                             <Link to="/admin/nhanVien">Nhân viên</Link>
                         </Menu.Item>

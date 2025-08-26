@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom";
 import loginImage from '../assets/login.png';
 import { Link } from "react-router-dom";
 import axios from "axios";
+
 function LoginForm() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
-
+    const [showPassword, setShowPassword] = useState(false);
     const handleLogin = async (e) => {
         e.preventDefault();
         setError("");
@@ -45,6 +46,10 @@ function LoginForm() {
             console.error("Lỗi đăng nhập:", error);
             setError(error.response?.data?.error || "Đăng nhập thất bại!");
         }
+    };
+
+    const togglePassword = () => {
+        setShowPassword(!showPassword);
     };
 
     return (
@@ -96,15 +101,19 @@ function LoginForm() {
                                         <i className="bi bi-lock"></i>
                                     </span>
                                     <input
-                                        type="password"
+                                        type={showPassword ? "text" : "password"} // Toggle type
                                         className="form-control"
                                         id="password"
                                         placeholder="Nhập mật khẩu"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                     />
-                                    <button className="btn btn-outline-secondary" type="button">
-                                        <i className="bi bi-eye"></i>
+                                    <button
+                                        className="btn btn-outline-secondary"
+                                        type="button"
+                                        onClick={togglePassword}
+                                    >
+                                        <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
                                     </button>
                                 </div>
                                 {error && <div className="text-danger mt-1">{error}</div>}

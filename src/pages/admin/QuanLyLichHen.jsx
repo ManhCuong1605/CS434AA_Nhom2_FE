@@ -94,6 +94,12 @@ function QuanLyLichHen() {
             }
         }
     };
+    const formatTimePeriod = (isoDate) => {
+        const date = new Date(isoDate);
+        const hour = date.getHours();
+        const period = hour < 12 ? "Sáng" : "Chiều";
+        return `${date.toLocaleDateString("vi-VN")} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')} (${period})`;
+    };
     return (
         <AdminPage>
             <h2 className="mb-4">Quản lý lịch hẹn</h2>
@@ -153,8 +159,7 @@ function QuanLyLichHen() {
                                 </td>
 
                                 {/* Ngày hẹn */}
-                                <td>{new Date(lich.NgayHen).toLocaleString("vi-VN")}</td>
-
+                                <td>{formatTimePeriod(lich.NgayHen)}</td>
                                 {/* Trạng thái */}
                                 <td>
                                     {lich.TrangThai === 0 && (

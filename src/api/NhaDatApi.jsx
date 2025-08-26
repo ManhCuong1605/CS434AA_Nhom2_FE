@@ -12,7 +12,18 @@ const nhaDatApi = {
         }),
     update: async (id, data) => axios.put(`${API_URL}/${id}`, data),
     delete: async (id) => axios.delete(`${API_URL}/${id}`),
-    search: async (params) => axios.get(`${API_URL}/search`, { params })
+    search: async (params) => axios.get(`${API_URL}/search`, { params }),
+    getRelated: async (id) => {
+        try {
+            const response = await axios.get(`${API_URL}/${id}/related`, {
+                timeout: 10000, // Timeout sau 10 giây
+            });
+            return response;
+        } catch (error) {
+            console.error("Lỗi khi lấy bất động sản liên quan:", error);
+            throw error;
+        }
+    },
 };
 
 export default nhaDatApi;

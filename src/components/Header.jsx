@@ -46,10 +46,6 @@ const Header = () => {
                             <Nav.Link onClick={() => navigate("/bat-dong-san")}>Bất động sản</Nav.Link>
                             <Nav.Link href="/tin-tuc">Bài viết</Nav.Link>
                             <Nav.Link href="/gioi-thieu">Giới thiệu</Nav.Link>
-                            <Nav.Link href="/du-an">Dự án</Nav.Link>
-
-                            <Nav.Link href="/wiki">Wiki BĐS</Nav.Link>
-                            <Nav.Link href="/ban-dat">Bán đất</Nav.Link>
                             <Nav.Link href="/form-bai-viet">Đăng bài viết</Nav.Link>
 
                         </Nav>

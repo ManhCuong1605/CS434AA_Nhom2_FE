@@ -7,15 +7,17 @@ import reportWebVitals from "./reportWebVitals";
 import { ChatProvider } from "./context/ChatContext"; // Import ChatProvider
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-
+import { HelmetProvider } from "react-helmet-async";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <React.StrictMode> {/* Tắt Strict Mode để tránh duplicate calls */}
-    <ChatProvider> {/* Bọc ChatProvider quanh App */}
+  <HelmetProvider>
+    <ChatProvider>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </ChatProvider>
+  </HelmetProvider>
   // </React.StrictMode>
 );
 
