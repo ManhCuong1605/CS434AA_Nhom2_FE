@@ -2,14 +2,16 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Navbar, Nav, Container, Button, NavDropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import Logo from "../assets/Logo/Logooo.jpg"
+import Logo from "../assets/Logo/Logooo.jpg";
+import axios from "axios";
 const Header = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(localStorage.getItem("username"));
 
     useEffect(() => {
+        // Cập nhật khi localStorage thay đổi
         const handleStorageChange = () => {
-            setUser(localStorage.getItem("username")); // Cập nhật user khi localStorage thay đổi
+            setUser(localStorage.getItem("username"));
         };
 
         window.addEventListener("storage", handleStorageChange);
@@ -17,17 +19,28 @@ const Header = () => {
             window.removeEventListener("storage", handleStorageChange);
         };
     }, []);
+    const handleLogout = async () => {
+        try {
+            const refreshToken = localStorage.getItem("refreshToken");
+            if (refreshToken) {
+                await axios.post("http://localhost:5000/api/logout", { refreshToken });
+            }
+        } catch (err) {
+            console.error("Logout lỗi:", err);
+        } finally {
+            // Xoá tất cả token và thông tin người dùng
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("username");
+            localStorage.removeItem("roles");
+            localStorage.removeItem("userId");
+            localStorage.removeItem("nhanVienId");
 
-    // Xử lý đăng xuất
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
-        localStorage.removeItem("roles");
-        setUser(null);
-        window.dispatchEvent(new Event("storage")); // Gửi sự kiện để cập nhật các component khác
-        navigate("/", { replace: true });
+            setUser(null);
+            window.dispatchEvent(new Event("storage")); // Cập nhật các component khác
+            navigate("/", { replace: true });
+        }
     };
-
     return (
         <header>
             <Navbar bg="light" expand="lg" className="border-bottom">

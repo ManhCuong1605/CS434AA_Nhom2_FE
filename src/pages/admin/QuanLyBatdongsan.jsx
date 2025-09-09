@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import AdminPage from './AdminPage';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import nhaDatApi from '../../api/NhaDatApi';
-import { fetchNhaDatList, fetchLoaiNhaDatList } from '../../services/fetchData';
-import Swal from 'sweetalert2';
-import PhanTrang from '../../components/PhanTrang';
-import diaChiApi from '../../api/DiaChiApi';
+import React, { useState, useEffect } from "react";
+import AdminPage from "./AdminPage";
+import "bootstrap/dist/css/bootstrap.min.css";
+import nhaDatApi from "../../api/NhaDatApi";
+import { fetchNhaDatList, fetchLoaiNhaDatList } from "../../services/fetchData";
+import Swal from "sweetalert2";
+import PhanTrang from "../../components/PhanTrang";
+import diaChiApi from "../../api/DiaChiApi";
+import "../../style/QuanLyBatDongSan.css";
 
 function Batdongsan() {
     const [showModal, setShowModal] = useState(false);
@@ -14,16 +15,14 @@ function Batdongsan() {
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
-
     const [isEditing, setIsEditing] = useState(false);
     const [selectedImages, setSelectedImages] = useState([]);
     const [currentImages, setCurrentImages] = useState([]);
-
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [totalItems, setTotalItems] = useState(0);
-
+    const [totalItems, setTotalItems] = useState(0); // eslint-disable-line no-unused-vars
     const [formData, setFormData] = useState({
+        id: "", // Add id for editing
         MaNhaDat: "",
         TenNhaDat: "",
         LoaiNhaDat_id: null,
@@ -37,9 +36,8 @@ function Batdongsan() {
         Quan: "",
         Phuong: "",
         Duong: "",
-        SoNha: ""
+        SoNha: "",
     });
-
     const [selectedProvince, setSelectedProvince] = useState("");
     const [selectedDistrict, setSelectedDistrict] = useState("");
     const [selectedWard, setSelectedWard] = useState("");
@@ -53,7 +51,7 @@ function Batdongsan() {
         try {
             const [nhaDat, loaiDat] = await Promise.all([
                 fetchNhaDatList(page, limit),
-                fetchLoaiNhaDatList()
+                fetchLoaiNhaDatList(),
             ]);
 
             setNhaDatList(nhaDat.data);
@@ -64,7 +62,6 @@ function Batdongsan() {
             } else {
                 setLoaiDatList([]);
             }
-
             setCurrentPage(nhaDat.currentPage);
             setTotalPages(nhaDat.totalPages);
             setTotalItems(nhaDat.totalItems);
@@ -86,10 +83,12 @@ function Batdongsan() {
         try {
             const data = await diaChiApi.getDistrictsByProvince(provinceCode);
             setDistricts(data);
-            setSelectedDistrict(""); // Reset district and ward
+            setSelectedDistrict("");
             setSelectedWard("");
+            return data;
         } catch (error) {
             console.error("Lỗi khi tải danh sách quận/huyện:", error);
+            return [];
         }
     };
 
@@ -98,8 +97,10 @@ function Batdongsan() {
             const data = await diaChiApi.getWardsByDistrict(districtCode);
             setWards(data);
             setSelectedWard("");
+            return data;
         } catch (error) {
             console.error("Lỗi khi tải danh sách xã/phường:", error);
+            return [];
         }
     };
 
@@ -109,9 +110,9 @@ function Batdongsan() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
+        setFormData((prev) => ({
             ...prev,
-            [name]: name === "LoaiNhaDat_id" ? (value ? Number(value) : null) : value
+            [name]: name === "LoaiNhaDat_id" ? (value ? Number(value) : null) : value,
         }));
     };
 
@@ -122,20 +123,23 @@ function Batdongsan() {
             Swal.fire('Lỗi!', 'Vui lòng nhập đầy đủ các thông tin bắt buộc!', 'error');
             return;
         }
+
         if (MaNhaDat.length > 10) {
             Swal.fire('Lỗi!', 'Mã nhà đất quá dài. Vui lòng nhập lại (dưới 10 ký tự)!', 'error');
             return;
         }
 
         try {
-            showLoading(); // <-- bật loading
-
+            showLoading();
+            const provinceName = provinces.find(p => (p.code || p.Id) === selectedProvince)?.Name.replace(/Thành phố |Tỉnh /, "") || "";
+            const districtName = districts.find(d => (d.code || d.Id) === selectedDistrict)?.Name.replace(/Quận |Huyện /, "") || "";
+            const wardName = wards.find(w => (w.code || w.Id) === selectedWard)?.Name.replace(/Phường |Xã /, "") || "";
             const formDataToSend = new FormData();
             Object.entries({
                 ...formData,
-                ThanhPho: selectedProvince,
-                Quan: selectedDistrict,
-                Phuong: selectedWard
+                ThanhPho: provinceName,
+                Quan: districtName,
+                Phuong: wardName
             }).forEach(([key, value]) => {
                 formDataToSend.append(key, value);
             });
@@ -146,7 +150,7 @@ function Batdongsan() {
 
             if (isEditing) {
                 await nhaDatApi.update(formData.id, formDataToSend);
-                hideLoading(); // <-- tắt loading
+                hideLoading();
                 Swal.fire('Cập nhật thành công!', '', 'success');
             } else {
                 await nhaDatApi.add(formDataToSend);
@@ -163,51 +167,93 @@ function Batdongsan() {
         }
     };
 
-    const handleEdit = (item) => {
-        setFormData({
-            ...item,
-            LoaiNhaDat_id: item.LoaiNhaDat?.id || null,
-        });
-        setSelectedProvince(item.ThanhPho || "");
-        fetchDistricts(item.ThanhPho).then(() => {
-            setSelectedDistrict(item.Quan || "");
-            fetchWards(item.Quan).then(() => {
-                setSelectedWard(item.Phuong || "");
-            });
-        });
-        setSelectedImages([]);
-        setCurrentImages(item.hinhAnh);
+    const handleEdit = async (item) => {
         setIsEditing(true);
         setShowModal(true);
+
+        // Prepopulate form data
+        setFormData({
+            id: item.id,
+            MaNhaDat: item.MaNhaDat,
+            TenNhaDat: item.TenNhaDat,
+            LoaiNhaDat_id: item.LoaiNhaDat?.id || null,
+            MoTa: item.MoTa,
+            GiaBan: item.GiaBan,
+            DienTich: item.DienTich,
+            Huong: item.Huong,
+            TrangThai: item.TrangThai,
+            Duong: item.Duong || "",
+            SoNha: item.SoNha || "",
+            ThanhPho: item.ThanhPho || "",
+            Quan: item.Quan || "",
+            Phuong: item.Phuong || "",
+        });
+
+        // Find the province code based on the stored name
+        const province = provinces.find(
+            (p) =>
+                p.Name.replace("Thành phố ", "") === item.ThanhPho ||
+                p.Name === item.ThanhPho
+        );
+        const provinceCode = province?.code || province?.Id || "";
+        setSelectedProvince(provinceCode);
+
+        // Fetch districts for the selected province
+        if (provinceCode) {
+            const districtData = await fetchDistricts(provinceCode);
+            const district = districtData.find(
+                (d) =>
+                    d.Name.replace("Quận ", "") === item.Quan ||
+                    d.Name.replace("Huyện ", "") === item.Quan ||
+                    d.Name === item.Quan
+            );
+            const districtCode = district?.code || district?.Id || "";
+            setSelectedDistrict(districtCode);
+
+            // Fetch wards for the selected district
+            if (districtCode) {
+                const wardData = await fetchWards(districtCode);
+                const ward = wardData.find(
+                    (w) =>
+                        w.Name.replace("Phường ", "") === item.Phuong ||
+                        w.Name.replace("Xã ", "") === item.Phuong ||
+                        w.Name === item.Phuong
+                );
+                setSelectedWard(ward?.code || ward?.Id || "");
+            }
+        }
+
+        setCurrentImages(item.hinhAnh || []);
+        setSelectedImages([]);
     };
 
     const handleDelete = async (id) => {
         const confirm = await Swal.fire({
-            title: 'Xác nhận xóa',
-            text: 'Bạn có chắc chắn muốn xóa bất động sản này?',
-            icon: 'warning',
+            title: "Xác nhận xóa",
+            text: "Bạn có chắc chắn muốn xóa bất động sản này?",
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonText: 'Có, xóa!',
-            cancelButtonText: 'Hủy'
+            confirmButtonText: "Có, xóa!",
+            cancelButtonText: "Hủy",
         });
 
         if (confirm.isConfirmed) {
             try {
-                showLoading(); // bật loading
+                showLoading();
                 await nhaDatApi.delete(id);
-                hideLoading(); // tắt loading
-                Swal.fire('Đã xóa!', 'Bất động sản đã bị xóa.', 'success');
+                hideLoading();
+                Swal.fire("Đã xóa!", "Bất động sản đã bị xóa.", "success");
                 window.location.reload();
             } catch (error) {
                 hideLoading();
-                Swal.fire('Lỗi!', 'Không thể xóa.', 'error');
+                Swal.fire("Lỗi!", "Không thể xóa.", "error");
             }
         }
     };
 
-
     const openModal = () => {
         setFormData({
+            id: "",
             MaNhaDat: "",
             TenNhaDat: "",
             LoaiNhaDat_id: null,
@@ -216,12 +262,11 @@ function Batdongsan() {
             DienTich: "",
             Huong: "",
             TrangThai: 1,
-            HinhAnh: "",
             ThanhPho: "",
             Quan: "",
             Phuong: "",
             Duong: "",
-            SoNha: ""
+            SoNha: "",
         });
         setSelectedProvince("");
         setSelectedDistrict("");
@@ -229,11 +274,13 @@ function Batdongsan() {
         setIsEditing(false);
         setShowModal(true);
         setSelectedImages([]);
+        setCurrentImages([]);
     };
 
     const closeModal = () => {
         setShowModal(false);
         setFormData({
+            id: "",
             MaNhaDat: "",
             TenNhaDat: "",
             LoaiNhaDat_id: null,
@@ -246,7 +293,7 @@ function Batdongsan() {
             Quan: "",
             Phuong: "",
             Duong: "",
-            SoNha: ""
+            SoNha: "",
         });
         setSelectedProvince("");
         setSelectedDistrict("");
@@ -256,79 +303,105 @@ function Batdongsan() {
         setIsEditing(false);
     };
 
-    const handleImageChange = (e) => {
-        const files = Array.from(e.target.files);
-        setSelectedImages(prevImages => [...prevImages, ...files]);
-    };
     const showLoading = () => {
         Swal.fire({
-            title: 'Đang xử lý...',
-            text: 'Vui lòng chờ trong giây lát',
+            title: "Đang xử lý...",
+            text: "Vui lòng chờ trong giây lát",
             allowOutsideClick: false,
             didOpen: () => {
                 Swal.showLoading();
-            }
+            },
         });
     };
+
     const hideLoading = () => {
         Swal.close();
     };
+
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files);
+        setSelectedImages((prevImages) => [...prevImages, ...files]);
+    };
+
     return (
         <AdminPage>
             <h2 className="mb-4">Bất động sản</h2>
-            <p className="text-muted">Tổng số bất động sản: {totalItems}</p>
-            <button type="button" className="btn btn-primary mb-3" onClick={openModal}>Thêm bất động sản</button>
+            <button type="button" className="btn btn-primary mb-3" onClick={openModal}>
+                Thêm bất động sản
+            </button>
             {nhaDatList.length > 0 ? (
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th>STT</th>
-                            <th>Mã nhà đất</th>
-                            <th>Tên nhà đất</th>
-                            <th>Loại</th>
-                            <th>Mô tả</th>
-                            <th>Địa chỉ</th>
-                            <th>Giá</th>
-                            <th>Diện tích</th>
-                            <th>Hướng</th>
-                            <th>Trạng thái</th>
-                            <th>Hình ảnh</th>
-                            <th>Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {nhaDatList.map((item, index) => (
-                            <tr key={item.id}>
-                                <td>{index + 1}</td>
-                                <td>{item.MaNhaDat}</td>
-                                <td>{item.TenNhaDat}</td>
-                                <td>{item.LoaiNhaDat?.TenLoaiDat || "Không xác định"}</td>
-                                <td>{item.MoTa}</td>
-                                <td>{`${item.Duong}, ${item.Phuong}, ${item.Quan}, ${item.ThanhPho}`}</td>
-                                <td>{item.GiaBan.toLocaleString()} VNĐ</td>
-                                <td>{item.DienTich} m²</td>
-                                <td>{item.Huong}</td>
-                                <td>{item.TrangThai === 1 ? 'Đang bán' : 'Đã bán'}</td>
-                                <td>
-                                    <div style={{ display: 'flex', gap: '5px', overflowX: 'auto', maxWidth: '150px' }}>
-                                        {item.hinhAnh?.map((img, idx) => (
-                                            <img
-                                                key={idx}
-                                                src={img.url}
-                                                alt={`Hình ảnh ${idx + 1}`}
-                                                style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '5px' }}
-                                            />
-                                        ))}
-                                    </div>
-                                </td>
-                                <td>
-                                    <button className="btn btn-warning me-2" onClick={() => handleEdit(item)}>Sửa</button>
-                                    <button className="btn btn-danger" onClick={() => handleDelete(item.id)}>Xóa</button>
-                                </td>
+                <div className="table-container">
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Mã nhà đất</th>
+                                <th>Tên nhà đất</th>
+                                <th>Loại</th>
+                                <th>Mô tả</th>
+                                <th>Thành phố</th>
+                                <th>Quận/Huyện</th>
+                                <th>Phường/Xã</th>
+                                <th>Đường</th>
+                                <th>Số nhà</th>
+                                <th>Giá</th>
+                                <th>Diện tích</th>
+                                <th>Hướng</th>
+                                <th>Trạng thái</th>
+                                <th>Hình ảnh</th>
+                                <th>Hành động</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {nhaDatList.map((item, index) => (
+                                <tr key={item.id}>
+                                    <td>{index + 1}</td>
+                                    <td>{item.MaNhaDat}</td>
+                                    <td>{item.TenNhaDat}</td>
+                                    <td>{item.LoaiNhaDat?.TenLoaiDat || "Không xác định"}</td>
+                                    <td>{item.MoTa}</td>
+                                    <td>{item.ThanhPho || ""}</td>
+                                    <td>{item.Quan || ""}</td>
+                                    <td>{item.Phuong || ""}</td>
+                                    <td>{item.Duong || ""}</td>
+                                    <td>{item.SoNha || ""}</td>
+                                    <td>{item.GiaBan.toLocaleString()} VNĐ</td>
+                                    <td>{item.DienTich} m²</td>
+                                    <td>{item.Huong || ""}</td>
+                                    <td>{item.TrangThai === 1 ? "Đang bán" : "Đã bán"}</td>
+                                    <td>
+                                        <div className="image-list">
+                                            {item.hinhAnh?.map((img, idx) => (
+                                                <img
+                                                    key={idx}
+                                                    src={img.url}
+                                                    alt={`Hình ảnh ${idx + 1}`}
+                                                    className="post-image"
+                                                />
+                                            ))}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div className="action-buttons">
+                                            <button
+                                                className="btn btn-sm btn-warning action-btn edit-btn"
+                                                onClick={() => handleEdit(item)}
+                                            >
+                                                <i className="fas fa-edit icon-small"></i> Sửa
+                                            </button>
+                                            <button
+                                                className="btn btn-sm btn-danger action-btn delete-btn"
+                                                onClick={() => handleDelete(item.id)}
+                                            >
+                                                <i className="fas fa-trash icon-small"></i> Xóa
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             ) : (
                 <p className="text-center text-muted">Chưa có dữ liệu nhà đất.</p>
             )}
@@ -343,18 +416,37 @@ function Batdongsan() {
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title">{isEditing ? 'Cập nhật bất động sản' : 'Thêm bất động sản'}</h5>
-                                <button type="button" className="btn-close" onClick={closeModal}></button>
+                                <h5 className="modal-title">
+                                    {isEditing ? "Cập nhật bất động sản" : "Thêm bất động sản"}
+                                </h5>
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    onClick={closeModal}
+                                ></button>
                             </div>
                             <div className="modal-body">
                                 <form>
                                     <div className="mb-3">
                                         <label className="form-label">Mã nhà đất *</label>
-                                        <input type="text" maxLength="10" className="form-control" name="MaNhaDat" value={formData.MaNhaDat} onChange={handleChange} />
+                                        <input
+                                            type="text"
+                                            maxLength="10"
+                                            className="form-control"
+                                            name="MaNhaDat"
+                                            value={formData.MaNhaDat}
+                                            onChange={handleChange}
+                                        />
                                     </div>
                                     <div className="mb-3">
                                         <label className="form-label">Tên nhà đất *</label>
-                                        <input type="text" className="form-control" name="TenNhaDat" value={formData.TenNhaDat} onChange={handleChange} />
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            name="TenNhaDat"
+                                            value={formData.TenNhaDat}
+                                            onChange={handleChange}
+                                        />
                                     </div>
                                     <div className="mb-3">
                                         <label className="form-label">Loại nhà đất *</label>
@@ -365,7 +457,7 @@ function Batdongsan() {
                                             onChange={handleChange}
                                         >
                                             <option value="">-- Chọn loại nhà đất --</option>
-                                            {loaiDatList.map(loai => (
+                                            {loaiDatList.map((loai) => (
                                                 <option key={loai.id} value={Number(loai.id)}>
                                                     {loai.TenLoaiDat}
                                                 </option>
@@ -374,13 +466,34 @@ function Batdongsan() {
                                     </div>
                                     <div className="mb-3">
                                         <label className="form-label">Mô tả</label>
-                                        <input type="text" className="form-control" name="MoTa" value={formData.MoTa} onChange={handleChange} />
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            name="MoTa"
+                                            value={formData.MoTa}
+                                            onChange={handleChange}
+                                        />
                                     </div>
                                     <div className="mb-3">
                                         <label className="form-label">Địa chỉ</label>
-                                        <input type="text" className="form-control mt-2" name="Duong" value={formData.Duong} onChange={handleChange} placeholder="Đường" />
-                                        <div className="mb-3 mt-2">
-                                            <label className="form-label">Tỉnh/Thành *</label>
+                                        <input
+                                            type="text"
+                                            className="form-control address-input"
+                                            name="SoNha"
+                                            value={formData.SoNha}
+                                            onChange={handleChange}
+                                            placeholder="Số nhà"
+                                        />
+                                        <input
+                                            type="text"
+                                            className="form-control address-input"
+                                            name="Duong"
+                                            value={formData.Duong}
+                                            onChange={handleChange}
+                                            placeholder="Đường"
+                                        />
+                                        <div className="mb-3 address-select">
+                                            <label className="form-label">* Tỉnh/Thành</label>
                                             <select
                                                 className="form-select"
                                                 value={selectedProvince}
@@ -390,15 +503,18 @@ function Batdongsan() {
                                                 }}
                                             >
                                                 <option value="">-- Chọn tỉnh/thành --</option>
-                                                {provinces.map(province => (
-                                                    <option key={province.code || province.Id} value={province.code || province.Id}>
+                                                {provinces.map((province) => (
+                                                    <option
+                                                        key={province.code || province.Id}
+                                                        value={province.code || province.Id}
+                                                    >
                                                         {province.Name}
                                                     </option>
                                                 ))}
                                             </select>
                                         </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">Quận/Huyện *</label>
+                                        <div className="mb-3 address-select">
+                                            <label className="form-label">* Quận/Huyện</label>
                                             <select
                                                 className="form-select"
                                                 value={selectedDistrict}
@@ -409,15 +525,18 @@ function Batdongsan() {
                                                 disabled={!selectedProvince}
                                             >
                                                 <option value="">-- Chọn quận/huyện --</option>
-                                                {districts.map(district => (
-                                                    <option key={district.code || district.Id} value={district.code || district.Id}>
+                                                {districts.map((district) => (
+                                                    <option
+                                                        key={district.code || district.Id}
+                                                        value={district.code || district.Id}
+                                                    >
                                                         {district.Name}
                                                     </option>
                                                 ))}
                                             </select>
                                         </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">Phường/Xã *</label>
+                                        <div className="mb-3 address-select">
+                                            <label className="form-label">* Phường/Xã</label>
                                             <select
                                                 className="form-select"
                                                 value={selectedWard}
@@ -425,26 +544,47 @@ function Batdongsan() {
                                                 disabled={!selectedDistrict}
                                             >
                                                 <option value="">-- Chọn phường/xã --</option>
-                                                {wards.map(ward => (
-                                                    <option key={ward.code || ward.Id} value={ward.code || ward.Id}>
+                                                {wards.map((ward) => (
+                                                    <option
+                                                        key={ward.code || ward.Id}
+                                                        value={ward.code || ward.Id}
+                                                    >
                                                         {ward.Name}
                                                     </option>
                                                 ))}
                                             </select>
                                         </div>
                                     </div>
-                                    <div className="row mb-3">
+                                    <div className="row mb-3 property-details">
                                         <div className="col-md-4">
                                             <label className="form-label">Giá</label>
-                                            <input type="text" className="form-control" name="GiaBan" value={formData.GiaBan} onChange={handleChange} />
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                name="GiaBan"
+                                                value={formData.GiaBan}
+                                                onChange={handleChange}
+                                            />
                                         </div>
                                         <div className="col-md-4">
                                             <label className="form-label">Diện tích</label>
-                                            <input type="text" className="form-control" name="DienTich" value={formData.DienTich} onChange={handleChange} />
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                name="DienTich"
+                                                value={formData.DienTich}
+                                                onChange={handleChange}
+                                            />
                                         </div>
                                         <div className="col-md-4">
                                             <label className="form-label">Hướng</label>
-                                            <input type="text" className="form-control" name="Huong" value={formData.Huong} onChange={handleChange} />
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                name="Huong"
+                                                value={formData.Huong}
+                                                onChange={handleChange}
+                                            />
                                         </div>
                                     </div>
                                     <div className="mb-3">
@@ -457,38 +597,48 @@ function Batdongsan() {
                                             multiple
                                             accept="image/*"
                                         />
-
                                         {isEditing && currentImages.length > 0 && (
-                                            <div className="mt-2">
-                                                <div className="d-flex flex-wrap gap-2">
-                                                    {currentImages.map((img, index) => (
-                                                        <img
-                                                            key={index}
-                                                            src={typeof img === 'string' ? img : img.url}
-                                                            alt={`Ảnh ${index}`}
-                                                            style={{ width: "80px", height: "80px", objectFit: "cover", border: "1px solid #ccc", borderRadius: "4px" }}
-                                                        />
-                                                    ))}
-                                                </div>
+                                            <div className="image-preview-container">
+                                                {currentImages.map((img, index) => (
+                                                    <img
+                                                        key={index}
+                                                        src={typeof img === "string" ? img : img.url}
+                                                        alt={`Ảnh ${index}`}
+                                                        className="image-preview"
+                                                    />
+                                                ))}
                                             </div>
                                         )}
-
-                                        <div className="mt-2 d-flex flex-wrap gap-2">
-                                            {selectedImages.map((file, index) => (
-                                                <img
-                                                    key={index}
-                                                    src={URL.createObjectURL(file)}
-                                                    alt={`Preview ${index}`}
-                                                    style={{ width: "80px", height: "80px", objectFit: "cover" }}
-                                                />
-                                            ))}
-                                        </div>
+                                        {selectedImages.length > 0 && (
+                                            <div className="image-preview-container">
+                                                {selectedImages.map((file, index) => (
+                                                    <img
+                                                        key={index}
+                                                        src={URL.createObjectURL(file)}
+                                                        alt={`Preview ${index}`}
+                                                        className="image-preview"
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 </form>
                             </div>
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" onClick={closeModal}>Đóng</button>
-                                <button type="button" className="btn btn-primary" onClick={handleSubmit}>{isEditing ? 'Cập nhật' : 'Thêm'}</button>
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={closeModal}
+                                >
+                                    Đóng
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={handleSubmit}
+                                >
+                                    {isEditing ? "Cập nhật" : "Thêm"}
+                                </button>
                             </div>
                         </div>
                     </div>

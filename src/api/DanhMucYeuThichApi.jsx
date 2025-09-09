@@ -5,10 +5,10 @@ const BASE_URL = "http://localhost:5000/api/danh-muc-yeu-thich";
 
 export const getFavorites = async () => {
   try {
-    console.log("Sending request to:", `${BASE_URL}/list`, "with headers:", getAuthHeader());
     const res = await axios.get(`${BASE_URL}/list`, getAuthHeader());
-    console.log("Response from API:", res.data);
-    return Array.isArray(res.data) ? res.data.map(item => item.nhaDatYeuThich) : [];
+    return Array.isArray(res.data)
+      ? res.data.map(item => item.nhaDatYeuThich)
+      : [];
   } catch (error) {
     console.error("Lỗi khi lấy danh sách yêu thích:", error.response?.data || error.message, error.response?.status);
     throw error;
@@ -16,7 +16,6 @@ export const getFavorites = async () => {
 };
 
 export const addFavorite = async (nhaDatId) => {
-  console.log("Adding favorite with NhaDatId:", nhaDatId); // Debug
   try {
     const res = await axios.post(
       `${BASE_URL}/add`,

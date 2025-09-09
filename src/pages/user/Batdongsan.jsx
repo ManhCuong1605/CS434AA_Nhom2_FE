@@ -6,7 +6,6 @@ import TimKiem from "../../components/TimKiem";
 import { fetchNhaDatListUser } from "../../services/fetchData";
 import PhanTrang from "../../components/PhanTrang";
 import { addFavorite, removeFavorite, getFavorites } from "../../api/DanhMucYeuThichApi";
-import diaChiApi from "../../api/DiaChiApi";
 import { toast, ToastContainer } from "react-toastify";
 
 function Batdongsan() {
@@ -47,24 +46,10 @@ function Batdongsan() {
       const response = await fetchNhaDatListUser(page, 8);
       const list = response.data || [];
 
-      const mappedList = await Promise.all(
-        list.map(async (item) => {
-          try {
-            const ward = await diaChiApi.getWardDetail(item.Phuong);
-            const district = await diaChiApi.getDistrictDetail(item.Quan);
-            const province = await diaChiApi.getProvinceDetail(item.ThanhPho);
-
-            return {
-              ...item,
-              wardName: ward?.Name || ward?.name || "",
-              districtName: district?.Name || district?.name || "",
-              provinceName: province?.Name || province?.name || "",
-            };
-          } catch {
-            return { ...item, wardName: "", districtName: "", provinceName: "" };
-          }
-        })
-      );
+      // Không cần ánh xạ lại từ diaChiApi vì đã lưu tên
+      const mappedList = list.map((item) => ({
+        ...item,
+      }));
 
       setOriginalList(mappedList);
       setNhaDatList(mappedList);
@@ -287,7 +272,6 @@ function Batdongsan() {
         setYeuThich((prev) => prev.filter((id) => id !== item.id));
         setPopupList((prev) => prev.filter((p) => p.id !== item.id));
         toast.info("Đã xóa khỏi danh sách yêu thích!");
-
       } else {
         await addFavorite(item.id);
         setYeuThich((prev) => [...prev, item.id]);
@@ -303,7 +287,6 @@ function Batdongsan() {
         setShowPopup(true);
         setTimeout(() => setShowPopup(false), 4000);
         toast.success("Đã thêm vào danh sách yêu thích!");
-
       }
     } catch (error) {
       console.error("Lỗi toggle yêu thích:", error);
@@ -337,6 +320,7 @@ function Batdongsan() {
       {showPopup && (
         <div
           style={{
+            marginTop: "100px",
             position: "fixed",
             top: "70px",
             right: "20px",
@@ -480,12 +464,12 @@ function Batdongsan() {
                       <p className="text-muted small mb-1 fs-6">
                         {item.DienTich} m² • {item.Huong}
                       </p>
-                      <p className="text-primary small fs-6">
-                        {item.SoNha ? `${item.SoNha} ` : ""}
-                        {item.Duong ? `${item.Duong} ` : ""}
-                        {item.wardName && `Phường ${item.wardName} `}
-                        {item.districtName && `Quận ${item.districtName} `}
-                        {item.provinceName}
+                      <p className="small fs-6">
+                        {item.SoNha ? `${item.SoNha}, ` : ""}
+                        {item.Duong ? `${item.Duong}, ` : ""}
+                        {item.Phuong ? `Phường ${item.Phuong}, ` : ""}
+                        {item.Quan ? `Quận ${item.Quan}, ` : ""}
+                        {item.ThanhPho ? item.ThanhPho : ""}
                       </p>
                       <div className="mt-2 d-flex justify-content-end align-items-center">
                         <div

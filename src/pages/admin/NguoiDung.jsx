@@ -26,7 +26,7 @@ function NguoiDung() {
 
     const loadData = async () => {
         try {
-            const token = localStorage.getItem('token'); // Lấy token từ localStorage
+            const token = localStorage.getItem('accessToken'); // Lấy token từ localStorage
             const res = await NguoiDungApi.getAll(token); // Gửi token vào API
             setUserList(res.data.sort((a, b) => b.TrangThai - a.TrangThai));
         } catch (error) {

@@ -1,0 +1,231 @@
+/* Table */
+.table-container {
+    overflow-x: auto;
+}
+
+.table th:last-child {
+    min-width: 160px;
+    /* Giữ nguyên độ rộng tối thiểu cho cột hành động */
+}
+
+.table {
+    width: 100%;
+    table-layout: auto;
+    /* Sử dụng auto để cột giãn theo nội dung */
+    border-collapse: collapse;
+}
+
+
+
+.table th:nth-child(3),
+/* Cột "Mô tả" là cột thứ 5 */
+.table td:nth-child(3) {
+    min-width: 120px;
+    /* Đặt độ rộng tối thiểu cho cột mô tả */
+    max-width: 150px;
+    /* Đặt độ rộng tối đa để tránh giãn quá mức */
+    word-wrap: break-word;
+    /* Tự động ngắt từ nếu nội dung dài */
+    overflow-wrap: break-word;
+    /* Hỗ trợ ngắt từ trên các trình duyệt */
+}
+
+
+.table th:nth-child(4),
+/* Cột "Mô tả" là cột thứ 5 */
+.table td:nth-child(4) {
+    min-width: 80px;
+    /* Đặt độ rộng tối thiểu cho cột mô tả */
+    max-width: 100px;
+    /* Đặt độ rộng tối đa để tránh giãn quá mức */
+    word-wrap: break-word;
+    /* Tự động ngắt từ nếu nội dung dài */
+    overflow-wrap: break-word;
+    /* Hỗ trợ ngắt từ trên các trình duyệt */
+}
+
+
+.table th:nth-child(5),
+/* Cột "Mô tả" là cột thứ 5 */
+.table td:nth-child(5) {
+    min-width: 200px;
+    /* Đặt độ rộng tối thiểu cho cột mô tả */
+    max-width: 400px;
+    /* Đặt độ rộng tối đa để tránh giãn quá mức */
+    word-wrap: break-word;
+    /* Tự động ngắt từ nếu nội dung dài */
+    overflow-wrap: break-word;
+    /* Hỗ trợ ngắt từ trên các trình duyệt */
+}
+
+.table th:nth-child(6),
+/* Cột "Mô tả" là cột thứ 5 */
+.table td:nth-child(6) {
+    min-width: 100px;
+    /* Đặt độ rộng tối thiểu cho cột mô tả */
+    max-width: 110px;
+    /* Đặt độ rộng tối đa để tránh giãn quá mức */
+    word-wrap: break-word;
+    /* Tự động ngắt từ nếu nội dung dài */
+    overflow-wrap: break-word;
+    /* Hỗ trợ ngắt từ trên các trình duyệt */
+}
+
+.table th:nth-child(9),
+/* Cột "Mô tả" là cột thứ 5 */
+.table td:nth-child(9) {
+    min-width: 100px;
+    /* Đặt độ rộng tối thiểu cho cột mô tả */
+    max-width: 110px;
+    /* Đặt độ rộng tối đa để tránh giãn quá mức */
+    word-wrap: break-word;
+    /* Tự động ngắt từ nếu nội dung dài */
+    overflow-wrap: break-word;
+    /* Hỗ trợ ngắt từ trên các trình duyệt */
+}
+
+.table th:nth-child(11),
+/* Cột "Mô tả" là cột thứ 5 */
+.table td:nth-child(11) {
+    min-width: 150px;
+    /* Đặt độ rộng tối thiểu cho cột mô tả */
+    max-width: 160px;
+    /* Đặt độ rộng tối đa để tránh giãn quá mức */
+    word-wrap: break-word;
+    /* Tự động ngắt từ nếu nội dung dài */
+    overflow-wrap: break-word;
+    /* Hỗ trợ ngắt từ trên các trình duyệt */
+}
+
+.table th:nth-child(12),
+/* Cột "Mô tả" là cột thứ 5 */
+.table td:nth-child(12) {
+    min-width: 80px;
+    /* Đặt độ rộng tối thiểu cho cột mô tả */
+    max-width: 100px;
+    /* Đặt độ rộng tối đa để tránh giãn quá mức */
+    word-wrap: break-word;
+    /* Tự động ngắt từ nếu nội dung dài */
+    overflow-wrap: break-word;
+    /* Hỗ trợ ngắt từ trên các trình duyệt */
+}
+
+.table th:nth-child(13),
+/* Cột "Mô tả" là cột thứ 5 */
+.table td:nth-child(13) {
+    min-width: 100px;
+    /* Đặt độ rộng tối thiểu cho cột mô tả */
+    max-width: 110px;
+    /* Đặt độ rộng tối đa để tránh giãn quá mức */
+    word-wrap: break-word;
+    /* Tự động ngắt từ nếu nội dung dài */
+    overflow-wrap: break-word;
+    /* Hỗ trợ ngắt từ trên các trình duyệt */
+}
+
+.table th:nth-child(14),
+/* Cột "Mô tả" là cột thứ 5 */
+.table td:nth-child(14) {
+    min-width: 100px;
+    /* Đặt độ rộng tối thiểu cho cột mô tả */
+    max-width: 110px;
+    /* Đặt độ rộng tối đa để tránh giãn quá mức */
+    word-wrap: break-word;
+    /* Tự động ngắt từ nếu nội dung dài */
+    overflow-wrap: break-word;
+    /* Hỗ trợ ngắt từ trên các trình duyệt */
+}
+
+
+/* Image List */
+.image-list {
+    display: flex;
+    gap: 5px;
+    overflow-x: auto;
+    max-width: 150px;
+}
+
+.post-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* Actions */
+.action-buttons {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.action-btn {
+    min-width: 80px;
+    height: 32px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.edit-btn {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+}
+
+.edit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background-color: #e0a800 !important;
+}
+
+.delete-btn {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+}
+
+.delete-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background-color: #c82333 !important;
+}
+
+.icon-small {
+    font-size: 10px;
+}
+
+/* Image Preview in Modal */
+.image-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin-top: 8px;
+}
+
+.image-preview {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Form Inputs */
+.address-input {
+    margin-bottom: 8px;
+}
+
+.address-select {
+    margin-top: 8px;
+}
+
+.property-details {
+    display: flex;
+    gap: 16px;
+}
+
+.property-details .col-md-4 {
+    flex: 1;
+}

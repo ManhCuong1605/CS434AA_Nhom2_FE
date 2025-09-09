@@ -17,7 +17,7 @@ const diaChiApi = {
 
     const province =
       data.find(
-        (p) => p.Id === provinceCode || p.code === provinceCode
+        (p) => p.Id == provinceCode || p.code == provinceCode
       ) || null;
 
     return province?.Districts || province?.districts || [];
@@ -31,8 +31,8 @@ const diaChiApi = {
     for (const province of data) {
       const district =
         province.Districts?.find(
-          (d) => d.Id === districtCode || d.code === districtCode
-        ) || province.districts?.find((d) => d.code === districtCode);
+          (d) => d.Id == districtCode || d.code == districtCode
+        ) || province.districts?.find((d) => d.code == districtCode);
 
       if (district) {
         return district.Wards || district.wards || [];
@@ -47,7 +47,7 @@ const diaChiApi = {
     const data = response.data;
     return (
       data.find(
-        (p) => p.Id === provinceCode || p.code === provinceCode
+        (p) => p.Id == provinceCode || p.code == provinceCode
       ) || null
     );
   },
@@ -60,8 +60,8 @@ const diaChiApi = {
     for (const province of data) {
       const district =
         province.Districts?.find(
-          (d) => d.Id === districtCode || d.code === districtCode
-        ) || province.districts?.find((d) => d.code === districtCode);
+          (d) => d.Id == districtCode || d.code == districtCode
+        ) || province.districts?.find((d) => d.code == districtCode);
 
       if (district) return district;
     }
@@ -77,8 +77,8 @@ const diaChiApi = {
       for (const district of province.Districts || province.districts || []) {
         const ward =
           district.Wards?.find(
-            (w) => w.Id === wardCode || w.code === wardCode
-          ) || district.wards?.find((w) => w.code === wardCode);
+            (w) => w.Id == wardCode || w.code == wardCode
+          ) || district.wards?.find((w) => w.code == wardCode);
         if (ward) return ward;
       }
     }

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import AdminPage from './AdminPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../style/QuanLyLoaiDat.css';
 import loaiNhaDatApi from '../../api/LoaiNhaDatApi';
 import PhanTrang from '../../components/PhanTrang';
 import Swal from 'sweetalert2';
+
 function Loaidat() {
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -24,18 +26,16 @@ function Loaidat() {
             setLoaiNhaDatList(data.data);
             setCurrentPage(data.currentPage);
             setTotalPages(data.totalPages);
-
         } catch (error) {
             console.error("Lỗi khi lấy danh sách loại đất:", error);
         }
     };
-    const handlePageChange = (newPage) => {
-        // Cập nhật trang hiện tại
-        setCurrentPage(newPage);
 
-        // Tải lại dữ liệu với trang mới
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
         fetchLoaiNhaDat(newPage);
     };
+
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -117,7 +117,6 @@ function Loaidat() {
         }
     };
 
-
     const handleEdit = (loaiNhaDat) => {
         setFormData(loaiNhaDat);
         setIsEditing(true);
@@ -176,30 +175,43 @@ function Loaidat() {
             </button>
 
             {loaiNhaDatList.length > 0 ? (
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">STT</th>
-                            <th scope="col">Mã loại đất</th>
-                            <th scope="col">Tên loại đất</th>
-                            <th scope="col">Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loaiNhaDatList.map((item, index) => (
-                            <tr key={item.id}>
-                                <td>{index + 1}</td>
-                                <td>{item.MaLoaiDat}</td>
-                                <td>{item.TenLoaiDat}</td>
-                                <td>
-                                    <button className="btn btn-warning me-2" onClick={() => handleEdit(item)}>Sửa</button>
-                                    <button className="btn btn-danger" onClick={() => handleDelete(item.id)}>Xóa</button>
-                                </td>
+                <div className="table-container">
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">STT</th>
+                                <th scope="col">Mã loại đất</th>
+                                <th scope="col">Tên loại đất</th>
+                                <th scope="col">Hành động</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-
+                        </thead>
+                        <tbody>
+                            {loaiNhaDatList.map((item, index) => (
+                                <tr key={item.id}>
+                                    <td>{index + 1}</td>
+                                    <td>{item.MaLoaiDat}</td>
+                                    <td>{item.TenLoaiDat}</td>
+                                    <td>
+                                        <div className="action-buttons">
+                                            <button
+                                                className="btn btn-sm btn-warning action-btn edit-btn"
+                                                onClick={() => handleEdit(item)}
+                                            >
+                                                <i className="fas fa-edit icon-small"></i> Sửa
+                                            </button>
+                                            <button
+                                                className="btn btn-sm btn-danger action-btn delete-btn"
+                                                onClick={() => handleDelete(item.id)}
+                                            >
+                                                <i className="fas fa-trash icon-small"></i> Xóa
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             ) : (
                 <p className="text-center text-muted">Chưa có dữ liệu loại đất.</p>
             )}

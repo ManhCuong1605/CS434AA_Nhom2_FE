@@ -7,7 +7,7 @@ function DanhMucYeuThich() {
   const [favorites, setFavorites] = useState([]);
   const [selected, setSelected] = useState([]);
   const [sortOption, setSortOption] = useState("newest");
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
 
   useEffect(() => {
     if (!token) return;

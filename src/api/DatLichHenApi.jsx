@@ -4,7 +4,7 @@ const API_URL = "http://localhost:5000/api/lichHen";
 
 // Hàm tạo config động để luôn lấy token mới nhất
 const getConfig = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     return {
         headers: {
             Authorization: `Bearer ${token}`,

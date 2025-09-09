@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import loginImage from '../assets/login.png';
 import { Link } from "react-router-dom";
 import axios from "axios";
+import GoogleLoginButton from "./GoogleLoginButton";
 
 function LoginForm() {
     const [username, setUsername] = useState("");
@@ -20,10 +21,14 @@ function LoginForm() {
                 password
             });
 
-            if (response.data?.token) {
-                localStorage.setItem("token", response.data.token);
+            if (response.data?.accessToken) {
+                // Lưu accessToken và refreshToken
+                localStorage.setItem("accessToken", response.data.accessToken);
+                localStorage.setItem("refreshToken", response.data.refreshToken);
+
                 localStorage.setItem("username", username);
                 localStorage.setItem("roles", JSON.stringify(response.data.roles || []));
+                localStorage.setItem("userId", response.data.userId);
 
                 // Lưu nhanVienId nếu có
                 if (response.data.nhanVienId) {
@@ -140,9 +145,7 @@ function LoginForm() {
 
                             {/* Hoặc đăng nhập với Google */}
                             <div className="text-center text-muted mb-3">Hoặc</div>
-                            <button type="button" className="btn btn-outline-primary w-100">
-                                <i className="bi bi-google me-2"></i>Đăng nhập với Google
-                            </button>
+                            <GoogleLoginButton setError={setError} />
                         </form>
 
                         {/* Đăng ký */}

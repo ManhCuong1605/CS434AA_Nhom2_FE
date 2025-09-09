@@ -1,8 +1,9 @@
-export default function getAuthHeader() {
-  const token = localStorage.getItem("token");
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  };
-}
+const getAuthHeader = () => {
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    return { headers: { Authorization: `Bearer ${token}` } };
+  }
+  return {};
+};
+
+export default getAuthHeader;

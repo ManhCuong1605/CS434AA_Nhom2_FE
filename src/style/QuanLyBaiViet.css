@@ -1,0 +1,199 @@
+/* QuanLyBaiViet.css */
+
+/* Tabs */
+.bai-viet-tabs {
+    border-bottom: 2px solid #dee2e6;
+}
+
+.nav-link {
+    border: none !important;
+    background-color: transparent !important;
+}
+
+.tab-all.active {
+    border-bottom: 3px solid #007bff !important;
+    color: #007bff !important;
+    font-weight: 600 !important;
+}
+
+.tab-all:not(.active) {
+    color: #6c757d !important;
+    font-weight: 400 !important;
+}
+
+.tab-pending.active {
+    border-bottom: 3px solid #ffc107 !important;
+    color: #856404 !important;
+    font-weight: 600 !important;
+}
+
+.tab-pending:not(.active) {
+    color: #6c757d !important;
+    font-weight: 400 !important;
+}
+
+.tab-approved.active {
+    border-bottom: 3px solid #28a745 !important;
+    color: #155724 !important;
+    font-weight: 600 !important;
+}
+
+.tab-approved:not(.active) {
+    color: #6c757d !important;
+    font-weight: 400 !important;
+}
+
+.tab-rejected.active {
+    border-bottom: 3px solid #dc3545 !important;
+    color: #721c24 !important;
+    font-weight: 600 !important;
+}
+
+.tab-rejected:not(.active) {
+    color: #6c757d !important;
+    font-weight: 400 !important;
+}
+
+/* Table */
+.table-container {
+    overflow-x: auto;
+}
+
+.table th:last-child {
+    min-width: 200px;
+}
+
+.tieu-de-cell {
+    max-width: 200px;
+    white-space: pre-wrap;
+}
+
+.mo-ta-cell {
+    max-width: 400px;
+    white-space: pre-wrap;
+}
+
+.image-list {
+    display: flex;
+    gap: 5px;
+    overflow-x: auto;
+    max-width: 150px;
+}
+
+.post-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.no-image {
+    color: #888;
+}
+
+/* Status */
+.status-pending {
+    color: #ffc107;
+    font-weight: 500;
+}
+
+.status-approved {
+    color: #28a745;
+    font-weight: 500;
+}
+
+.status-rejected {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+/* Actions */
+.action-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+    min-height: 60px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+}
+
+.action-buttons-single {
+    display: flex;
+    gap: 6px;
+}
+
+.action-column {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.action-btn {
+    min-width: 80px;
+    height: 32px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.approve-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.edit-btn {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+}
+
+.edit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background-color: #e0a800 !important;
+}
+
+.reject-btn {
+    background-color: #007bff !important;
+    color: #fff !important;
+}
+
+.reject-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.delete-btn {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+}
+
+.delete-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background-color: #c82333 !important;
+}
+
+/* Image Preview in Modal */
+.image-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+.image-preview {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}

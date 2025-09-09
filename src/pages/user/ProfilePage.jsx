@@ -12,7 +12,7 @@ import {
     MDBCardImage,
     MDBBreadcrumb,
 } from "mdb-react-ui-kit";
-
+import { FaEdit, FaSave, FaTimes } from "react-icons/fa";
 export default function ProfilePage() {
     const [user, setUser] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -20,13 +20,15 @@ export default function ProfilePage() {
     const [newPassword, setNewPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-
+    const [editField, setEditField] = useState(null);
+    const [tempValue, setTempValue] = useState("");
     useEffect(() => {
         const fetchProfile = async () => {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("accessToken");
+
             if (!token) return;
             try {
-                const response = await axios.get("http://localhost:5000/api/users/profile", {
+                const response = await axios.get("http://localhost:5000/api/profile", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setUser(response.data);
@@ -75,7 +77,36 @@ export default function ProfilePage() {
         setLoading(false);
     };
 
-
+    const handleEditClick = (field) => {
+        setEditField(field);
+        setTempValue(user[field] || "");
+    };
+    const fieldMap = {
+        HoTen: "HoTen",
+        email: "Email",
+        SoDienThoai: "SoDienThoai",
+        DiaChi: "DiaChi",
+    };
+    const handleSave = async (field) => {
+        try {
+            const token = localStorage.getItem("accessToken");
+            const backendField = fieldMap[field];
+            const payload = { [backendField]: tempValue };
+            await axios.put("http://localhost:5000/api/profile", payload, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setUser((prev) => ({ ...prev, [field]: tempValue }));
+            setEditField(null);
+            toast.success("Cập nhật thành công!");
+        } catch (err) {
+            const message = err.response?.data?.error || "Cập nhật thất bại";
+            toast.error(message); // hiển thị message dễ hiểu
+        }
+    };
+    const handleCancel = () => {
+        setEditField(null);
+        setTempValue("");
+    };
     return (
         <section style={{ backgroundColor: "#eee" }}>
             <MDBContainer className="py-5">
@@ -114,42 +145,59 @@ export default function ProfilePage() {
                     <MDBCol lg="8">
                         <MDBCard className="mb-4">
                             <MDBCardBody>
-                                <MDBRow>
-                                    <MDBCol sm="3">
-                                        <MDBCardText>Họ Tên</MDBCardText>
-                                    </MDBCol>
-                                    <MDBCol sm="9">
-                                        <MDBCardText className="text-muted">{user.HoTen}</MDBCardText>
-                                    </MDBCol>
-                                </MDBRow>
-                                <hr />
-                                <MDBRow>
-                                    <MDBCol sm="3">
-                                        <MDBCardText>Email</MDBCardText>
-                                    </MDBCol>
-                                    <MDBCol sm="9">
-                                        <MDBCardText className="text-muted">{user.email}</MDBCardText>
-                                    </MDBCol>
-                                </MDBRow>
-                                <hr />
-                                <MDBRow>
-                                    <MDBCol sm="3">
-                                        <MDBCardText>Số điện thoại</MDBCardText>
-                                    </MDBCol>
-                                    <MDBCol sm="9">
-                                        <MDBCardText className="text-muted">{user.SoDienThoai}</MDBCardText>
-                                    </MDBCol>
-                                </MDBRow>
-                                <hr />
-                                <MDBRow>
-                                    <MDBCol sm="3">
-                                        <MDBCardText>Địa chỉ</MDBCardText>
-                                    </MDBCol>
-                                    <MDBCol sm="9">
-                                        <MDBCardText className="text-muted">{user.DiaChi}</MDBCardText>
-                                    </MDBCol>
-                                </MDBRow>
+                                {["HoTen", "email", "SoDienThoai", "DiaChi"].map((field, idx) => (
+                                    <React.Fragment key={field}>
+                                        <MDBRow className="align-items-center mb-2">
+                                            <MDBCol sm="3">
+                                                <MDBCardText className="mb-0">
+                                                    {field === "HoTen"
+                                                        ? "Họ Tên"
+                                                        : field === "SoDienThoai"
+                                                            ? "Số điện thoại"
+                                                            : field === "DiaChi"
+                                                                ? "Địa chỉ"
+                                                                : "Email"}
+                                                </MDBCardText>
+                                            </MDBCol>
+                                            <MDBCol sm="9">
+                                                <div className="d-flex align-items-center justify-content-between">
+                                                    {editField === field ? (
+                                                        <div className="d-flex align-items-center flex-grow-1 me-2">
+                                                            <input
+                                                                type="text"
+                                                                value={tempValue}
+                                                                onChange={(e) => setTempValue(e.target.value)}
+                                                                className="form-control form-control-sm me-2"
+                                                                style={{ height: "30px" }}
+                                                            />
+                                                            <FaSave
+                                                                style={{ cursor: "pointer", fontSize: "1rem" }}
+                                                                onClick={() => handleSave(field)}
+                                                            />
+                                                            <FaTimes
+                                                                style={{ cursor: "pointer", fontSize: "1rem", marginLeft: "5px" }}
+                                                                onClick={handleCancel}
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <>
+                                                            <MDBCardText className="text-muted mb-0 flex-grow-1 me-2">
+                                                                {user[field] || "-"}
+                                                            </MDBCardText>
+                                                            <FaEdit
+                                                                style={{ cursor: "pointer", fontSize: "1rem" }}
+                                                                onClick={() => handleEditClick(field)}
+                                                            />
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </MDBCol>
+                                        </MDBRow>
+                                        {idx < 3 && <hr />} {/* thêm đường kẻ giữa các dòng trừ dòng cuối */}
+                                    </React.Fragment>
+                                ))}
                             </MDBCardBody>
+
                         </MDBCard>
                     </MDBCol>
                 </MDBRow>

@@ -6,13 +6,13 @@ import nhaDatApi from "../../api/NhaDatApi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MoTaChiTiet from "../../components/MoTaChiTiet";
-import "../../style/ChiTietBaiViet.css";
+import "../../style/Chitietsanpham.css";
 import diaChiApi from "../../api/DiaChiApi";
 import { FaHeart, FaShareAlt, FaFacebookSquare } from "react-icons/fa";
 import { addFavorite, removeFavorite, getFavorites } from "../../api/DanhMucYeuThichApi";
 import { Helmet } from "react-helmet-async";
 import DatLichHenModal from "../../components/DatLichHenModal";
-import { Bold } from "lucide-react";
+
 const ChiTietSanPham = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -111,7 +111,8 @@ const ChiTietSanPham = () => {
 
     const handleToggleFavorite = async () => {
         if (!token) {
-            alert("Vui lòng đăng nhập để sử dụng chức năng yêu thích!");
+            toast.error("Vui lòng đăng nhập để sử dụng chức năng yêu thích");
+
             return;
         }
         try {
