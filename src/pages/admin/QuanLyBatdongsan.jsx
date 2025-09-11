@@ -368,7 +368,9 @@ function Batdongsan() {
                                     <td>{item.GiaBan.toLocaleString()} VNĐ</td>
                                     <td>{item.DienTich} m²</td>
                                     <td>{item.Huong || ""}</td>
-                                    <td>{item.TrangThai === 1 ? "Đang bán" : "Đã bán"}</td>
+                                    <td className={`${item.TrangThai === 1 ? "text-success" : "text-danger"} fw-bold`}>
+                                        {item.TrangThai === 1 ? "Đang bán" : "Đã bán"}
+                                    </td>
                                     <td>
                                         <div className="image-list">
                                             {item.hinhAnh?.map((img, idx) => (

@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, Container, Row, Col, Button, Spinner, Modal, Form } from "react-bootstrap";
+import { Container, Row, Col, Button, Spinner } from "react-bootstrap";
 import { useChat } from "../../context/ChatContext";
 import nhaDatApi from "../../api/NhaDatApi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MoTaChiTiet from "../../components/MoTaChiTiet";
 import "../../style/Chitietsanpham.css";
-import diaChiApi from "../../api/DiaChiApi";
 import { FaHeart, FaShareAlt, FaFacebookSquare } from "react-icons/fa";
 import { addFavorite, removeFavorite, getFavorites } from "../../api/DanhMucYeuThichApi";
 import { Helmet } from "react-helmet-async";
@@ -20,8 +19,6 @@ const ChiTietSanPham = () => {
     const [product, setProduct] = useState(null);
     const [selectedImage, setSelectedImage] = useState(0);
     const [showModal, setShowModal] = useState(false);
-    const [selectedDate, setSelectedDate] = useState("");
-    const [selectedTime, setSelectedTime] = useState("");
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [loadingRelated, setLoadingRelated] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
@@ -29,16 +26,13 @@ const ChiTietSanPham = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [showShareMenu, setShowShareMenu] = useState(false);
     const [showShareSuccess, setShowShareSuccess] = useState(false);
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
 
     const fetchData = async (numericId) => {
         try {
             const res = await nhaDatApi.getById(numericId);
             const data = res.data;
             console.log("API response:", data);
-            const ward = await diaChiApi.getWardDetail(data.Phuong);
-            const district = await diaChiApi.getDistrictDetail(data.Quan);
-            const province = await diaChiApi.getProvinceDetail(data.ThanhPho);
 
             const mappedData = {
                 id: data.id,
@@ -46,7 +40,11 @@ const ChiTietSanPham = () => {
                 price: `${Number(data.GiaBan).toLocaleString()} VND`,
                 area: `${data.DienTich}m²`,
                 pricePerM2: data.GiaBan && data.DienTich ? `${Math.round(data.GiaBan / data.DienTich).toLocaleString()} VND/m²` : "",
-                location: `${data.Duong} ${ward?.Name || ward?.name || ""} ${district?.Name || district?.name || ""} ${province?.Name || province?.name || ""}`,
+                street: data.Duong || "",
+                ward: data.Phuong || "",
+                district: data.Quan || "",
+                province: data.ThanhPho || "",
+                location: `${data.Duong || ""}, ${data.Phuong ? `Phường ${data.Phuong}` : ""}, ${data.Quan ? `Quận ${data.Quan}` : ""}, ${data.ThanhPho || ""}`,
                 images: data.hinhAnh?.map((img) => img.url) || [],
                 contact: "0969 524 111",
                 agent: "Nguyễn Bình Gold",
@@ -112,7 +110,6 @@ const ChiTietSanPham = () => {
     const handleToggleFavorite = async () => {
         if (!token) {
             toast.error("Vui lòng đăng nhập để sử dụng chức năng yêu thích");
-
             return;
         }
         try {
@@ -150,7 +147,7 @@ const ChiTietSanPham = () => {
         const shareUrl = `http://localhost:3000/bat-dong-san/${product.id}`;
         const title = product.title || "Bất động sản";
         const description = product.description || "Thông tin bất động sản chi tiết.";
-        const image = "https://via.placeholder.com/1200x630"; // Hình ảnh mặc định công khai
+        const image = "https://via.placeholder.com/1200x630";
 
         switch (platform) {
             case "facebook":
@@ -182,7 +179,7 @@ const ChiTietSanPham = () => {
     };
 
     return (
-        <Container className="my-5">
+        <Container className="my-5 product-container">
             <Helmet>
                 {product && (
                     <>
@@ -195,7 +192,7 @@ const ChiTietSanPham = () => {
                         />
                         <meta
                             property="og:image"
-                            content="https://via.placeholder.com/1200x630" // Hình ảnh mặc định công khai
+                            content="https://via.placeholder.com/1200x630"
                         />
                         <meta
                             property="og:url"
@@ -350,278 +347,262 @@ const ChiTietSanPham = () => {
                 </div>
             ) : (
                 <>
-                    <Row>
-                        <Col lg={6} md={12} className="mb-4 d-flex align-items-start">
-                            <Card className="border-0 shadow-sm w-100">
-                                <div style={{ position: "relative" }}>
-                                    {product.images && product.images.length > 0 ? (
-                                        <>
-                                            <img
-                                                src={product.images[selectedImage]}
-                                                alt={product.title}
-                                                className="w-100"
-                                                style={{ height: "400px", objectFit: "cover" }}
-                                            />
-                                            {product.images.length > 1 && (
-                                                <>
-                                                    <Button
-                                                        variant="light"
-                                                        size="sm"
-                                                        style={{
-                                                            position: "absolute",
-                                                            left: "10px",
-                                                            top: "50%",
-                                                            transform: "translateY(-50%)",
-                                                            opacity: 0.8,
-                                                        }}
-                                                        onClick={() =>
-                                                            setSelectedImage((prev) => (prev === 0 ? product.images.length - 1 : prev - 1))
-                                                        }
-                                                    >
-                                                        ‹
-                                                    </Button>
-                                                    <Button
-                                                        variant="light"
-                                                        size="sm"
-                                                        style={{
-                                                            position: "absolute",
-                                                            right: "10px",
-                                                            top: "50%",
-                                                            transform: "translateY(-50%)",
-                                                            opacity: 0.8,
-                                                        }}
-                                                        onClick={() =>
-                                                            setSelectedImage((prev) => (prev === product.images.length - 1 ? 0 : prev + 1))
-                                                        }
-                                                    >
-                                                        ›
-                                                    </Button>
-                                                </>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <div
-                                            className="d-flex align-items-center justify-content-center"
-                                            style={{ height: "400px", backgroundColor: "#f8f9fa" }}
+                    <div className="product-top">
+                        <div className="product-left">
+                            <div className="main-image-wrapper">
+                                {product.images && product.images.length > 0 ? (
+                                    <img
+                                        src={product.images[selectedImage]}
+                                        alt={product.title}
+                                        className="main-image"
+                                    />
+                                ) : (
+                                    <div
+                                        className="d-flex align-items-center justify-content-center"
+                                        style={{ height: "100%", backgroundColor: "#f8f9fa" }}
+                                    >
+                                        <p className="text-muted">Không có hình ảnh</p>
+                                    </div>
+                                )}
+                                {product.images.length > 1 && (
+                                    <>
+                                        <Button
+                                            variant="light"
+                                            size="sm"
+                                            style={{
+                                                position: "absolute",
+                                                left: "10px",
+                                                top: "50%",
+                                                transform: "translateY(-50%)",
+                                                opacity: 0.8,
+                                            }}
+                                            onClick={() =>
+                                                setSelectedImage((prev) => (prev === 0 ? product.images.length - 1 : prev - 1))
+                                            }
                                         >
-                                            <p className="text-muted">Không có hình ảnh</p>
+                                            ‹
+                                        </Button>
+                                        <Button
+                                            variant="light"
+                                            size="sm"
+                                            style={{
+                                                position: "absolute",
+                                                right: "10px",
+                                                top: "50%",
+                                                transform: "translateY(-50%)",
+                                                opacity: 0.8,
+                                            }}
+                                            onClick={() =>
+                                                setSelectedImage((prev) => (prev === product.images.length - 1 ? 0 : prev + 1))
+                                            }
+                                        >
+                                            ›
+                                        </Button>
+                                    </>
+                                )}
+                            </div>
+
+                            {product.images && product.images.length > 1 && (
+                                <div className="thumbnail-container">
+                                    {product.images.map((img, index) => (
+                                        <img
+                                            key={index}
+                                            src={img}
+                                            alt={`Ảnh ${index + 1}`}
+                                            className={`thumbnail ${selectedImage === index ? "active" : ""}`}
+                                            onClick={() => setSelectedImage(index)}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="product-right">
+                            <h2 className="product-title">
+                                {product.title}
+                            </h2>
+                            <p className="product-price" style={{ color: "#f00d0dff", fontSize: "22px" }}>
+                                Giá: <span style={{ fontWeight: "bold" }}>{product.price}</span>
+                            </p>
+
+                            <div className="mb-4">
+                                <h5>Địa chỉ</h5>
+                                <p className="product-location">
+                                    <i className="fas fa-map-marker-alt me-2"></i>
+                                    {product.location}
+                                </p>
+                            </div>
+
+                            <div className="mb-4">
+                                <h5>Thông tin bất động sản</h5>
+                                <div className="row">
+                                    <div className="col-6">
+                                        <small className="text-muted">Diện tích:</small>
+                                        <p className="mb-1">
+                                            <strong>{product.area}</strong>
+                                        </p>
+                                    </div>
+                                    <div className="col-6">
+                                        <small className="text-muted">Giá/m²:</small>
+                                        <p className="mb-1">
+                                            <strong>{product.pricePerM2 || "Không xác định"}</strong>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mb-4">
+                                <h5>Thông tin liên hệ</h5>
+                                <div className="d-flex align-items-center mb-2">
+                                    <i className="fas fa-user me-2"></i>
+                                    <span>
+                                        <strong>Môi giới:</strong> {product.agent}
+                                    </span>
+                                </div>
+                                <div className="d-flex align-items-center mb-2">
+                                    <i className="fas fa-phone me-2"></i>
+                                    <span>
+                                        <strong>Số điện thoại:</strong> {product.contact}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="d-flex justify-content-center mb-3">
+                                <button className="btn btn-primary me-2" onClick={() => setIsChatOpen(true)}>
+                                    Liên hệ ngay
+                                </button>
+                                <button
+                                    className="btn btn-outline-primary"
+                                    onClick={() => {
+                                        const token = localStorage.getItem("accessToken");
+                                        if (!token || token.trim() === "") {
+                                            toast.error("Vui lòng đăng nhập để đặt lịch hẹn!");
+                                            return;
+                                        }
+                                        setShowModal(true); // mở modal nếu đã đăng nhập
+                                    }}
+                                >
+                                    Đặt lịch hẹn
+                                </button>
+                            </div>
+
+                            <div className="d-flex justify-content-end mt-auto">
+                                <button
+                                    onClick={handleToggleFavorite}
+                                    className="btn btn-light rounded-circle shadow me-2"
+                                    style={{ width: "48px", height: "48px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                                >
+                                    <FaHeart style={{ color: isFavorite ? "red" : "#6c757d", fontSize: "20px" }} />
+                                </button>
+
+                                <div className="position-relative">
+                                    <button
+                                        onClick={() => setShowShareMenu(!showShareMenu)}
+                                        className="btn btn-light rounded-circle shadow"
+                                        style={{ width: "48px", height: "48px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                                    >
+                                        <FaShareAlt style={{ color: "#198754", fontSize: "20px" }} />
+                                    </button>
+
+                                    {showShareMenu && (
+                                        <div
+                                            className="share-menu"
+                                            style={{
+                                                position: "absolute",
+                                                top: "100%",
+                                                right: "0",
+                                                background: "#fff",
+                                                borderRadius: "10px",
+                                                boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+                                                zIndex: 1000,
+                                                padding: "10px",
+                                                width: "200px",
+                                                marginTop: "5px",
+                                            }}
+                                        >
+                                            <button
+                                                onClick={() => handleShare("facebook")}
+                                                style={{
+                                                    width: "100%",
+                                                    padding: "5px",
+                                                    textAlign: "left",
+                                                    border: "none",
+                                                    background: "none",
+                                                    cursor: "pointer",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                }}
+                                            >
+                                                <FaFacebookSquare style={{ marginRight: "10px", color: "#3b5998", fontSize: "24px" }} />{" "}
+                                                Facebook
+                                            </button>
+                                            <button
+                                                onClick={() => handleShare("zalo")}
+                                                style={{
+                                                    width: "100%",
+                                                    padding: "5px",
+                                                    textAlign: "left",
+                                                    border: "none",
+                                                    background: "none",
+                                                    cursor: "pointer",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                }}
+                                            >
+                                                <span
+                                                    style={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        width: 24,
+                                                        height: 24,
+                                                        marginRight: "10px",
+                                                    }}
+                                                >
+                                                    <svg
+                                                        width="24"
+                                                        height="24"
+                                                        viewBox="0 0 48 48"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <rect width="48" height="48" rx="12" fill="#0180DE" />
+                                                        <path
+                                                            d="M24 13C17.3726 13 12 17.4772 12 23C12 25.7614 13.3431 28.2386 15.5147 29.9992C15.1862 31.0932 14.3932 32.3932 13.5 33.5C13.5 33.5 16.5 33 19.5 31.5C21.0192 31.8202 22.4841 32 24 32C30.6274 32 36 27.5228 36 22C36 16.4772 30.6274 13 24 13Z"
+                                                            fill="white"
+                                                        />
+                                                    </svg>
+                                                </span>
+                                                Zalo
+                                            </button>
+                                            <button
+                                                onClick={() => handleShare("copy")}
+                                                style={{
+                                                    width: "100%",
+                                                    padding: "5px",
+                                                    textAlign: "left",
+                                                    border: "none",
+                                                    background: "none",
+                                                    cursor: "pointer",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                }}
+                                            >
+                                                <span style={{ marginRight: "10px" }}></span> Sao chép liên kết
+                                            </button>
                                         </div>
                                     )}
                                 </div>
-
-                                {product.images && product.images.length > 1 && (
-                                    <div className="thumbnail-container">
-                                        {product.images.map((img, index) => (
-                                            <img
-                                                key={index}
-                                                src={img}
-                                                alt={`Ảnh ${index + 1}`}
-                                                className={`thumbnail ${selectedImage === index ? "active" : ""}`}
-                                                onClick={() => setSelectedImage(index)}
-                                            />
-                                        ))}
-                                    </div>
-                                )}
-                            </Card>
-                        </Col>
-
-                        <Col lg={6} md={12}>
-                            <Card className="h-100 custom-card">
-                                <Card.Header className="bg-dark text-white text-center">
-                                    <h4 className="mb-0">
-
-                                        Thông tin chi tiết
-                                    </h4>
-                                </Card.Header>
-                                <Card.Body>
-                                    <h2 className="mb-3" style={{ color: "#000000" }}>
-                                        {product.title}
-                                    </h2>
-                                    <p className="product-price" style={{ color: "#f00d0dff", fontSize: "22px" }}>
-                                        Giá tiền: <span style={{ fontWeight: "bold" }}>{product.price}</span>
-                                    </p>
-
-                                    <div className="mb-4">
-                                        <h5>Thông tin bất động sản</h5>
-                                        <div className="row">
-                                            <div className="col-6">
-                                                <small className="text-muted">Diện tích:</small>
-                                                <p className="mb-1">
-                                                    <strong>{product.area}</strong>
-                                                </p>
-                                            </div>
-                                            <div className="col-6">
-                                                <small className="text-muted">Giá/m²:</small>
-                                                <p className="mb-1">
-                                                    <strong>{product.pricePerM2 || "Không xác định"}</strong>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="mb-4">
-                                        <h5>Địa chỉ</h5>
-                                        <p className="mb-0">
-                                            <i className="fas fa-map-marker-alt me-2"></i>
-                                            {product.location}
-                                        </p>
-                                    </div>
-
-                                    <div className="mb-4">
-                                        <h5>Thông tin liên hệ</h5>
-                                        <div className="d-flex align-items-center mb-2">
-                                            <i className="fas fa-user me-2"></i>
-                                            <span>
-                                                <strong>Môi giới:</strong> {product.agent}
-                                            </span>
-                                        </div>
-                                        <div className="d-flex align-items-center mb-2">
-                                            <i className="fas fa-phone me-2"></i>
-                                            <span>
-                                                <strong>Số điện thoại:</strong> {product.contact}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div className="d-flex justify-content-center mb-3">
-                                        <button className="btn btn-primary me-2" onClick={() => setIsChatOpen(true)}>
-                                            Liên hệ ngay
-                                        </button>
-                                        <button
-                                            className="btn btn-outline-primary"
-                                            onClick={() => {
-                                                const token = localStorage.getItem("token"); // kiểm tra token
-                                                if (!token) {
-                                                    toast.error("Vui lòng đăng nhập để đặt lịch hẹn!");
-                                                } else {
-                                                    setShowModal(true); // mở modal nếu đã đăng nhập
-                                                }
-                                            }}
-                                        >
-                                            Đặt lịch hẹn
-                                        </button>
-                                    </div>
-
-                                    <div className="d-flex justify-content-end">
-                                        <button
-                                            onClick={handleToggleFavorite}
-                                            className="btn btn-light rounded-circle shadow me-2"
-                                            style={{ width: "48px", height: "48px", display: "flex", alignItems: "center", justifyContent: "center" }}
-                                        >
-                                            <FaHeart style={{ color: isFavorite ? "red" : "#6c757d", fontSize: "20px" }} />
-                                        </button>
-
-                                        <div className="position-relative">
-                                            <button
-                                                onClick={() => setShowShareMenu(!showShareMenu)}
-                                                className="btn btn-light rounded-circle shadow"
-                                                style={{ width: "48px", height: "48px", display: "flex", alignItems: "center", justifyContent: "center" }}
-                                            >
-                                                <FaShareAlt style={{ color: "#198754", fontSize: "20px" }} />
-                                            </button>
-
-                                            {showShareMenu && (
-                                                <div
-                                                    className="share-menu"
-                                                    style={{
-                                                        position: "absolute",
-                                                        top: "100%",
-                                                        right: "0",
-                                                        background: "#fff",
-                                                        borderRadius: "10px",
-                                                        boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-                                                        zIndex: 1000,
-                                                        padding: "10px",
-                                                        width: "200px",
-                                                        marginTop: "5px",
-                                                    }}
-                                                >
-                                                    <button
-                                                        onClick={() => handleShare("facebook")}
-                                                        style={{
-                                                            width: "100%",
-                                                            padding: "5px",
-                                                            textAlign: "left",
-                                                            border: "none",
-                                                            background: "none",
-                                                            cursor: "pointer",
-                                                            display: "flex",
-                                                            alignItems: "center",
-                                                        }}
-                                                    >
-                                                        <FaFacebookSquare style={{ marginRight: "10px", color: "#3b5998", fontSize: "24px" }} />{" "}
-                                                        Facebook
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleShare("zalo")}
-                                                        style={{
-                                                            width: "100%",
-                                                            padding: "5px",
-                                                            textAlign: "left",
-                                                            border: "none",
-                                                            background: "none",
-                                                            cursor: "pointer",
-                                                            display: "flex",
-                                                            alignItems: "center",
-                                                        }}
-                                                    >
-                                                        <span
-                                                            style={{
-                                                                display: "flex",
-                                                                alignItems: "center",
-                                                                width: 24,
-                                                                height: 24,
-                                                                marginRight: "10px",
-                                                            }}
-                                                        >
-                                                            <svg
-                                                                width="24"
-                                                                height="24"
-                                                                viewBox="0 0 48 48"
-                                                                fill="none"
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                            >
-                                                                <rect width="48" height="48" rx="12" fill="#0180DE" />
-                                                                <path
-                                                                    d="M24 13C17.3726 13 12 17.4772 12 23C12 25.7614 13.3431 28.2386 15.5147 29.9992C15.1862 31.0932 14.3932 32.3932 13.5 33.5C13.5 33.5 16.5 33 19.5 31.5C21.0192 31.8202 22.4841 32 24 32C30.6274 32 36 27.5228 36 22C36 16.4772 30.6274 13 24 13Z"
-                                                                    fill="white"
-                                                                />
-                                                            </svg>
-                                                        </span>
-                                                        Zalo
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleShare("copy")}
-                                                        style={{
-                                                            width: "100%",
-                                                            padding: "5px",
-                                                            textAlign: "left",
-                                                            border: "none",
-                                                            background: "none",
-                                                            cursor: "pointer",
-                                                            display: "flex",
-                                                            alignItems: "center",
-                                                        }}
-                                                    >
-                                                        <span style={{ marginRight: "10px" }}></span> Sao chép liên kết
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
+                            </div>
+                        </div>
+                    </div>
 
                     {product.description && (
-                        <div className="mt-4">
+                        <div className="product-description">
                             <MoTaChiTiet description={product.description} />
                         </div>
                     )}
 
-                    <div className="mt-5">
-                        <h3 className="mb-4" style={{ color: "#198754" }}>
+                    <div className="mt-5 related-products-container">
+                        <h3 className="mb-4">
                             Bất động sản liên quan
                         </h3>
                         {loadingRelated ? (
@@ -633,18 +614,18 @@ const ChiTietSanPham = () => {
                             <Row>
                                 {relatedProducts.map((related) => (
                                     <Col key={related.id} md={3} sm={6} className="mb-4">
-                                        <Card
+                                        <div
                                             className="related-card"
                                             onClick={() => navigate(`/bat-dong-san/${related.id}`)}
                                             style={{ cursor: "pointer" }}
                                         >
-                                            <Card.Img variant="top" src={related.image} style={{ height: "150px", objectFit: "cover" }} />
-                                            <Card.Body>
-                                                <Card.Title className="text-truncate">{related.title}</Card.Title>
-                                                <Card.Text className="text-danger">Giá: {related.price}</Card.Text>
-                                                <Card.Text>Diện tích: {related.area}</Card.Text>
-                                            </Card.Body>
-                                        </Card>
+                                            <img src={related.image} alt={related.title} style={{ height: "150px", objectFit: "cover", width: "100%" }} />
+                                            <div className="p-2">
+                                                <h6 className="text-truncate">{related.title}</h6>
+                                                <p className="text-danger mb-1">Giá: {related.price}</p>
+                                                <p className="mb-0">Diện tích: {related.area}</p>
+                                            </div>
+                                        </div>
                                     </Col>
                                 ))}
                             </Row>

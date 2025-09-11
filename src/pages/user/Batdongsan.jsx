@@ -7,7 +7,7 @@ import { fetchNhaDatListUser } from "../../services/fetchData";
 import PhanTrang from "../../components/PhanTrang";
 import { addFavorite, removeFavorite, getFavorites } from "../../api/DanhMucYeuThichApi";
 import { toast, ToastContainer } from "react-toastify";
-
+import nhaDatApi from "../../api/NhaDatApi";
 function Batdongsan() {
   const [yeuThich, setYeuThich] = useState([]);
   const [nhaDatList, setNhaDatList] = useState([]);
@@ -17,7 +17,7 @@ function Batdongsan() {
   const [showPopup, setShowPopup] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState([]);
   const [originalList, setOriginalList] = useState([]);
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -293,10 +293,14 @@ function Batdongsan() {
     }
   };
 
-  const handleSearch = (filter) => {
-    const value = Object.values(filter)[0];
-    if (!appliedFilters.includes(value)) {
-      addFilter(value);
+  const handleSearch = async (filters) => {
+    try {
+      // Gọi API search với toàn bộ filters
+      const res = await nhaDatApi.search(filters);
+      console.log("Kết quả tìm kiếm:", res.data);
+      setNhaDatList(res.data.data); // cập nhật state để render danh sách
+    } catch (error) {
+      console.error("Lỗi tìm kiếm:", error);
     }
   };
 

@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import quanLyBaiVietApi from "../../api/QuanLyBaiVietApi.jsx";
 import diaChiApi from "../../api/DiaChiApi.jsx";
 import Swal from "sweetalert2";
-
+import "../../style/QuanLyBaiViet.css";
 function QuanLyBaiViet() {
     const [baiViet, setBaiViet] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -146,7 +146,7 @@ function QuanLyBaiViet() {
     // Load danh sách bài viết
     const loadData = () => {
         setLoading(true);
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("accessToken");
         quanLyBaiVietApi
             .getTatCa(token)
             .then((res) => {
@@ -291,7 +291,7 @@ function QuanLyBaiViet() {
                 dataToSend.append("images", img);
             });
 
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("accessToken");
 
             if (isEditing) {
                 await quanLyBaiVietApi.capNhatBaiViet(formData.id, dataToSend, token);
@@ -347,7 +347,7 @@ function QuanLyBaiViet() {
 
         if (result.isConfirmed) {
             setActionLoading(id);
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("accessToken");
             try {
                 await quanLyBaiVietApi.duyet(id, token);
                 Swal.fire("Đã duyệt!", "Bài viết đã được duyệt thành công.", "success");
@@ -401,7 +401,7 @@ function QuanLyBaiViet() {
 
         if (result.isConfirmed) {
             setActionLoading(id);
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("accessToken");
             try {
                 await quanLyBaiVietApi.xoaBaiViet(id, token);
                 Swal.fire("Đã xóa!", "Bài viết đã được xóa thành công.", "success");
@@ -423,21 +423,13 @@ function QuanLyBaiViet() {
 
             {/* Tabs phân loại bài viết */}
             <div className="mb-4">
-                <ul className="nav nav-tabs" id="baiVietTabs" role="tablist" style={{ borderBottom: "2px solid #dee2e6" }}>
+                <ul className="nav nav-tabs bai-viet-tabs" id="baiVietTabs" role="tablist">
                     <li className="nav-item" role="presentation">
                         <button
-                            className={`nav-link ${activeTab === "all" ? "active" : ""}`}
+                            className={`nav-link ${activeTab === "all" ? "active" : ""} tab-all`}
                             onClick={() => setActiveTab("all")}
                             type="button"
                             role="tab"
-                            style={{
-                                border: "none",
-                                borderBottom: activeTab === "all" ? "3px solid #007bff" : "none",
-                                color: activeTab === "all" ? "#007bff" : "#6c757d",
-                                fontWeight: activeTab === "all" ? "600" : "400",
-                                padding: "12px 20px",
-                                backgroundColor: "transparent",
-                            }}
                         >
                             <i className="fas fa-list me-2"></i>
                             Tất cả
@@ -446,18 +438,10 @@ function QuanLyBaiViet() {
                     </li>
                     <li className="nav-item" role="presentation">
                         <button
-                            className={`nav-link ${activeTab === "pending" ? "active" : ""}`}
+                            className={`nav-link ${activeTab === "pending" ? "active" : ""} tab-pending`}
                             onClick={() => setActiveTab("pending")}
                             type="button"
                             role="tab"
-                            style={{
-                                border: "none",
-                                borderBottom: activeTab === "pending" ? "3px solid #ffc107" : "none",
-                                color: activeTab === "pending" ? "#856404" : "#6c757d",
-                                fontWeight: activeTab === "pending" ? "600" : "400",
-                                padding: "12px 20px",
-                                backgroundColor: "transparent",
-                            }}
                         >
                             <i className="fas fa-clock me-2"></i>
                             Chờ duyệt
@@ -466,18 +450,10 @@ function QuanLyBaiViet() {
                     </li>
                     <li className="nav-item" role="presentation">
                         <button
-                            className={`nav-link ${activeTab === "approved" ? "active" : ""}`}
+                            className={`nav-link ${activeTab === "approved" ? "active" : ""} tab-approved`}
                             onClick={() => setActiveTab("approved")}
                             type="button"
                             role="tab"
-                            style={{
-                                border: "none",
-                                borderBottom: activeTab === "approved" ? "3px solid #28a745" : "none",
-                                color: activeTab === "approved" ? "#155724" : "#6c757d",
-                                fontWeight: activeTab === "approved" ? "600" : "400",
-                                padding: "12px 20px",
-                                backgroundColor: "transparent",
-                            }}
                         >
                             <i className="fas fa-check-circle me-2"></i>
                             Đã duyệt
@@ -486,18 +462,10 @@ function QuanLyBaiViet() {
                     </li>
                     <li className="nav-item" role="presentation">
                         <button
-                            className={`nav-link ${activeTab === "rejected" ? "active" : ""}`}
+                            className={`nav-link ${activeTab === "rejected" ? "active" : ""} tab-rejected`}
                             onClick={() => setActiveTab("rejected")}
                             type="button"
                             role="tab"
-                            style={{
-                                border: "none",
-                                borderBottom: activeTab === "rejected" ? "3px solid #dc3545" : "none",
-                                color: activeTab === "rejected" ? "#721c24" : "#6c757d",
-                                fontWeight: activeTab === "rejected" ? "600" : "400",
-                                padding: "12px 20px",
-                                backgroundColor: "transparent",
-                            }}
                         >
                             <i className="fas fa-times-circle me-2"></i>
                             Đã từ chối
@@ -693,36 +661,25 @@ function QuanLyBaiViet() {
                                             onChange={handleImageChange}
                                         />
                                         {isEditing && currentImages.length > 0 && (
-                                            <div className="mt-2 d-flex flex-wrap gap-2">
+                                            <div className="mt-2 d-flex flex-wrap gap-2 image-preview-container">
                                                 {currentImages.map((img, index) => (
                                                     <img
                                                         key={index}
                                                         src={typeof img === "string" ? img : img.url}
                                                         alt={`Ảnh ${index}`}
-                                                        style={{
-                                                            width: "80px",
-                                                            height: "80px",
-                                                            objectFit: "cover",
-                                                            border: "1px solid #ccc",
-                                                            borderRadius: "4px",
-                                                        }}
+                                                        className="image-preview"
                                                     />
                                                 ))}
                                             </div>
                                         )}
                                         {selectedImages.length > 0 && (
-                                            <div className="mt-2 d-flex flex-wrap gap-2">
+                                            <div className="mt-2 d-flex flex-wrap gap-2 image-preview-container">
                                                 {selectedImages.map((file, index) => (
                                                     <img
                                                         key={index}
                                                         src={URL.createObjectURL(file)}
                                                         alt={`Preview ${index}`}
-                                                        style={{
-                                                            width: "80px",
-                                                            height: "80px",
-                                                            objectFit: "cover",
-                                                            borderRadius: "4px",
-                                                        }}
+                                                        className="image-preview"
                                                     />
                                                 ))}
                                             </div>
@@ -746,7 +703,7 @@ function QuanLyBaiViet() {
             {/* Bảng danh sách bài viết */}
             <div className="container-fluid mt-4">
                 {getFilteredBaiViet().length > 0 ? (
-                    <div style={{ overflowX: "auto" }}>
+                    <div className="table-container">
                         <table className="table">
                             <thead>
                                 <tr>
@@ -764,7 +721,7 @@ function QuanLyBaiViet() {
                                     <th>Ngày đăng</th>
                                     <th>Hình ảnh</th>
                                     <th>Trạng thái</th>
-                                    <th style={{ minWidth: "200px" }}>Hành động</th>
+                                    <th>Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -787,7 +744,7 @@ function QuanLyBaiViet() {
                                     getFilteredBaiViet().map((bv, idx) => (
                                         <tr key={bv.id}>
                                             <td>{idx + 1}</td>
-                                            <td style={{ maxWidth: "200px", whiteSpace: "pre-wrap" }}>
+                                            <td className="tieu-de-cell">
                                                 {bv.TieuDe || "Chưa có tiêu đề"}
                                             </td>
                                             <td>{addressNames.provinces[bv.ThanhPho] || "Không xác định"}</td>
@@ -797,86 +754,53 @@ function QuanLyBaiViet() {
                                             <td>{new Intl.NumberFormat("vi-VN").format(Number(bv.GiaBan || 0))}</td>
                                             <td>{new Intl.NumberFormat("vi-VN").format(Number(bv.DienTich || 0))}</td>
                                             <td>{bv.Huong || "Không xác định"}</td>
-                                            <td style={{ maxWidth: "400px", whiteSpace: "pre-wrap" }}>{bv.MoTa}</td>
+                                            <td className="mo-ta-cell">{bv.MoTa}</td>
                                             <td>{bv.nguoiDang?.HoTen || "Ẩn danh"}</td>
                                             <td>{new Date(bv.ngayDang).toLocaleString()}</td>
                                             <td>
-                                                <div style={{ display: "flex", gap: "5px", overflowX: "auto", maxWidth: "150px" }}>
+                                                <div className="image-list">
                                                     {bv.hinhAnh && bv.hinhAnh.length > 0 ? (
                                                         bv.hinhAnh.map((img) => (
                                                             <img
                                                                 key={img.id}
                                                                 src={img.url}
                                                                 alt="Ảnh bài viết"
-                                                                style={{
-                                                                    width: "50px",
-                                                                    height: "50px",
-                                                                    objectFit: "cover",
-                                                                    borderRadius: "5px",
-                                                                }}
+                                                                className="post-image"
                                                             />
                                                         ))
                                                     ) : (
-                                                        <span style={{ color: "#888" }}>Không có ảnh</span>
+                                                        <span className="no-image">Không có ảnh</span>
                                                     )}
                                                 </div>
                                             </td>
                                             <td>
                                                 {bv.TrangThai === 1 && (
-                                                    <span className="text-warning" style={{ fontWeight: 500 }}>
+                                                    <span className="status-pending">
                                                         Chờ duyệt
                                                     </span>
                                                 )}
                                                 {bv.TrangThai === 2 && (
-                                                    <span className="text-success" style={{ fontWeight: 500 }}>
+                                                    <span className="status-approved">
                                                         Đã duyệt
                                                     </span>
                                                 )}
                                                 {bv.TrangThai === 3 && (
-                                                    <span className="text-danger" style={{ fontWeight: 500 }}>
+                                                    <span className="status-rejected">
                                                         Đã từ chối
                                                     </span>
                                                 )}
                                             </td>
                                             <td>
-                                                <div
-                                                    style={{
-                                                        display: "flex",
-                                                        flexDirection: "column",
-                                                        gap: "6px",
-                                                        justifyContent: "center",
-                                                        alignItems: "center",
-                                                        minHeight: "60px",
-                                                    }}
-                                                >
+                                                <div className="action-container">
                                                     {bv.TrangThai === 1 ? (
-                                                        <>
-                                                            <div style={{ display: "flex", gap: "6px" }}>
+                                                        <div className="action-buttons">
+                                                            {/* Cột trái: Duyệt + Sửa */}
+                                                            <div className="action-column">
                                                                 <button
-                                                                    className="btn btn-success btn-sm"
-                                                                    style={{
-                                                                        minWidth: "80px",
-                                                                        height: "32px",
-                                                                        fontSize: "12px",
-                                                                        fontWeight: 500,
-                                                                        borderRadius: "6px",
-                                                                        border: "none",
-                                                                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                                                                        transition: "all 0.2s ease",
-                                                                    }}
+                                                                    className="btn btn-success btn-sm action-btn approve-btn"
                                                                     disabled={actionLoading === bv.id}
                                                                     onClick={() => handleDuyet(bv.id)}
                                                                     title="Duyệt bài viết"
-                                                                    onMouseEnter={(e) => {
-                                                                        if (!e.target.disabled) {
-                                                                            e.target.style.transform = "translateY(-1px)";
-                                                                            e.target.style.boxShadow = "0 4px 8px rgba(0,0,0,0.15)";
-                                                                        }
-                                                                    }}
-                                                                    onMouseLeave={(e) => {
-                                                                        e.target.style.transform = "translateY(0)";
-                                                                        e.target.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
-                                                                    }}
                                                                 >
                                                                     {actionLoading === bv.id ? (
                                                                         <span className="spinner-border spinner-border-sm me-1"></span>
@@ -885,31 +809,23 @@ function QuanLyBaiViet() {
                                                                     )}
                                                                     {actionLoading === bv.id ? "Đang duyệt..." : "Duyệt"}
                                                                 </button>
+
                                                                 <button
-                                                                    className="btn btn-warning btn-sm"
-                                                                    style={{
-                                                                        minWidth: "80px",
-                                                                        height: "32px",
-                                                                        fontSize: "12px",
-                                                                        fontWeight: 500,
-                                                                        borderRadius: "6px",
-                                                                        border: "none",
-                                                                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                                                                        transition: "all 0.2s ease",
-                                                                    }}
+                                                                    className="btn btn-sm btn-warning action-btn edit-btn"
+                                                                    onClick={() => handleEdit(bv)}
+                                                                    title="Sửa bài viết"
+                                                                >
+                                                                    <i className="fas fa-edit"></i> Sửa
+                                                                </button>
+                                                            </div>
+
+                                                            {/* Cột phải: Từ chối + Xóa */}
+                                                            <div className="action-column">
+                                                                <button
+                                                                    className="btn btn-primary btn-sm action-btn reject-btn"
                                                                     disabled={actionLoading === bv.id}
                                                                     onClick={() => handleTuChoi(bv.id)}
                                                                     title="Từ chối bài viết"
-                                                                    onMouseEnter={(e) => {
-                                                                        if (!e.target.disabled) {
-                                                                            e.target.style.transform = "translateY(-1px)";
-                                                                            e.target.style.boxShadow = "0 4px 8px rgba(0,0,0,0.15)";
-                                                                        }
-                                                                    }}
-                                                                    onMouseLeave={(e) => {
-                                                                        e.target.style.transform = "translateY(0)";
-                                                                        e.target.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
-                                                                    }}
                                                                 >
                                                                     {actionLoading === bv.id ? (
                                                                         <span className="spinner-border spinner-border-sm me-1"></span>
@@ -918,183 +834,44 @@ function QuanLyBaiViet() {
                                                                     )}
                                                                     {actionLoading === bv.id ? "Đang xử lý..." : "Từ chối"}
                                                                 </button>
-                                                            </div>
-                                                            <div style={{ display: "flex", gap: "6px" }}>
+
                                                                 <button
-                                                                    className="btn btn-primary btn-sm"
-                                                                    style={{
-                                                                        minWidth: "80px",
-                                                                        height: "32px",
-                                                                        fontSize: "12px",
-                                                                        fontWeight: 500,
-                                                                        borderRadius: "6px",
-                                                                        border: "none",
-                                                                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                                                                        transition: "all 0.2s ease",
-                                                                    }}
-                                                                    onClick={() => handleEdit(bv)}
-                                                                    title="Sửa bài viết"
-                                                                    onMouseEnter={(e) => {
-                                                                        e.target.style.transform = "translateY(-1px)";
-                                                                        e.target.style.boxShadow = "0 4px 8px rgba(0,0,0,0.15)";
-                                                                    }}
-                                                                    onMouseLeave={(e) => {
-                                                                        e.target.style.transform = "translateY(0)";
-                                                                        e.target.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
-                                                                    }}
-                                                                >
-                                                                    <i className="fas fa-edit me-1"></i>
-                                                                    Sửa
-                                                                </button>
-                                                                <button
-                                                                    className="btn btn-outline-danger btn-sm"
-                                                                    style={{
-                                                                        minWidth: "80px",
-                                                                        height: "32px",
-                                                                        fontSize: "12px",
-                                                                        fontWeight: 500,
-                                                                        borderRadius: "6px",
-                                                                        border: "2px solid #dc3545",
-                                                                        backgroundColor: "transparent",
-                                                                        color: "#dc3545",
-                                                                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                                                                        transition: "all 0.2s ease",
-                                                                    }}
+                                                                    className="btn btn-sm btn-danger action-btn delete-btn"
                                                                     disabled={actionLoading === bv.id}
                                                                     onClick={() => handleXoa(bv.id)}
                                                                     title="Xóa bài viết"
-                                                                    onMouseEnter={(e) => {
-                                                                        if (!e.target.disabled) {
-                                                                            e.target.style.backgroundColor = "#dc3545";
-                                                                            e.target.style.color = "white";
-                                                                            e.target.style.transform = "translateY(-1px)";
-                                                                            e.target.style.boxShadow = "0 4px 8px rgba(0,0,0,0.15)";
-                                                                        }
-                                                                    }}
-                                                                    onMouseLeave={(e) => {
-                                                                        e.target.style.backgroundColor = "transparent";
-                                                                        e.target.style.color = "#dc3545";
-                                                                        e.target.style.transform = "translateY(0)";
-                                                                        e.target.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
-                                                                    }}
                                                                 >
-                                                                    {actionLoading === bv.id ? (
-                                                                        <span className="spinner-border spinner-border-sm me-1"></span>
-                                                                    ) : (
-                                                                        <i className="fas fa-trash me-1"></i>
-                                                                    )}
-                                                                    {actionLoading === bv.id ? "Đang xóa..." : "Xóa"}
+                                                                    <i className="fas fa-trash"></i> {actionLoading === bv.id ? "Đang xóa..." : "Xóa"}
                                                                 </button>
                                                             </div>
-                                                        </>
+                                                        </div>
                                                     ) : bv.TrangThai === 2 ? (
-                                                        <div style={{ display: "flex", gap: "6px" }}>
+                                                        <div className="action-buttons-single">
                                                             <button
-                                                                className="btn btn-primary btn-sm"
-                                                                style={{
-                                                                    minWidth: "80px",
-                                                                    height: "32px",
-                                                                    fontSize: "12px",
-                                                                    fontWeight: 500,
-                                                                    borderRadius: "6px",
-                                                                    border: "none",
-                                                                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                                                                    transition: "all 0.2s ease",
-                                                                }}
+                                                                className="btn btn-sm btn-warning me-2 action-btn edit-btn"
                                                                 onClick={() => handleEdit(bv)}
                                                                 title="Sửa bài viết"
-                                                                onMouseEnter={(e) => {
-                                                                    e.target.style.transform = "translateY(-1px)";
-                                                                    e.target.style.boxShadow = "0 4px 8px rgba(0,0,0,0.15)";
-                                                                }}
-                                                                onMouseLeave={(e) => {
-                                                                    e.target.style.transform = "translateY(0)";
-                                                                    e.target.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
-                                                                }}
                                                             >
-                                                                <i className="fas fa-edit me-1"></i>
-                                                                Sửa
+                                                                <i className="fas fa-edit"></i> Sửa
                                                             </button>
                                                             <button
-                                                                className="btn btn-outline-danger btn-sm"
-                                                                style={{
-                                                                    minWidth: "80px",
-                                                                    height: "32px",
-                                                                    fontSize: "12px",
-                                                                    fontWeight: 500,
-                                                                    borderRadius: "6px",
-                                                                    border: "2px solid #dc3545",
-                                                                    backgroundColor: "transparent",
-                                                                    color: "#dc3545",
-                                                                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                                                                    transition: "all 0.2s ease",
-                                                                }}
+                                                                className="btn btn-sm btn-danger action-btn delete-btn"
                                                                 disabled={actionLoading === bv.id}
                                                                 onClick={() => handleXoa(bv.id)}
                                                                 title="Xóa bài viết"
-                                                                onMouseEnter={(e) => {
-                                                                    if (!e.target.disabled) {
-                                                                        e.target.style.backgroundColor = "#dc3545";
-                                                                        e.target.style.color = "white";
-                                                                        e.target.style.transform = "translateY(-1px)";
-                                                                        e.target.style.boxShadow = "0 4px 8px rgba(0,0,0,0.15)";
-                                                                    }
-                                                                }}
-                                                                onMouseLeave={(e) => {
-                                                                    e.target.style.backgroundColor = "transparent";
-                                                                    e.target.style.color = "#dc3545";
-                                                                    e.target.style.transform = "translateY(0)";
-                                                                    e.target.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
-                                                                }}
                                                             >
-                                                                {actionLoading === bv.id ? (
-                                                                    <span className="spinner-border spinner-border-sm me-1"></span>
-                                                                ) : (
-                                                                    <i className="fas fa-trash me-1"></i>
-                                                                )}
-                                                                {actionLoading === bv.id ? "Đang xóa..." : "Xóa"}
+                                                                <i className="fas fa-trash"></i> {actionLoading === bv.id ? "Đang xóa..." : "Xóa"}
                                                             </button>
                                                         </div>
                                                     ) : (
-                                                        <div style={{ display: "flex", gap: "6px" }}>
+                                                        <div className="action-buttons-single">
                                                             <button
-                                                                className="btn btn-outline-danger btn-sm"
-                                                                style={{
-                                                                    minWidth: "80px",
-                                                                    height: "32px",
-                                                                    fontSize: "12px",
-                                                                    fontWeight: 500,
-                                                                    borderRadius: "6px",
-                                                                    border: "2px solid #dc3545",
-                                                                    backgroundColor: "transparent",
-                                                                    color: "#dc3545",
-                                                                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                                                                    transition: "all 0.2s ease",
-                                                                }}
+                                                                className="btn btn-sm btn-danger action-btn delete-btn"
                                                                 disabled={actionLoading === bv.id}
                                                                 onClick={() => handleXoa(bv.id)}
                                                                 title="Xóa bài viết"
-                                                                onMouseEnter={(e) => {
-                                                                    if (!e.target.disabled) {
-                                                                        e.target.style.backgroundColor = "#dc3545";
-                                                                        e.target.style.color = "white";
-                                                                        e.target.style.transform = "translateY(-1px)";
-                                                                        e.target.style.boxShadow = "0 4px 8px rgba(0,0,0,0.15)";
-                                                                    }
-                                                                }}
-                                                                onMouseLeave={(e) => {
-                                                                    e.target.style.backgroundColor = "transparent";
-                                                                    e.target.style.color = "#dc3545";
-                                                                    e.target.style.transform = "translateY(0)";
-                                                                    e.target.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
-                                                                }}
                                                             >
-                                                                {actionLoading === bv.id ? (
-                                                                    <span className="spinner-border spinner-border-sm me-1"></span>
-                                                                ) : (
-                                                                    <i className="fas fa-trash me-1"></i>
-                                                                )}
-                                                                {actionLoading === bv.id ? "Đang xóa..." : "Xóa"}
+                                                                <i className="fas fa-trash"></i> {actionLoading === bv.id ? "Đang xóa..." : "Xóa"}
                                                             </button>
                                                         </div>
                                                     )}

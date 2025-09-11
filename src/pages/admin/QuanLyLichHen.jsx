@@ -136,12 +136,12 @@ function QuanLyLichHen() {
                 <table className="table">
                     <thead>
                         <tr>
-                            <th>STT</th>
-                            <th>Khách hàng</th>
-                            <th>Ngày hẹn</th>
-                            <th>Trạng thái</th>
-                            <th>Nhân viên</th>
-                            <th>Hành động</th>
+                            <th style={{ width: "5%" }}>STT</th>
+                            <th style={{ width: "20%" }}>Khách hàng</th>
+                            <th style={{ width: "20%" }}>Ngày hẹn</th>
+                            <th style={{ width: "15%" }}>Trạng thái</th>
+                            <th style={{ width: "15%" }}>Nhân viên</th>
+                            <th style={{ width: "25%" }}>Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -186,7 +186,7 @@ function QuanLyLichHen() {
                                     {lich.TrangThai === 0 && (
                                         <>
                                             <select
-                                                className="form-select d-inline w-auto me-2"
+                                                className="form-select d-inline w-auto me-2 mb-2"
                                                 value={selectedNhanVien[lich.id] || ""}
                                                 onChange={(e) =>
                                                     setSelectedNhanVien({
@@ -202,15 +202,23 @@ function QuanLyLichHen() {
                                                     </option>
                                                 ))}
                                             </select>
-                                            <button
-                                                className="btn btn-success me-2"
-                                                onClick={() => handleDuyet(lich.id)}
-                                            >
-                                                Duyệt
-                                            </button>
+                                            <div className="d-flex">
+                                                <button
+                                                    className="btn btn-success me-2"
+                                                    onClick={() => handleDuyet(lich.id)}
+                                                >
+                                                    Duyệt
+                                                </button>
+                                                <button
+                                                    className="btn btn-danger"
+                                                    onClick={() => handleHuy(lich.id)}
+                                                >
+                                                    Hủy
+                                                </button>
+                                            </div>
                                         </>
                                     )}
-                                    {lich.TrangThai !== 2 && (
+                                    {lich.TrangThai !== 2 && lich.TrangThai !== 0 && (
                                         <button
                                             className="btn btn-danger"
                                             onClick={() => handleHuy(lich.id)}

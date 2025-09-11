@@ -52,7 +52,7 @@ export default function ProfilePage() {
 
         setLoading(true);
         try {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("accessToken");
             const response = await axios.put(
                 "http://localhost:5000/api/change-password",
                 { currentPassword: oldPassword, newPassword },
