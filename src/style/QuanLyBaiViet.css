@@ -59,18 +59,27 @@
     overflow-x: auto;
 }
 
-.table th:last-child {
-    min-width: 200px;
+.table {
+    table-layout: auto;
+    /* cho phép cột dãn theo nội dung */
+    width: 100%;
+    min-width: max-content;
+    /* tránh bị ép hẹp */
 }
 
+/* Cột tiêu đề - giữ 1 dòng, nếu dài quá thì hiển thị ... */
 .tieu-de-cell {
     max-width: 200px;
-    white-space: pre-wrap;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
+/* Cột mô tả - cho phép xuống dòng */
 .mo-ta-cell {
     max-width: 400px;
-    white-space: pre-wrap;
+    white-space: normal;
+    word-wrap: break-word;
 }
 
 .image-list {

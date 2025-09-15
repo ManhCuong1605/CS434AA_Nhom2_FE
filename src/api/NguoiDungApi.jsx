@@ -2,10 +2,11 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/users';
 
-const getAll = (token) => {
+const getAll = (params, token) => {
     return axios.get(API_URL, {
+        params,
         headers: {
-            Authorization: `Bearer ${token}`,  // Gửi token trong header
+            Authorization: `Bearer ${token}`,  // Token chuẩn
         },
     });
 };
@@ -13,7 +14,7 @@ const getAll = (token) => {
 const add = (data) => {
     return axios.post(`${API_URL}/addUser`, data, {
         headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
     });
 };
@@ -21,7 +22,7 @@ const add = (data) => {
 const update = (id, data) => {
     return axios.put(`${API_URL}/${id}`, data, {
         headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
     });
 };
@@ -29,7 +30,7 @@ const update = (id, data) => {
 const deleteUser = (id) => {
     return axios.delete(`${API_URL}/${id}`, {
         headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
     });
 };

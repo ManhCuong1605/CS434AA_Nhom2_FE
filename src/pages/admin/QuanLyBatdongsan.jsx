@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import PhanTrang from "../../components/PhanTrang";
 import diaChiApi from "../../api/DiaChiApi";
 import "../../style/QuanLyBatDongSan.css";
+import SearchAdmin from "../../components/SearchAdmin";
 
 function Batdongsan() {
     const [showModal, setShowModal] = useState(false);
@@ -20,9 +21,9 @@ function Batdongsan() {
     const [currentImages, setCurrentImages] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [totalItems, setTotalItems] = useState(0); // eslint-disable-line no-unused-vars
+    const [totalItems, setTotalItems] = useState(0);
     const [formData, setFormData] = useState({
-        id: "", // Add id for editing
+        id: "",
         MaNhaDat: "",
         TenNhaDat: "",
         LoaiNhaDat_id: null,
@@ -41,20 +42,29 @@ function Batdongsan() {
     const [selectedProvince, setSelectedProvince] = useState("");
     const [selectedDistrict, setSelectedDistrict] = useState("");
     const [selectedWard, setSelectedWard] = useState("");
+    const [filters, setFilters] = useState({
+        searchText: "",
+        ThanhPho: "",
+        TenLoaiDat: "",
+        GiaMin: "",
+        GiaMax: "",
+        DienTichMin: "",
+        DienTichMax: "",
+    });
 
     useEffect(() => {
-        loadData(currentPage, 5);
+        loadData(currentPage, 5, filters);
         fetchProvinces();
-    }, [currentPage]);
+    }, [currentPage, filters]);
 
-    const loadData = async (page = 1, limit = 5) => {
+    const loadData = async (page = 1, limit = 5, filters = {}) => {
         try {
             const [nhaDat, loaiDat] = await Promise.all([
-                fetchNhaDatList(page, limit),
+                fetchNhaDatList(page, limit, filters),
                 fetchLoaiNhaDatList(),
             ]);
 
-            setNhaDatList(nhaDat.data);
+            setNhaDatList(nhaDat.data || []);
             if (Array.isArray(loaiDat.data)) {
                 setLoaiDatList(loaiDat.data);
             } else if (Array.isArray(loaiDat)) {
@@ -62,9 +72,9 @@ function Batdongsan() {
             } else {
                 setLoaiDatList([]);
             }
-            setCurrentPage(nhaDat.currentPage);
-            setTotalPages(nhaDat.totalPages);
-            setTotalItems(nhaDat.totalItems);
+            setCurrentPage(nhaDat.currentPage || 1);
+            setTotalPages(nhaDat.totalPages || 1);
+            setTotalItems(nhaDat.totalItems || 0);
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu:", error);
         }
@@ -108,6 +118,20 @@ function Batdongsan() {
         setCurrentPage(newPage);
     };
 
+    const handleSearchInputChange = (e) => {
+        const { name, value } = e.target;
+        setFilters((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const onSearch = (newFilters = filters) => {
+        setFilters(newFilters);
+        setCurrentPage(1);
+        loadData(1, 5, newFilters);
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
@@ -139,7 +163,7 @@ function Batdongsan() {
                 ...formData,
                 ThanhPho: provinceName,
                 Quan: districtName,
-                Phuong: wardName
+                Phuong: wardName,
             }).forEach(([key, value]) => {
                 formDataToSend.append(key, value);
             });
@@ -171,7 +195,6 @@ function Batdongsan() {
         setIsEditing(true);
         setShowModal(true);
 
-        // Prepopulate form data
         setFormData({
             id: item.id,
             MaNhaDat: item.MaNhaDat,
@@ -189,16 +212,12 @@ function Batdongsan() {
             Phuong: item.Phuong || "",
         });
 
-        // Find the province code based on the stored name
         const province = provinces.find(
-            (p) =>
-                p.Name.replace("Thành phố ", "") === item.ThanhPho ||
-                p.Name === item.ThanhPho
+            (p) => p.Name.replace("Thành phố ", "") === item.ThanhPho || p.Name === item.ThanhPho
         );
         const provinceCode = province?.code || province?.Id || "";
         setSelectedProvince(provinceCode);
 
-        // Fetch districts for the selected province
         if (provinceCode) {
             const districtData = await fetchDistricts(provinceCode);
             const district = districtData.find(
@@ -210,7 +229,6 @@ function Batdongsan() {
             const districtCode = district?.code || district?.Id || "";
             setSelectedDistrict(districtCode);
 
-            // Fetch wards for the selected district
             if (districtCode) {
                 const wardData = await fetchWards(districtCode);
                 const ward = wardData.find(
@@ -326,6 +344,13 @@ function Batdongsan() {
     return (
         <AdminPage>
             <h2 className="mb-4">Bất động sản</h2>
+            <SearchAdmin
+                filters={filters}
+                handleSearchInputChange={handleSearchInputChange}
+                onSearch={onSearch}
+                provinces={provinces}
+                loaiDatList={loaiDatList}
+            />
             <button type="button" className="btn btn-primary mb-3" onClick={openModal}>
                 Thêm bất động sản
             </button>

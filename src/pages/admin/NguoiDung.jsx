@@ -3,11 +3,14 @@ import AdminPage from './AdminPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Swal from 'sweetalert2';
 import NguoiDungApi from '../../api/NguoiDungApi';
-
+import PhanTrang from "../../components/PhanTrang";
 function NguoiDung() {
     const [showModal, setShowModal] = useState(false);
     const [userList, setUserList] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0); // eslint-disable-line no-unused-vars
 
     const [formData, setFormData] = useState({
         id: '',
@@ -21,20 +24,30 @@ function NguoiDung() {
     });
 
     useEffect(() => {
-        loadData();
-    }, []);
+        loadData(currentPage, 5);
+    }, [currentPage]);
 
-    const loadData = async () => {
+    const loadData = async (page = 1, limit = 5) => {
         try {
-            const token = localStorage.getItem('accessToken'); // Lấy token từ localStorage
-            const res = await NguoiDungApi.getAll(token); // Gửi token vào API
-            setUserList(res.data.sort((a, b) => b.TrangThai - a.TrangThai));
+            const token = localStorage.getItem('accessToken');
+            const res = await NguoiDungApi.getAll(
+                { page, limit },
+                token              // token
+            );
+            // BE phân trang chuẩn thì trả ra dạng: { data, totalPages, currentPage, totalItems }
+            setUserList(res.data.data.sort((a, b) => b.TrangThai - a.TrangThai));
+            setTotalPages(res.data.totalPages);
+            setCurrentPage(res.data.currentPage);
+            setTotalItems(res.data.totalItems);
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu:", error);
             Swal.fire('Lỗi!', 'Không thể tải danh sách người dùng', 'error');
         }
     };
 
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -119,7 +132,7 @@ function NguoiDung() {
                     </thead>
                     <tbody>
                         {userList
-                            .filter(user => user.TrangThai === 1) // Chỉ hiển thị người dùng đang hoạt động
+
                             .map((user, index) => (
                                 <tr key={user.id}>
                                     <td>{index + 1}</td>
@@ -129,7 +142,13 @@ function NguoiDung() {
                                     <td>{user.email}</td>
                                     <td>{user.SoDienThoai}</td>
                                     <td>{user.DiaChi}</td>
-                                    <td>Hoạt động</td>
+                                    <td>
+                                        {user.TrangThai === 1 ? (
+                                            <span className="fw-bold text-success">Hoạt động</span>
+                                        ) : (
+                                            <span className="fw-bold text-danger">Khóa</span>
+                                        )}
+                                    </td>
                                     <td>
                                         <button className="btn btn-sm btn-warning me-2" onClick={() => handleEdit(user)}>
                                             <i className="fas fa-edit"></i> Sửa
@@ -141,7 +160,11 @@ function NguoiDung() {
                     </tbody>
                 </table>
             </div>
-
+            <PhanTrang
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
             {/* Modal thêm/sửa người dùng */}
             {showModal && (
                 <div className="modal fade show d-block" tabIndex="-1" role="dialog">
