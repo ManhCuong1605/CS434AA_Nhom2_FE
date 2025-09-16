@@ -50,6 +50,7 @@ const ChiTietSanPham = () => {
                 agent: "Nguyễn Bình Gold",
                 description: data.MoTa,
                 type: "nhaDat",
+                status: data.TrangThai === 1 ? "Đang bán" : "Đã bán",
             };
 
             setProduct(mappedData);
@@ -447,6 +448,10 @@ const ChiTietSanPham = () => {
                                         <p className="mb-1">
                                             <strong>{product.pricePerM2 || "Không xác định"}</strong>
                                         </p>
+                                    </div>
+                                    <div className="col-6">
+                                        <small className="text-muted">Trạng thái: </small>
+                                        <strong className="d-inline">{product.status}</strong>
                                     </div>
                                 </div>
                             </div>

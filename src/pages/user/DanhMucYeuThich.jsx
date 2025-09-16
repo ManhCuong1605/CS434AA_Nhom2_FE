@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import banner1 from "../../assets/slide/banner1.jpg";
 import { getFavorites, removeFavorite } from "../../api/DanhMucYeuThichApi";
+import { toast, ToastContainer } from "react-toastify";
 
 function DanhMucYeuThich() {
   const [favorites, setFavorites] = useState([]);
@@ -62,14 +63,17 @@ function DanhMucYeuThich() {
       }
       setFavorites((prev) => prev.filter((item) => !selected.includes(item.id)));
       setSelected([]);
+      toast.info("Đã xóa khỏi danh sách yêu thích!");
     } catch (error) {
       console.error("Lỗi xóa yêu thích:", error);
     }
   };
 
   return (
+
     <div className="container mt-4">
       <h2 className="text-center fw-bold fs-4 mb-4">Danh mục yêu thích</h2>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
 
       {/* Thanh công cụ */}
       <div className="d-flex justify-content-between align-items-center mb-3">

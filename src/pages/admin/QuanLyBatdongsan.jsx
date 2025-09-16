@@ -143,7 +143,7 @@ function Batdongsan() {
     const handleSubmit = async () => {
         const { MaNhaDat, TenNhaDat, LoaiNhaDat_id } = formData;
 
-        if (!MaNhaDat || !TenNhaDat || !LoaiNhaDat_id || !selectedProvince || !selectedDistrict || !selectedWard) {
+        if (!MaNhaDat || !TenNhaDat || !LoaiNhaDat_id || !selectedProvince || !selectedDistrict) {
             Swal.fire('Lỗi!', 'Vui lòng nhập đầy đủ các thông tin bắt buộc!', 'error');
             return;
         }
@@ -194,7 +194,7 @@ function Batdongsan() {
     const handleEdit = async (item) => {
         setIsEditing(true);
         setShowModal(true);
-
+        console.log("Editing item:", item);
         setFormData({
             id: item.id,
             MaNhaDat: item.MaNhaDat,
@@ -260,11 +260,18 @@ function Batdongsan() {
                 showLoading();
                 await nhaDatApi.delete(id);
                 hideLoading();
-                Swal.fire("Đã xóa!", "Bất động sản đã bị xóa.", "success");
-                window.location.reload();
+                await Swal.fire({
+                    title: "Đã xóa!",
+                    text: "Bất động sản đã bị xóa.",
+                    icon: "success",
+                    timer: 1500, // Hiển thị thông báo trong 1.5 giây
+                    showConfirmButton: false, // Ẩn nút xác nhận
+                });
+                window.location.reload(); // Reload sau khi thông báo hiển thị xong
             } catch (error) {
                 hideLoading();
-                Swal.fire("Lỗi!", "Không thể xóa.", "error");
+                console.error("Lỗi khi xóa bất động sản:", error); // Log lỗi để debug
+                Swal.fire("Lỗi!", error?.response?.data?.error || "Không thể xóa.", "error");
             }
         }
     };
@@ -614,6 +621,20 @@ function Batdongsan() {
                                             />
                                         </div>
                                     </div>
+                                    {isEditing && (
+                                        <div className="mb-3">
+                                            <label className="form-label">Trạng thái *</label>
+                                            <select
+                                                className="form-select"
+                                                name="TrangThai"
+                                                value={formData.TrangThai}
+                                                onChange={handleChange}
+                                            >
+                                                <option value={1}>Đang bán</option>
+                                                <option value={0}>Đã bán</option>
+                                            </select>
+                                        </div>
+                                    )}
                                     <div className="mb-3">
                                         <label className="form-label">Hình ảnh</label>
                                         <input

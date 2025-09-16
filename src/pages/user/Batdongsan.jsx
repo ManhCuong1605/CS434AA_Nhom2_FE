@@ -262,20 +262,21 @@ function Batdongsan() {
   };
 
   const toggleYeuThich = async (item) => {
+    const token = localStorage.getItem("accessToken"); // lấy trực tiếp từ trình duyệt
     if (!token) {
       toast.error("Vui lòng đăng nhập để sử dụng chức năng yêu thích!");
       return;
     }
+
     try {
       if (yeuThich.includes(item.id)) {
-        await removeFavorite(item.id);
+        await removeFavorite(item.id, token);
         setYeuThich((prev) => prev.filter((id) => id !== item.id));
         setPopupList((prev) => prev.filter((p) => p.id !== item.id));
         toast.info("Đã xóa khỏi danh sách yêu thích!");
       } else {
-        await addFavorite(item.id);
+        await addFavorite(item.id, token);
         setYeuThich((prev) => [...prev, item.id]);
-
         const newPopupItem = {
           id: item.id,
           title: item.TenNhaDat,
@@ -283,13 +284,17 @@ function Batdongsan() {
           time: "Vừa lưu xong",
         };
         setPopupList((prev) => [newPopupItem, ...prev.slice(0, 2)]);
-
         setShowPopup(true);
         setTimeout(() => setShowPopup(false), 4000);
         toast.success("Đã thêm vào danh sách yêu thích!");
       }
     } catch (error) {
       console.error("Lỗi toggle yêu thích:", error);
+      if (error.response?.status === 401) {
+        toast.error("Vui lòng đăng nhập để sử dụng chức năng yêu thích!");
+      } else {
+        toast.error(error.message || "Lỗi khi thêm/xóa yêu thích!");
+      }
     }
   };
 

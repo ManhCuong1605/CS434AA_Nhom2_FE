@@ -36,11 +36,14 @@ function AdminPage({ children }) {
     }, [navigate, location.pathname]);
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
         localStorage.removeItem("username");
         localStorage.removeItem("roles");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("nhanVienId");
         window.dispatchEvent(new Event("storage")); // Gửi sự kiện cập nhật
-        navigate("/dang-nhap", { replace: true }); // Điều hướng đến trang đăng nhập
+        navigate("/dang-nhap", { replace: true });// Điều hướng đến trang đăng nhập
     };
 
     const isAdmin = roles.includes('ADMIN');
