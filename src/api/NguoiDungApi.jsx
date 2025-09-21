@@ -14,6 +14,7 @@ const getAll = (params, token) => {
 const add = (data) => {
     return axios.post(`${API_URL}/addUser`, data, {
         headers: {
+
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
     });
@@ -22,6 +23,7 @@ const add = (data) => {
 const update = (id, data) => {
     return axios.put(`${API_URL}/${id}`, data, {
         headers: {
+
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
     });
@@ -30,6 +32,7 @@ const update = (id, data) => {
 const deleteUser = (id) => {
     return axios.delete(`${API_URL}/${id}`, {
         headers: {
+            
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
     });

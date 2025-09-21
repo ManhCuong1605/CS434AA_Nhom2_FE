@@ -26,8 +26,11 @@ function LoginForm() {
                 localStorage.setItem("accessToken", response.data.accessToken);
                 localStorage.setItem("refreshToken", response.data.refreshToken);
 
+
                 localStorage.setItem("username", username);
+                
                 localStorage.setItem("roles", JSON.stringify(response.data.roles || []));
+                
                 localStorage.setItem("userId", response.data.userId);
 
                 // Lưu nhanVienId nếu có
@@ -62,7 +65,8 @@ function LoginForm() {
             <div className="container d-flex justify-content-center align-items-center vh-100 bg-light">
                 <div className="row bg-white shadow rounded overflow-hidden" style={{ maxWidth: "900px" }}>
                     {/* Left Side */}
-                    <div className="col-md-5 d-flex flex-column justify-content-center align-items-center bg-light p-4">
+                    <div className="col-md-5 d-flex flex-column justify-content-center 
+                    align-items-center bg-light p-4">
                         <img
                             src={loginImage} // Thay link này bằng logo của bạn
                             alt="Login"
@@ -148,6 +152,17 @@ function LoginForm() {
                             <GoogleLoginButton setError={setError} />
                         </form>
 
+                        {/* Đăng ký
+                        <p className="text-center mt-3">
+                            Chưa là thành viên?{" "}
+                            <span
+                                className="text-danger text-decoration-none"
+                                style={{ cursor: "pointer" }}
+                                onClick={() => navigate("/dang-ky")}
+                            >
+                                Đăng ký
+                            </span>{" "}tại đây
+                        </p> */}
                         {/* Đăng ký */}
                         <p className="text-center mt-3">
                             Chưa là thành viên?{" "}
