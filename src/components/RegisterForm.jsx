@@ -7,12 +7,7 @@ function RegisterForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [hoTen, setHoTen] = useState("");
-  const [soDienThoai, setSoDienThoai] = useState("");
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
-  const [showOTP, setShowOTP] = useState(false);
-  const [tempData, setTempData] = useState(null);
+
 
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");

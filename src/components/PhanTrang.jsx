@@ -8,36 +8,7 @@ const PhanTrang = ({ currentPage, totalPages, onPageChange }) => {
     }
 
     return (
-        <nav aria-label="Page navigation example">
-            <MDBPagination className="mb-0 justify-content-center">
-                {/* Previous */}
-                <MDBPaginationItem disabled={currentPage === 1}>
-                    <MDBPaginationLink
-                        href="#"
-                        aria-label="Previous"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (currentPage > 1) onPageChange(currentPage - 1);
-                        }}
-                    >
-                        <span aria-hidden="true">«</span>
-                    </MDBPaginationLink>
-                </MDBPaginationItem>
-
-                {/* Page numbers */}
-                {pageNumbers.map((number) => (
-                    <MDBPaginationItem key={number} active={number === currentPage}>
-                        <MDBPaginationLink
-                            href="#"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                onPageChange(number);
-                            }}
-                        >
-                            {number}
-                        </MDBPaginationLink>
-                    </MDBPaginationItem>
-                ))}
+      
 
                 {/* Next */}
                 <MDBPaginationItem disabled={currentPage === totalPages}>
