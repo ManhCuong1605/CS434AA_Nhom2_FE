@@ -12,6 +12,7 @@ function DoiMatKhau() {
     const email = location.state?.email || '';
     const handleSubmit = async (e) => {
         e.preventDefault();
+    
         setMessage('');
         setError('');
         try {

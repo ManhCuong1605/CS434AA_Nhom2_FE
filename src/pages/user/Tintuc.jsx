@@ -10,6 +10,7 @@ const PAGE_SIZE = 6;
 
 const TinTuc = () => {
     const [baiViets, setBaiViets] = useState([]);
+    
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);

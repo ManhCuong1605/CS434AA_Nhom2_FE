@@ -13,6 +13,7 @@ import { Helmet } from "react-helmet-async";
 import DatLichHenModal from "../../components/DatLichHenModal";
 
 const ChiTietSanPham = () => {
+    
     const { id } = useParams();
     const navigate = useNavigate();
     const { setIsChatOpen } = useChat();

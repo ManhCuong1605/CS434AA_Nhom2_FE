@@ -222,7 +222,6 @@ function Batdongsan() {
 
   const handleSort = (sortType) => {
     let sortedList = [...nhaDatList];
-
     switch (sortType) {
       case "verified":
         sortedList.sort((a, b) => (b.isVerified ? 1 : 0) - (a.isVerified ? 1 : 0));
@@ -267,7 +266,6 @@ function Batdongsan() {
       toast.error("Vui lòng đăng nhập để sử dụng chức năng yêu thích!");
       return;
     }
-
     try {
       if (yeuThich.includes(item.id)) {
         await removeFavorite(item.id, token);
@@ -288,6 +286,8 @@ function Batdongsan() {
         setTimeout(() => setShowPopup(false), 4000);
         toast.success("Đã thêm vào danh sách yêu thích!");
       }
+
+
     } catch (error) {
       console.error("Lỗi toggle yêu thích:", error);
       if (error.response?.status === 401) {
@@ -297,28 +297,28 @@ function Batdongsan() {
       }
     }
   };
-
-  const handleSearch = async (filters) => {
-    try {
-      // Gọi API search với toàn bộ filters
-      const res = await nhaDatApi.search(filters);
-      console.log("Kết quả tìm kiếm:", res.data);
-      setNhaDatList(res.data.data); // cập nhật state để render danh sách
-    } catch (error) {
-      console.error("Lỗi tìm kiếm:", error);
-    }
-  };
-
   const removeFilter = (label) => {
     const newFilters = appliedFilters.filter((f) => f !== label);
     setAppliedFilters(newFilters);
-
     if (newFilters.length === 0) {
       setNhaDatList(originalList);
     } else {
       applyFilters(newFilters);
     }
   };
+  const handleSearch = async (filters) => {
+    try {
+      // Gọi API search với toàn bộ filters
+      const res = await nhaDatApi.search(filters);
+      console.log("Kết quả tìm kiếm:", res.data);
+      
+      setNhaDatList(res.data.data); // cập nhật state để render danh sách
+    } catch (error) {
+      console.error("Lỗi tìm kiếm:", error);
+    }
+  };
+
+
 
   return (
     <div>

@@ -13,6 +13,7 @@ const GioiThieu = () => {
           className="img-fluid w-100"
           style={{ height: "400px", objectFit: "cover" }}
         />
+        
         <div
           className="position-absolute top-50 start-50 translate-middle text-center"
           style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)" }}
