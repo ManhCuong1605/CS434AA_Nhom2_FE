@@ -1,7 +1,6 @@
 .ant-layout {
     min-height: 100vh;
 }
-
 .ant-layout-sider {
     max-height: 100vh;
     overflow-y: auto;
@@ -17,6 +16,7 @@
     position: fixed !important;
 }
 
+
 .ant-layout-content {
     min-height: 100vh;
     overflow-y: auto;
@@ -29,6 +29,7 @@
 .ant-layout-content.collapsed {
     margin-left: 80px; /* Chiều rộng của sidebar khi thu gọn */
 }
+
 
 /* Responsive cho mobile */
 @media (max-width: 768px) {
@@ -59,6 +60,8 @@
     left: 80px;
 }
 
+/*
+*/
 @media (max-width: 768px) {
     .ant-layout-header {
         left: 0;
