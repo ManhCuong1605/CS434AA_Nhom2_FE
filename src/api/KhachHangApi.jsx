@@ -13,3 +13,16 @@ const khachHangApi = {
 export default khachHangApi;
 
 
+ import axios from 'axios';
+const API_URL = 'http://localhost:5000/api/khachHang';
+
+const khachHangApi = {
+    getAll: async () => axios.get(API_URL),
+    getById: async (id) => axios.get(),
+    add: async (data) => axios.post(, data),
+    update: async (id, data) => axios.put(, data),
+    delete: async (id) => axios.delete()
+
+}
+
+export default khachHangApi;
