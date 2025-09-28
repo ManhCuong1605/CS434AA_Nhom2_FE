@@ -14,7 +14,6 @@ const DatLichHenModal = ({ show, onClose, nhaDatId }) => {
             return;
         }
 
-        const selectedDateTime = new Date(`${selectedDate}T${selectedTime}:00`);
         const isoUTC = new Date(
             selectedDateTime.getTime() - selectedDateTime.getTimezoneOffset() * 60000
         ).toISOString();

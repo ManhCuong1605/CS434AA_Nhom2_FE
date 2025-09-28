@@ -32,15 +32,7 @@ const datLichHenApi = {
         );
     },
 
-    // Hủy lịch
-    huyLichHen: async (id) => {
-        return axios.put(`${API_URL}/huy-lich/${id}`, {}, getConfig());
-    },
 
-    // Lấy lịch của nhân viên
-    getLichHenNhanVien: async (nhanVienId) => {
-        return axios.get(`${API_URL}/nhanvien/${nhanVienId}`, getConfig());
-    },
 
     // Lấy tất cả lịch (ADMIN)
     getAll: async () => {
