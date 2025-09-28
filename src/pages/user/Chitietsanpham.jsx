@@ -43,8 +43,11 @@ const ChiTietSanPham = () => {
                 street: data.Duong || "",
                 ward: data.Phuong || "",
                 district: data.Quan || "",
+                
                 province: data.ThanhPho || "",
+                
                 location: `${data.Duong || ""}, ${data.Phuong ? `Phường ${data.Phuong}` : ""}, ${data.Quan ? `Quận ${data.Quan}` : ""}, ${data.ThanhPho || ""}`,
+                
                 images: data.hinhAnh?.map((img) => img.url) || [],
                 contact: "0969 524 111",
                 agent: "Nguyễn Bình Gold",
@@ -72,6 +75,7 @@ const ChiTietSanPham = () => {
                 setRelatedProducts([]);
             } finally {
                 setLoadingRelated(false);
+
             }
         } catch (error) {
             console.error("Lỗi khi tải chi tiết sản phẩm:", error);
@@ -85,6 +89,7 @@ const ChiTietSanPham = () => {
         if (isNaN(numericId)) {
             alert("ID không hợp lệ, phải là số nguyên");
             navigate("/");
+
             return;
         }
         setProduct(null);
@@ -99,8 +104,10 @@ const ChiTietSanPham = () => {
         const fetchFavorite = async () => {
             try {
                 const favorites = await getFavorites();
+
                 const found = favorites.some((item) => item.id === numericId);
                 setIsFavorite(found);
+
             } catch (err) {
                 console.error("Không lấy được danh sách yêu thích:", err);
             }
@@ -115,16 +122,21 @@ const ChiTietSanPham = () => {
         }
         try {
             if (isFavorite) {
+
                 await removeFavorite(product.id);
+
                 setIsFavorite(false);
+
                 setPopupList((prev) => prev.filter((p) => p.id !== product.id));
             } else {
+
                 await addFavorite(product.id);
                 setIsFavorite(true);
 
                 const newPopupItem = {
                     id: product.id,
                     title: product.title,
+
                     img: product.images?.[0] || "https://via.placeholder.com/150",
                     time: "Vừa lưu xong",
                 };
@@ -135,6 +147,7 @@ const ChiTietSanPham = () => {
             }
         } catch (error) {
             console.error("Lỗi khi toggle yêu thích:", error);
+
             toast.error("Lỗi khi cập nhật danh sách yêu thích!");
         }
     };
@@ -146,7 +159,9 @@ const ChiTietSanPham = () => {
         }
 
         const shareUrl = `http://localhost:3000/bat-dong-san/${product.id}`;
+        
         const title = product.title || "Bất động sản";
+
         const description = product.description || "Thông tin bất động sản chi tiết.";
         const image = "https://via.placeholder.com/1200x630";
 

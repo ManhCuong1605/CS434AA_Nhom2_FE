@@ -8,11 +8,14 @@ function GoogleLoginButton({ setError }) {
     const handleGoogleLoginSuccess = async (credentialResponse) => {
         try {
             const idToken = credentialResponse.credential;
+            
             const response = await axios.post("http://localhost:5000/api/google", { idToken });
 
             // Lưu token và dữ liệu user
             localStorage.setItem("accessToken", response.data.accessToken);
+            
             localStorage.setItem("refreshToken", response.data.refreshToken);
+            
             localStorage.setItem("roles", JSON.stringify(response.data.roles || []));
             localStorage.setItem("userId", response.data.userId);
 
@@ -28,10 +31,13 @@ function GoogleLoginButton({ setError }) {
 
             // Chuyển trang theo role
             if (response.data.roles?.some(role => ["ADMIN", "NHANVIEN"].includes(role))) {
+            
                 navigate("/admin", { replace: true });
             } else {
+            
                 navigate("/", { replace: true });
             }
+
         } catch (err) {
             console.error("Lỗi đăng nhập Google:", err);
             setError(err.response?.data?.error || "Đăng nhập Google thất bại!");

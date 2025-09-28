@@ -21,10 +21,15 @@ const BaiViet = () => {
     // UI state
     const [images, setImages] = useState([]);
     const [statusMessage, setStatusMessage] = useState("");
+
     const [statusType, setStatusType] = useState("");
+    
     const [errors, setErrors] = useState({});
+    
     const [loading, setLoading] = useState(false);
+    
     const [showToast, setShowToast] = useState(false);
+    
     const [giaHienThi, setGiaHienThi] = useState("");
     const [dienTichHienThi, setDienTichHienThi] = useState("");
 
