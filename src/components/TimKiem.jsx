@@ -160,7 +160,9 @@ function TimKiem({ onSearch }) {
                         </select>
 
                         <select className="form-select" name="TenLoaiDat" onChange={handleChange}>
+
                             <option value="">-- Chọn Loại Đất --</option>
+                            
                             {loaiDatList.map((loai) => (
                                 <option key={loai.id} value={loai.TenLoaiDat}>
                                     {loai.TenLoaiDat}
@@ -168,6 +170,14 @@ function TimKiem({ onSearch }) {
                             ))}
                         </select>
 
+                        {/* <select className="form-select" name="GiaBan" onChange={handleChange}>
+                            <option value="">-- Chọn khoảng giá --</option>
+                            <option value="0-1000000000">Dưới 1 tỷ</option>
+                            <option value="1000000000-2000000000">1 tỷ - 2 tỷ</option>
+                            <option value="2000000000-3000000000">2 tỷ - 3 tỷ</option>
+                            <option value="3000000000-5000000000">3 tỷ - 5 tỷ</option>
+                            <option value="5000000000-99999999999999">Trên 5 tỷ</option>
+                        </select> */}
                         <select className="form-select" name="GiaBan" onChange={handleChange}>
                             <option value="">-- Chọn khoảng giá --</option>
                             <option value="0-1000000000">Dưới 1 tỷ</option>
@@ -176,7 +186,6 @@ function TimKiem({ onSearch }) {
                             <option value="3000000000-5000000000">3 tỷ - 5 tỷ</option>
                             <option value="5000000000-99999999999999">Trên 5 tỷ</option>
                         </select>
-
                         <select className="form-select" name="DienTich" onChange={handleChange}>
                             <option value="">-- Chọn diện tích --</option>
                             <option value="0-50">Dưới 50m²</option>
@@ -190,4 +199,5 @@ function TimKiem({ onSearch }) {
         </div>
     );
 };
+
 export default TimKiem;

@@ -45,6 +45,7 @@ export default function ProfilePage() {
 
     const handleChangePassword = async () => {
         setError("");
+
         if (!oldPassword || !newPassword) {
             setError("Vui lòng nhập đầy đủ mật khẩu cũ và mới");
             return;
@@ -53,6 +54,7 @@ export default function ProfilePage() {
         setLoading(true);
         try {
             const token = localStorage.getItem("accessToken");
+        
             const response = await axios.put(
                 "http://localhost:5000/api/change-password",
                 { currentPassword: oldPassword, newPassword },
@@ -83,8 +85,11 @@ export default function ProfilePage() {
     };
     const fieldMap = {
         HoTen: "HoTen",
+        
         email: "Email",
+        
         SoDienThoai: "SoDienThoai",
+        
         DiaChi: "DiaChi",
     };
     const handleSave = async (field) => {
